@@ -43,7 +43,15 @@
     },
     greet: function(formal) {
       var msg = formal ? this.formalGreeting() : this.greeting();
-      console.log(msg);
+      return msg;
+    },
+    setLang: function(lang) {
+      this.lang = lang;
+      this.validate();
+      return this;
+    },
+    setGreeting: function(selector, formal) {
+      $(selector).html(this.greet(formal));
       return this;
     }
   };
@@ -51,7 +59,4 @@
 
   global.Greetr = global.G$ = Greetr;
 
-}(global, jQuery));
-
-a = G$();
-a.greet(true).greet()
+}(window, jQuery));
