@@ -1,0 +1,17 @@
+<script src="https://npmcdn.com/vue/dist/vue.js"></script>
+
+<div id="exercise">
+    <div>
+        <button v-on:click="showAlert">Show Alert</button>
+    </div>
+    <div>
+        <input v-on:keyup="handleKeyDown($event)" type="text">
+        <p>{{ value }}</p>
+    </div>
+    <div>
+        <input v-on:keyup.enter=handleKeyDown($event) type="text">
+        <p>{{ value }}</p>
+    </div>
+</div>
+
+<script src="app.js"></script>
