@@ -10,6 +10,8 @@
     this.lang = lang || 'en';
   };
 
+  var supportedLangs = ['en', 'es'];
+
   Greetr.prototype = {};
   Greetr.init.prototype = Greetr.prototype;
 
