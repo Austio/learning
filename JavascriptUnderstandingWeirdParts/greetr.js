@@ -12,9 +12,46 @@
 
   var supportedLangs = ['en', 'es'];
 
-  Greetr.prototype = {};
+  var greetings = {
+    en: "Hello",
+    es: "Hola"
+  };
+
+  var formalGreetings = {
+    en: 'Greetings',
+    es: 'Saludos'
+  };
+
+  var logMessages = {
+    en: 'Logged In',
+    es: 'El Logged In'
+  }
+  Greetr.prototype = {
+    fullName: function() {
+      return this.first + ' ' + this.last;
+    },
+    validate: function() {
+      if (supportedLangs.indexOf(this.lang) === -1) {
+        throw "Unsupported lang"
+      }
+    },
+    greeting: function() {
+      return greetings[this.lang] + ' ' + this.first;
+    },
+    formalGreeting: function() {
+      return formalGreetings[this.lang] + ' ' + this.fullName();
+    },
+    greet: function(formal) {
+      var msg = formal ? this.formalGreeting() : this.greeting();
+      console.log(msg);
+      return this;
+    }
+  };
   Greetr.init.prototype = Greetr.prototype;
 
   global.Greetr = global.G$ = Greetr;
 
 }(global, jQuery));
+
+a = G$();
+a.greet(true).greet()
