@@ -1,0 +1,27 @@
+<script src="https://npmcdn.com/vue/dist/vue.js"></script>
+<link rel="stylesheet" type="text/css" href="styles.css">
+<div id="exercise">
+  <div>
+    <button @click="startEffect">Start Effect</button>
+    <div id="effect" :class="{shrink: applyEffect, highlight: !applyEffect}">1</div>
+  </div>
+  <div :class="[applyEffect ? highlightClass : unHighlightClass]">2</div>
+  <div>
+    <input type="text" v-model="userClass">
+    <div :class="[userClass]">3</div>
+  </div>
+  <div>
+    <input type="text" v-model="userClass"> UserClass
+    <input type="text" v-model="userExtraClass"> True/False
+    <div :class="[userClass, {highlight: userExtraClass}]">4</div>
+  </div>
+  <div>
+    <input type="text">
+    <div :class="">5</div>
+  </div>
+  <div>
+    <button v-on:click="startProgress">Start Progress</button>
+    <div>{{progressBar}}</div>
+  </div>
+</div>
+<script src="app.js"></script>
