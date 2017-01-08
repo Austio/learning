@@ -2,6 +2,7 @@ function Character(name, specialAttackMultiplier, strength, health) {
   this.specialAttackMultiplier = specialAttackMultiplier || 1;
   this.strength = strength || 5;
   this.health = health || 100;
+  this.originalHealth = this.health;
   this.attackDamage = curriedNumberMultiplier(this.strength);
   this.name = name;
   
@@ -52,11 +53,19 @@ function attackRound(vm, multiplier) {
 new Vue({
   el: '#app',
   data: {
-    player: new Character('player', 1.5),
+    player: new Character('player', 1.5, 100),
     monster: new Character('monster'),
-    actions: [{character: 'player', activity: 'stuff'}]
+    actions: [],
+    stopGame: false,
   },
   methods: {
+    startGame: function() {
+      var vm = this;
+      
+      vm.actions = 0;
+      vm.player.health = vm.player.originalHealth;
+      vm.monster.health = vm.player.originalHealth;
+    },
     attack: function() {
       var vm = this;
       
@@ -75,7 +84,14 @@ new Vue({
       attackWithLogging(vm, vm.monster, vm.player, 1);
     },
     giveUp: function() {
-      console.log('i give')
+      this.stopGame = true;
+    }
+  },
+  computed: {
+    gameIsOngoing: function() {
+      var x = (this.monster.health > 0 && this.player.health > 0) && !this.stopGame;
+      console.log(x, this);
+      return x;
     }
   }
 });
