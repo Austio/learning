@@ -1,0 +1,36 @@
+<script src="../vue.js"></script>
+
+<div id="exercise">
+  <div>
+    <button @click="toggleMe">Toggle</button>
+    <p v-if="toggle">You either see me v-if...</p>
+    <p v-if="!toggle">...or me</p>
+    <p v-show="toggle">You either see me v-show ...</p>
+    <p v-show="!toggle">...or me</p>
+  </div>
+  <ul>
+    <li>
+      <ul v-for="(a, i) in array">
+        {{a}} {{i}}
+      </ul>
+    </li>
+  </ul>
+  <ul>
+    <li v-for="(k, v, i) in myObject">
+      {{k}} {{v}} {{i}}
+    </li>
+  </ul>
+  <ul>
+    <li v-for="data in testData">
+      <template v-if="Array.isArray(data)">
+        <ul>
+          <li v-for="d in data">{{ d }}</li>
+        </ul>
+      </template>
+      <template v-else>
+       {{ data }}
+      </template>
+    </li>
+  </ul>
+</div>
+<script src="./app.js"></script>
