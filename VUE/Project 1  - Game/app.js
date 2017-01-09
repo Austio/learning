@@ -21,13 +21,20 @@ function Character(name, specialAttackMultiplier, strength, health) {
     if (!this.alive()) {
       return 'red'
     };
-    
-    var remaining  = this.health / this.originalHealth;
-    if (remaining < 0.5) {
+
+    if (this.healthPercentLeft() < 0.5) {
       return 'orange'
     } else {
       return 'green'
     }
+  }
+
+  this.healthWithPercent = function() {
+    return this.healthPercentLeft() * 100 + '%';
+  }
+
+  this.healthPercentLeft = function() {
+    return this.health / this.originalHealth;
   }
 }
 
