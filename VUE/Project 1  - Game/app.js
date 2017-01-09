@@ -49,7 +49,7 @@ function attackWithLogging(vm, attacker, attackee, multipler) {
   var damage = attack(attacker, attackee, multipler);
   var logMessage = attacker.name + ' attacked ' + attackee.name + ' for ' + damage + ' damage.'
   
-  vm.actions.push({character: attacker.name, activity: logMessage});
+  vm.actions.unshift({character: attacker.name, activity: logMessage});
 }
 
 function curriedNumberMultiplier(strength) {
