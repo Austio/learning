@@ -11,13 +11,24 @@ function Character(name, specialAttackMultiplier, strength, health) {
     
     this.health = this.health + healAmount;
     return healAmount;
+  };
+  
+  this.alive = function() {
+    return this.health > 0;
+  };
+  
+  this.healthBar = function() {
+    if (!this.alive()) {
+      return 'red'
+    };
+    
+    var remaining  = this.health / this.originalHealth;
+    if (remaining < 0.5) {
+      return 'orange'
+    } else {
+      return 'green'
+    }
   }
-}
-
-
-function setupGame() {
-  player = new Character('player', 1.5);
-  monster = new Character('monster');
 }
 
 function attack(attacker, attackee, multiplier) {
@@ -53,7 +64,7 @@ function attackRound(vm, multiplier) {
 new Vue({
   el: '#app',
   data: {
-    player: new Character('player', 1.5, 100),
+    player: new Character('player', 1.5),
     monster: new Character('monster'),
     actions: [],
     stopGame: false,
@@ -92,6 +103,6 @@ new Vue({
       var x = (this.monster.health > 0 && this.player.health > 0) && !this.stopGame;
       console.log(x, this);
       return x;
-    }
+    },
   }
 });

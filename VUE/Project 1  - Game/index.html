@@ -15,12 +15,16 @@
                 <div class="healthbar text-center" style="background-color: green; margin: 0; color: white;">
                     {{ player.health }}
                 </div>
+                <div class="healthbar text-center" style="background-color: green; margin: 0; color: white;">
+                    {{ player.health }}
+                </div>
             </div>
         </div>
         <div class="small-6 columns">
             <h1 class="text-center">MONSTER</h1>
             <div class="healthbar">
-                <div class="healthbar text-center" style="background-color: green; margin: 0; color: white;">
+                <div class="healthbar text-center" style="margin: 0; color: white;"
+                     :style="{'background-color': monster.healthBar()}">
                     {{ monster.health }}
                 </div>
             </div>
