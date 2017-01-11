@@ -1,41 +1,34 @@
 <template>
     <div class="container">
-        <div class="row">
-            <div class="col-xs-12">
-                <header>
-                    <h1>Server Status</h1>
-                </header>
-            </div>
-        </div>
+        <server-header></server-header>
+
         <hr>
         <div class="row">
             <div class="col-xs-12 col-sm-6">
                 <ul class="list-group">
-                    <li
-                            class="list-group-item"
-                            v-for="index in 5">
-                        <server></server>
-                    </li>
+                    <server-details v-for="s in 5"></server-details>
                 </ul>
             </div>
-            <div class="col-xs-12 col-sm-6">
-                <p>Server Details are currently not updated</p>
-            </div>
         </div>
+
+        <server-status></server-status>
         <hr>
-        <div class="row">
-            <div class="col-xs-12">
-                <footer>
-                    <p>All Servers are managed here</p>
-                </footer>
-            </div>
-        </div>
+        <server-footer></server-footer>
     </div>
 </template>
 
 <script>
+    import LocalServerStatus from './components/ServerStatus.vue';
+    import ServerHeader from './components/ServerHeader.vue';
+    import ServerFooter from './components/ServerFooter.vue';
+    import ServerDetails from './components/ServerDetails.vue';
+
+    export default {
+      components: {
+        'server-status': LocalServerStatus,
+        'server-header': ServerHeader,
+        'server-footer': ServerFooter,
+        'server-details': ServerDetails
+      }
+    }
 </script>
-
-<style>
-
-</style>
