@@ -14,7 +14,7 @@
                     <li
                             class="list-group-item"
                             v-for="index in 5">
-                        Server #{{ index }}
+                        <server></server>
                     </li>
                 </ul>
             </div>
