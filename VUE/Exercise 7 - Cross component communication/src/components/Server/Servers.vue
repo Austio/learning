@@ -4,7 +4,7 @@
             <li
                     class="list-group-item"
                     v-for="server in serversList"
-                    :class="{ selected: server.id === selectedServer }"
+                    :class="{selected: (server.id === selectedServer) }"
             >
                 Server {{ server.name }}
             </li>
@@ -14,7 +14,12 @@
 
 <script>
   export default ({
-    props: ['serversList', 'selectedServer']
+    props: ['serversList', 'selectedServer'],
+    computed: {
+      isSelected() {
+        return this.server ? (this.server.id === this.selectedServer) : false;
+      }
+    }
   });
 </script>
 

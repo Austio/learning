@@ -4,7 +4,7 @@
         <hr>
         <div class="row">
             <servers :serversList='serversList' :selectedServer='selectedServer'></servers>
-            <app-server-details :server='selectedServer' ></app-server-details>
+            <app-server-details :server='currentlySelectedServer' ></app-server-details>
         </div>
         <hr>
         <app-footer></app-footer>
@@ -34,6 +34,11 @@
              { name: 'Magnar', id: 4 },
              { name: 'Hank', id: 5 }
            ]
+        }
+      },
+      computed: {
+        currentlySelectedServer() {
+          return this.serversList.find(s => s.id === this.selectedServer)
         }
       }
     }
