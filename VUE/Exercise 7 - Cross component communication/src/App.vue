@@ -3,8 +3,8 @@
         <app-header></app-header>
         <hr>
         <div class="row">
-            <servers :serversList='serversList' :selectedServer='selectedServer'></servers>
-            <app-server-details :server='currentlySelectedServer' ></app-server-details>
+            <servers :serversList='serversList' :selectedServer='selectedServer' :selectServer='selectServer'></servers>
+            <app-server-details :server='currentlySelectedServer'></app-server-details>
         </div>
         <hr>
         <app-footer></app-footer>
@@ -34,6 +34,11 @@
              { name: 'Magnar', id: 4 },
              { name: 'Hank', id: 5 }
            ]
+        }
+      },
+      methods: {
+        selectServer(id) {
+          this.selectedServer = id;
         }
       },
       computed: {

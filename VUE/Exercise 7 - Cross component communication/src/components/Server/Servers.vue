@@ -5,6 +5,7 @@
                     class="list-group-item"
                     v-for="server in serversList"
                     :class="{selected: (server.id === selectedServer) }"
+                    @click="selectServer(server.id)"
             >
                 Server {{ server.name }}
             </li>
@@ -14,7 +15,7 @@
 
 <script>
   export default ({
-    props: ['serversList', 'selectedServer'],
+    props: ['serversList', 'selectedServer', 'selectServer'],
     computed: {
       isSelected() {
         return this.server ? (this.server.id === this.selectedServer) : false;
