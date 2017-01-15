@@ -5,7 +5,7 @@
                     class="list-group-item"
                     v-for="server in serversList"
                     :class="{selected: (server.id === selectedServer) }"
-                    @click="selectServer(server.id)"
+                    @click="setServer(server.id)"
             >
                 Server {{ server.name }}
             </li>
@@ -14,11 +14,17 @@
 </template>
 
 <script>
+  import { eventBus } from '../../main.js';
   export default ({
-    props: ['serversList', 'selectedServer', 'selectServer'],
+    props: ['serversList', 'selectedServer'],
     computed: {
       isSelected() {
         return this.server ? (this.server.id === this.selectedServer) : false;
+      }
+    },
+    methods: {
+      setServer(sid) {
+        eventBus.$emit('serverSelected', sid)
       }
     }
   });

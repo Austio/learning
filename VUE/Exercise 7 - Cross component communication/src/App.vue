@@ -3,7 +3,7 @@
         <app-header></app-header>
         <hr>
         <div class="row">
-            <servers :serversList='serversList' :selectedServer='selectedServer' :selectServer='selectServer'></servers>
+            <servers :serversList='serversList' :selectedServer='selectedServer'></servers>
             <app-server-details :server='currentlySelectedServer'></app-server-details>
         </div>
         <hr>
@@ -16,7 +16,7 @@
     import Footer from './components/Shared/Footer.vue';
     import Servers from './components/Server/Servers.vue';
     import ServerDetails from './components/Server/ServerDetails.vue';
-
+    import { eventBus } from './main.js';
     export default {
         components: {
             appHeader: Header,
@@ -36,15 +36,13 @@
            ]
         }
       },
-      methods: {
-        selectServer(id) {
-          this.selectedServer = id;
-        }
-      },
       computed: {
         currentlySelectedServer() {
           return this.serversList.find(s => s.id === this.selectedServer)
         }
+      },
+      created() {
+        eventBus.$on('serverSelected', (serverId) => this.selectedServer = serverId)
       }
     }
 </script>
