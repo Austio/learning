@@ -16,11 +16,6 @@
     import Quotes from './Quotes.vue';
 
     export default{
-        data(){
-            return{
-                msg:'hello vue'
-            }
-        },
         components:{
           ProgressBar,
           NewQuoteForm,

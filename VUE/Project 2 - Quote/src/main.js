@@ -3,7 +3,7 @@ import App from './App.vue'
 
 const quoteStore = new Vue({
   data: {
-    quotes: []
+    quotes: [{ text: 'First Quote' }]
   },
   methods: {
     addQuote(data) {

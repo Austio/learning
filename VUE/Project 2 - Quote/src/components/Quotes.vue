@@ -1,7 +1,11 @@
 <template>
     <div>
-      <div v-for="quote in quotes">
-        {{ quote.text }}
+      <div v-for="(quote, i) in quotes">
+        <Quote>
+          <p class='quote-text' @click='removeQuote(i)'>
+            {{ quote.text }}
+          </p>
+        </Quote>
       </div>
     </div>
 </template>
@@ -9,7 +13,7 @@
 </style>
 <script>
   import { quoteStore } from '../main.js';
-  import { Quote } from './Quote.vue';
+  import Quote from './Quote.vue';
     export default{
         data(){
           return {
@@ -18,6 +22,11 @@
         },
         components: {
           Quote
+        },
+        methods: {
+          removeQuote(index) {
+            quoteStore.removeQuote(index)
+          }
         }
     }
 </script>

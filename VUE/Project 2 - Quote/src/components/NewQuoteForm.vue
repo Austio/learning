@@ -1,10 +1,14 @@
 <template>
     <div>
       <input v-model="quoteText">
-      <button @click='submitQuote'>Submit</button>
+      <button @click='submitQuote' :disabled='canSubmit' :style="{disabled: canSubmit}">Submit</button>
     </div>
 </template>
-<style>
+<style scoped>
+  .disabled {
+    opacity: 0.2;
+    color: red;
+  }
 </style>
 <script>
   import { quoteStore } from '../main.js';
@@ -16,10 +20,13 @@
       },
       methods: {
         submitQuote() {
-          var vm = this;
-
-          quoteStore.addQuote(vm.quoteText);
-          vm.quoteText = '';
+          quoteStore.addQuote(this.quoteText);
+          this.quoteText = '';
+        }
+      },
+      computed: {
+        canSubmit() {
+          return this.quoteText === '';
         }
       }
     }
