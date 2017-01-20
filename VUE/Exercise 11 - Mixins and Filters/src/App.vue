@@ -17,36 +17,13 @@
                 reversed: {{ reverseComputed }}
                 <br>
                 count: {{ countComputed }}
-                <!-- Exercise 3 -->
-                <!-- Do the same as in Exercises 1 & 2, now with Computed Properties -->
-
-                <!-- Exercise 4 -->
-                <!-- Share the Computed Property rebuilding Exercise 2 via a Mixin -->
-            </div>
+             </div>
         </div>
     </div>
 </template>
 
 <script>
     export default {
-      data() {
-        return {
-          text: 'asdf'
-        }
-      },
-      filters: {
-        reverse(str) {
-          return str.split('').reverse().join('');
-        }
-      },
-      computed: {
-        reverseComputed() {
-          return this.text.split('').reverse().join('');
-        },
-        countComputed() {
-          return `${this.text} (${this.text.length})`
-        }
-      }
     }
 </script>
 
