@@ -1,3 +1,25 @@
+## Mutations
+
+### Field Object
+
+type is the return but it is not always the same type that we will be passing in.  
+
+```
+fields: {
+  addUser: {
+    type: UserType,  //refers to type of data we will return from our function
+    args: {
+      firstName: { type: new GraphQLNonNull(GraphQLString) },
+      age: { type: new GraphQLNonNull(GraphQLInt) },
+      companyId: { type: GraphQLString }
+    },  
+    resolve() {}
+  }
+}
+type:
+
+```
+
 ## Query
 
 ### Response Object
@@ -60,3 +82,6 @@ Represents a property on a node in our system.  That property can connect to an 
 
 #### Resolve function
 Resolves differences between incoming JSON and how to access data on backend.  I.e. mapping join tables or diverse data.
+
+
+## Apollo vs Relay
