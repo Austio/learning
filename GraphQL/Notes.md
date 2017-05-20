@@ -1,6 +1,14 @@
 ## Mutations
 
+Differences from query
+
+ - Begin with mutation and you must specify the return fields from the mutation.
+ - Are executed consecutively instead of in parallel when you provide multiple mutations.
+ 
+
 ### Field Object
+
+Represents a property on a node in our system.  That property can connect to an edge to another node or list of nodes.
 
 type is the return but it is not always the same type that we will be passing in.  
 
@@ -20,7 +28,75 @@ type:
 
 ```
 
+### Resolve function
+Resolves differences between incoming JSON and how to access data on backend.  I.e. mapping join tables or diverse data.
+
 ## Query
+
+### Query Variables
+
+Limits
+https://facebook.github.io/graphql/#sec-Input-Types
+
+ - Only available on Input Types, which are 1 of
+ - Scalers (Int, String, Flaot, Boolean)
+ - Enums
+ - Arrays of Enums or Scalers
+
+Allow you to pass dynamic data down to a query
+
+```
+{
+  recentPosts(count: 10) {
+    title
+  }
+}
+
+// becomes
+
+query getFewPosts {
+  recentPosts(count: 10) {
+    title
+  }
+}
+
+// becomes
+
+query getFewPosts($postCount: Int!) {
+  recentPosts(count: $postCount) {
+    title
+  }
+}
+
+```
+
+Use in real situation tying together query params from fragments
+
+```
+query getFewPosts($postCount: Int!, $commentCount: Int) {
+  recentPosts(count: $postCount) {
+    title
+    ...comments
+  }
+}
+
+fragment comments on Post {
+  comments(limit: $commentCount) {
+    ...commentInfo
+  }
+}
+
+fragment commentInfo on Comment {
+  content
+  timestamp
+  replies {
+    _id
+    content
+    timestamp
+  }
+}
+
+```
 
 ### Composition
 
@@ -124,21 +200,3 @@ fragment authorInfo on Author {
 ```
 
 
-### Field
-Represents a property on a node in our system.  That property can connect to an edge to another node or list of nodes.
-
-
-#### Resolve function
-Resolves differences between incoming JSON and how to access data on backend.  I.e. mapping join tables or diverse data.
-
-
-## Apollo vs Relay
-
-
-## Mutations
-
-Differences from query
-
- - Begin with mutation and you must specify the return fields from the mutation.
- - Are executed consecutively instead of in parallel when you provide multiple mutations.
- 
