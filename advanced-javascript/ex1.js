@@ -35,8 +35,7 @@
 
   function I() {
     console.log("I");
-    J();
-    J();
+    J()();
   }
 
   function B() {
@@ -63,7 +62,7 @@
   }
 
   var J = function () {
-    J = function () {
+    return function () {
       console.log("J");
       window.K();
     };
