@@ -41,7 +41,7 @@
     J();
   }
 
-  B = function () {
+  function B() {
     console.log("B");
     C();
   };
