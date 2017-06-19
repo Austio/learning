@@ -1,6 +1,4 @@
 (function (window) {
-  A();
-
   function C() {
     console.log("OOPS!");
   }
@@ -76,4 +74,5 @@
     D();
   };
 
-})({})
+  return A;
+})({})()
