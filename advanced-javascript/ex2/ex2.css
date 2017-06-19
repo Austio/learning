@@ -1,0 +1,48 @@
+#notes {
+	border: 1px solid #999;
+	width: 500px;
+	height: 300px;
+	overflow: scroll;
+	overflow-y: scroll;
+	overflow-x: hidden;
+}
+
+#notes.active {
+	border: 1px solid yellow;
+}
+
+.note {
+	display: block;
+	font-size: 16px;
+	line-height: 23px;
+	color: #006;
+	padding: 4px 8px;
+	text-decoration: none;
+}
+
+.note:nth-child(odd) {
+	background-color: #def;
+}
+
+.note:nth-child(even) {
+	background-color: #fff;
+}
+
+.note.highlighted {
+	background-color: yellow;
+}
+
+#help {
+	display: none;
+	position: absolute;
+	left: 50px;
+	top: 25px;
+	width: 200px;
+	border: 2px solid #000;
+	background-color: #eee;
+	padding: 15px;
+}
+
+#help .note {
+	cursor: default;
+}
