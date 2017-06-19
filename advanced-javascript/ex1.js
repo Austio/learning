@@ -30,7 +30,7 @@
 
   function d() {
     console.log("D");
-    E();
+    E(F);
   }
 
   function I() {
