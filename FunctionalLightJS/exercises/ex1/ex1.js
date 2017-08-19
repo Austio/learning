@@ -5,8 +5,12 @@ function foo(x) {
 
 var y = 5, z;
 
-foo(20);
-z;		// 120
+function bar(x) {
+	foo(x)
+}
 
-foo(25);
-z;		// 175
+bar(20);
+console.log(z);		// 120
+
+bar(25);
+console.log(z);		// 175
