@@ -22,7 +22,8 @@
 ## Impurity
  - Side effects bad because it makes a line hard to predict outside of the context of all other lines
  - Impurity optimizes for *writing* and makes it harder for *reading* because you need much more context to understand and run
- 
+ - Look at both uses of variables not passed as argument or things that affect 'outside'
+  
 ## Purity
  - Makes it easier to debug.  The bug will most likely be in your side effect code.  
  - Importance is in observability *not* academically, meaning that what matters is that all side effects are encapsulated in the function and have no affect outside
