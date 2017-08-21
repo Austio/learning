@@ -14,6 +14,7 @@
  - Excapsulation - Hiding details in a facade
  - Abstraction - Creating appropriate layers of separation so that we can reason about each piece (20:00)
  - Pure - No side effects
+ - Predicate Function - returns true/false
 
 ## What is a function
  - Must have a return value (no return is a procedure)
@@ -59,7 +60,21 @@ h(1,2,3,4); //[1,2]
 // implementing call
 ``` 
  
+## Point Free Style
+ - defining function arguments using functional composition instead of explicitly mapping
  
+``` 
+//not pointfree cause we receive args
+var initials = function(name) {
+  return name.split(' ').map(compose(toUpperCase, head)).join('. ');
+};
+
+//pointfree
+var initials = compose(join('. '), map(compose(toUpperCase, head)), split(' '));
+
+initials("hunter stockton thompson");
+// 'H. S. T'
+``` 
 
 ### Are these Pure?
 
