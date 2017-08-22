@@ -74,7 +74,34 @@ var initials = compose(join('. '), map(compose(toUpperCase, head)), split(' '));
 
 initials("hunter stockton thompson");
 // 'H. S. T'
+
+
 ``` 
+### Example 2
+```
+function isOdd(v) {
+  return v % 2 == 1;
+}
+
+function isEven(v) {
+  return !isOdd(v);
+}
+
+isEven(4)
+// There is a point where isevent passes to isOdd
+
+
+// Without Points in our code
+function not(fn) {
+  return function negated(...args) {
+    return !fn(...args)
+  }
+}
+
+var isEven = not(isOdd)
+
+
+```
 
 ### Are these Pure?
 
