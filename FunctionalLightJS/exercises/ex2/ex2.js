@@ -10,13 +10,17 @@ function printIf(predicate) {
 	};
 }
 
+function not(fn) {
+	return function negate(...args) {
+		return !fn(...args);
+	}
+};
+
 function isShortEnough(str) {
 	return str.length <= 5;
 }
 
-function isLongEnough(str) {
-	return !isShortEnough(str);
-}
+var isLongEnough = not(isShortEnough)
 
 var msg1 = "Hello";
 var msg2 = msg1 + " World";

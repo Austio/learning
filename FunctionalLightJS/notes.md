@@ -100,7 +100,6 @@ function not(fn) {
 
 var isEven = not(isOdd)
 
-
 ```
 
 ### Are these Pure?
@@ -144,4 +143,8 @@ getId({
 })
 ```
 no
+
+### Composition
+
+pipe vs compose => pipe is apply left to right, compose right to left
 
