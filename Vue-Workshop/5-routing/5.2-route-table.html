@@ -1,0 +1,30 @@
+<script src="../node_modules/vue/dist/vue.js"></script>
+
+<div id="app">
+  <!-- render main view here -->
+  <a href="#foo">foo</a>
+  <a href="#bar">bar</a>
+</div>
+
+<script>
+// '#/foo' -> Foo
+// '#/bar' -> Bar
+// '#/404' -> NotFound
+
+const Foo = { template: `<div>foo</div>` }
+const Bar = { template: `<div>bar</div>` }
+const NotFound = { template: `<div>not found!</div>` }
+
+const routeTable = {
+  // Implement this!
+}
+
+window.addEventListener('hashchange', () => {
+  // Implement this!
+})
+
+const app = new Vue({
+  el: '#app',
+  // Implement this!
+})
+</script>

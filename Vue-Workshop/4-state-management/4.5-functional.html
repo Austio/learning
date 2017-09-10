@@ -1,0 +1,26 @@
+<script src="../node_modules/vue/dist/vue.js"></script>
+
+<div id="app"></div>
+
+<script>
+function app ({ el, model, view, actions }) {
+  // Implement this!
+}
+
+// voila
+app({
+  el: '#app',
+  model: {
+    count: 0
+  },
+  actions: {
+    inc: ({ count }) => ({ count: count + 1 }),
+    dec: ({ count }) => ({ count: count - 1 })
+  },
+  view: (h, model, actions) => h('div', { attrs: { id: 'app' }}, [
+    model.count, ' ',
+    h('button', { on: { click: actions.inc }}, '+'),
+    h('button', { on: { click: actions.dec }}, '-')
+  ])
+})
+</script>

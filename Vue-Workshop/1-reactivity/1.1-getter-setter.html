@@ -1,0 +1,19 @@
+<script>
+  function convert(obj) {
+    Object.keys(obj).forEach(key => {
+      let value = obj[key];
+
+      Object.defineProperty(obj, key, {
+        get () {
+          console.log(`getting key "${key}": ${value}`);
+          return value;
+        },
+        set (newvalue) {
+          console.log(`setting key "${key}" to: ${newvalue}`);
+          value = newvalue;
+        }
+      })
+
+    })
+  }
+</script>
