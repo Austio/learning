@@ -2,7 +2,24 @@
 
 <script>
 const RulesPlugin = {
-  // Implement this!
+  install(Vue) {
+    Vue.mixin({
+      created() {
+        const { rules } = this.$options;
+        if(rules) {
+          Object.keys(rules).forEach(property => {
+            const { validate, message } = rules[property];
+
+            this.$watch(property, (newProp) => {
+              if (!validate(newProp)) {
+                console.log(message);
+              }
+            })
+          })
+        }
+      }
+    })
+  }
 }
 
 Vue.use(RulesPlugin)
