@@ -6,7 +6,17 @@
 
 <script>
 Vue.component('example', {
-  // Implement this!
+  props: {
+    tags: {
+      type: Array,
+      default: () => []
+    }
+  },
+  render(h){
+    elms = this.$options.propsData.tags.map((tag, index) => h(tag, index));
+
+    return h('div', elms);
+  }
 })
 
 new Vue({ el: '#app' })
