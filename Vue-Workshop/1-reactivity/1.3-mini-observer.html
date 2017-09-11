@@ -1,9 +1,47 @@
 <script>
-function observe (obj) {
-  // Implement this!
+
+Depend = class Dep {
+  constructor() {
+    this.dependencies = new Set();
+  }
+
+  depend(){
+    if(runningFunc) {
+      this.dependencies.add(runningFunc);
+    }
+  }
+  notify(){
+    this.dependencies.forEach(dep => dep());
+  }
 }
 
+function observe (obj) {
+  Object.keys(obj).forEach(o => {
+    let internalVal = obj[o];
+    let dep = new Depend();
+
+    Object.defineProperty(obj, o, {
+      get() {
+        dep.depend();
+        return internalVal;
+      },
+      set(newVal) {
+        this.internalVal = newVal;
+        dep.notify();
+      }
+    })
+  })
+}
+
+let runningFunc = null;
+
 function autorun (update) {
-  // Implement this!
+  function autoRunFunc() {
+    runningFunc = autoRunFunc;
+    update();
+    runningFunc = null;
+  }
+
+  autoRunFunc();
 }
 </script>
