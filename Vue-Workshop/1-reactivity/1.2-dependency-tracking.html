@@ -1,11 +1,30 @@
 <script>
 // a class representing a dependency
 // exposing it on window is necessary for testing
+
+let calledFunction = undefined;
+
 window.Dep = class Dep {
-  // Implement this!
+  constructor() {
+    this.dependencies = [];
+  }
+
+  depend() {
+    this.dependencies.push(calledFunction);
+  }
+
+  notify() {
+    this.dependencies.forEach(dep => dep());
+  }
 }
 
 function autorun (update) {
-  // Implement this!
+  function wrappedUpdate() {
+    calledFunction = update;
+    update()
+    calledFunction = undefined;
+  }
+
+  wrappedUpdate()
 }
 </script>
