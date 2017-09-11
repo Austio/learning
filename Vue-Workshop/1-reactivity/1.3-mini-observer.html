@@ -1,6 +1,6 @@
 <script>
 
-Depend = class Dep {
+class Depend {
   constructor() {
     this.dependencies = new Set();
   }
@@ -26,8 +26,12 @@ function observe (obj) {
         return internalVal;
       },
       set(newVal) {
-        this.internalVal = newVal;
-        dep.notify();
+        const changed = internalVal !== newVal
+
+        internalVal = newVal;
+        if(changed) {
+          dep.notify();
+        }
       }
     })
   })
@@ -36,6 +40,8 @@ function observe (obj) {
 let runningFunc = null;
 
 function autorun (update) {
+  // wrap the raw update function into a "job" function that registers and
+  // unregisters itself as the current active job when invoked
   function autoRunFunc() {
     runningFunc = autoRunFunc;
     update();
