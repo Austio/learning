@@ -4,6 +4,7 @@ require('../../util').createTestCase(__filename, (window, logs, done) => {
   )
   window.$click('button')
   setTimeout(() => {
+    console.log(window.document.innerHTML);
     expect(window.document.getElementById('app').innerHTML).toMatch(
       `<div>bar</div>`
     )
