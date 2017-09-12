@@ -22,41 +22,41 @@
     props: {
       ok: {
         required: true,
-        default: 'Foo'
+        default: true,
       }
     },
     components: {
       Bar, Foo
     },
     render(h) {
-      h(this.$options.components[this.ok])
+      const comp = this.ok
+        ? Foo
+        : Bar;
+
+      h(comp)
     },
   })
 
   new Vue({
     el: '#app',
     data: {
-      useComp: 'Foo'
+      ok: true
     },
     methods: {
-      toggleUseComp() {
-        const newUseComp = (this.useComp === 'Foo')
-          ? 'Bar'
-          : 'Foo';
-
-        this.useComp = newUseComp;
+      toggleOk() {
+        this.ok = !this.ok;
       }
     },
     render(h) {
       const button = h('button', {
         on: {
-          click: this.toggleUseComp,
+          click: this.toggleOk,
         }
       }, 'Click To Toggle');
 
       const exampleComponent = h('example', {
         props: {
-          ok: this.useComp
+          ok: this.ok
         }
       });
 
