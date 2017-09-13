@@ -19,7 +19,29 @@ const Avatar = {
 }
 
 function withAvatarURL (InnerComponent) {
-  // Implement this!
+  return {
+    props: ['username'],
+    data() {
+      return {
+        src: null
+      }
+    },
+    render(h, context) {
+      if(this.src) {
+        return h(InnerComponent, {
+          props: {
+            src: this.src,
+          }
+        })
+      } else {
+        const vm = this;
+        fetchURL(this.username, function(src){
+          vm.src = src;
+        });
+        return h('div', 'loading')
+      }
+    }
+  }
 }
 
 const SmartAvatar = withAvatarURL(Avatar)
