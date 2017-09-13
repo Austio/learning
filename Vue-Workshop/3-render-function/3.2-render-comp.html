@@ -2,6 +2,7 @@
 
 <div id="app">
   <example :ok="ok"></example>
+  <button @click="ok = !ok"></button>
 </div>
 
 <script>
@@ -25,15 +26,8 @@
         default: true,
       }
     },
-    components: {
-      Bar, Foo
-    },
     render(h) {
-      const comp = this.ok
-        ? Foo
-        : Bar;
-
-      h(comp)
+      return this.ok ? h(Foo) : h(Bar);
     },
   })
 
@@ -42,28 +36,5 @@
     data: {
       ok: true
     },
-    methods: {
-      toggleOk() {
-        this.ok = !this.ok;
-      }
-    },
-    render(h) {
-      const button = h('button', {
-        on: {
-          click: this.toggleOk,
-        }
-      }, 'Click To Toggle');
-
-      const exampleComponent = h('example', {
-        props: {
-          ok: this.ok
-        }
-      });
-
-      return h('div', [
-        button,
-        exampleComponent
-      ])
-    }
   })
 </script>
