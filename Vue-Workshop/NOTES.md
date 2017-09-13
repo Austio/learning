@@ -35,3 +35,7 @@ function autorun (update) {
  - referrenced as h
  - `h(MyComponent, { props: ... })`
   
+#### Interface
+ - this.$slots.default - array, all unnamed slots
+ - this.$slots.foo - array, all slots named foo
+ - this.$arrts - all the attributes (not props) 
