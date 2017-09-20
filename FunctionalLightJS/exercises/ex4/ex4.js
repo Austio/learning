@@ -2,14 +2,14 @@ function lotteryNum() {
 	return (Math.round(Math.random() * 100) % 58) + 1;
 }
 
-function pickNumber(){
-	const length = luckyLotteryNumbers.length;
+function pickNumber(n){
+	const length = n.length;
 
-	while (luckyLotteryNumbers.length === length) {
+	while (n.length === length) {
 		let num = lotteryNum();
 
 		if (luckyLotteryNumbers.indexOf(num) === -1) {
-      luckyLotteryNumbers = [...luckyLotteryNumbers, num].sort();
+      return [...luckyLotteryNumbers, num].sort();
     }
 	}
 }
@@ -17,7 +17,7 @@ function pickNumber(){
 var luckyLotteryNumbers = [];
 
 for (var i = 0; i < 6; i++) {
-	pickNumber();
+	luckyLotteryNumbers = pickNumber(luckyLotteryNumbers);
 }
 
 console.log(luckyLotteryNumbers);
