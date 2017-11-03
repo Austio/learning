@@ -15,6 +15,7 @@
  - Abstraction - Creating appropriate layers of separation so that we can reason about each piece (20:00)
  - Pure - No side effects
  - Predicate Function - returns true/false
+ - Higher Order Function - Takes or returns a function
 
 ## What is a function
  - Must have a return value (no return is a procedure)
@@ -160,7 +161,8 @@ getId({
 ```
 no
 
-### Composition
+# Composition
 
 pipe vs compose => pipe is apply left to right, compose right to left
 
+Good Quote: The point of wrapping in a function is to create a boundary between the what and the how.  
