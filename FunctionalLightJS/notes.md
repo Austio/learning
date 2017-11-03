@@ -74,9 +74,25 @@ var initials = compose(join('. '), map(compose(toUpperCase, head)), split(' '));
 
 initials("hunter stockton thompson");
 // 'H. S. T'
-
-
 ``` 
+
+### Example 1
+```
+function bar(v) {
+  console.log(v);
+}
+
+function foo(func) {
+  return function(v) {
+    func(v);
+  }
+}
+
+// these two are the same
+foo(function(v){ return bar(v) })(4);
+foo(bar)(4)
+```
+
 ### Example 2
 ```
 function isOdd(v) {

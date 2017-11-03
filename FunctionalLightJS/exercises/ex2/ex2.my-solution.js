@@ -1,16 +1,18 @@
-
+function when(output) {
+	return function(predicate) {
+	  return function(...arg) {
+	    if(predicate(...arg)) {
+	      output(...arg);
+      }
+    }
+  }
+}
 
 function output(txt) {
 	console.log(txt);
 }
 
-function printIf(predicate) {
-	return function(msg) {
-		if (predicate(msg)) {
-			output(msg);
-		}
-	};
-}
+const printIf = when(output)
 
 function not(fn) {
 	return function negate(...args) {
