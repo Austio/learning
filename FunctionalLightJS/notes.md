@@ -166,3 +166,10 @@ no
 pipe vs compose => pipe is apply left to right, compose right to left
 
 Good Quote: The point of wrapping in a function is to create a boundary between the what and the how.  
+
+# Immutability
+
+constant -> the variable itself cannot be reassigned
+functional programmers generally mean value immutability
+`Object.freeze` => Read only, shallow only works on top level
+
