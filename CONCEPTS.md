@@ -1,2 +1,0 @@
-### Explaining Constructor/Prototype
-
