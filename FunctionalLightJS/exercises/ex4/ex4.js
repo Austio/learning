@@ -2,22 +2,21 @@ function lotteryNum() {
 	return (Math.round(Math.random() * 100) % 58) + 1;
 }
 
-function pickNumber(n){
-	const length = n.length;
-
-	while (n.length === length) {
-		let num = lotteryNum();
-
-		if (luckyLotteryNumbers.indexOf(num) === -1) {
-      return [...luckyLotteryNumbers, num].sort();
-    }
+function pick(n, l = []) {
+  Object.freeze(l);
+	if (n === 0) {
+  	return l;
 	}
+
+
+	const num = lotteryNum();
+  if (l.indexOf(num) > -1) {
+  	return pick(n, l);
+	}
+
+	const newList = [...l, num].sort((l, r) => Number(l) > Number(r));
+	return pick(n - 1, newList);
 }
 
-var luckyLotteryNumbers = [];
 
-for (var i = 0; i < 6; i++) {
-	luckyLotteryNumbers = pickNumber(luckyLotteryNumbers);
-}
-
-console.log(luckyLotteryNumbers);
+console.log(pick(9));
