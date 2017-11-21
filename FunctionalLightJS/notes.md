@@ -178,4 +178,15 @@ functional programmers generally mean value immutability
 Me: Having access to the parents activation record, lexically.  It is what allows things like currying/partial applicaton.
 Kyles Definition: A function "remembers" the variables arount it even when the function is executed elsewhere.
 
+# Referential Transparency
 
+A function can be replaced with it's return value and not affect the rest of the system.
+Best definition of function purity.
+
+```
+// Example of failed referential transparency, we cannot replace this utilities usage in the system with it's value, b/c it changes
+function foo(x,y) {
+  var id = 0;
+  return function() { return id++ }
+}
+```
