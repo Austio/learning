@@ -173,3 +173,9 @@ constant -> the variable itself cannot be reassigned
 functional programmers generally mean value immutability
 `Object.freeze` => Read only, shallow only works on top level
 
+# Closure
+
+Me: Having access to the parents activation record, lexically.  It is what allows things like currying/partial applicaton.
+Kyles Definition: A function "remembers" the variables arount it even when the function is executed elsewhere.
+
+
