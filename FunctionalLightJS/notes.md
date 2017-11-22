@@ -190,3 +190,15 @@ function foo(x,y) {
   return function() { return id++ }
 }
 ```
+
+# Partial Application and Currying
+
+Process of turning a general function into a more specific one
+
+Me: Similar in that they both return functions that accept more arguments that will be applied
+    Different in that currying only takes 1 argument at a time
+    
+Kyle: Techniques for specializing a generalized function
+      Partial application takes all now and the rest later, currying is 1 at a time    
+
+
