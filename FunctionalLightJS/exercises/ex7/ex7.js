@@ -56,8 +56,27 @@ function addnInternal(fxa = []) {
   }, 0)
 }
 
-
 assert(() => addnInternal([one, two, () => 3, () => 4]) === 10, 'addnInternal')
 
+function filterArr (fxn) {
+  function recur(arr = [], uniq = []) {
+    if (arr.length === 0) {
+      return uniq;
+    }
+
+    if (fxn(uniq, arr[0])) {
+      uniq.push(arr[0]);
+    }
+
+    return recur(arr.slice(1), uniq);
+  }
+
+  return recur;
+}
+
+const findUniq = filterArr((arr, elm) => arr.indexOf(elm) === -1);
+assert(() => findUniq([1,1,2,3,3,3,3,2,2,1, 2]).length === 3, 'findUniq')
 
 
+const onlyEven = filterArr((arr, elm) => elm % 2 === 0);
+assert(() => onlyEven([1,1,2,3,3,3,3,2,2,1,2]).length === 4, 'onlyEven')
