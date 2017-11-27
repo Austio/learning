@@ -80,3 +80,52 @@ assert(() => findUniq([1,1,2,3,3,3,3,2,2,1, 2]).length === 3, 'findUniq')
 
 const onlyEven = filterArr((arr, elm) => elm % 2 === 0);
 assert(() => onlyEven([1,1,2,3,3,3,3,2,2,1,2]).length === 4, 'onlyEven')
+
+// Kyle Solutions
+function constant(v) {
+  return function() {
+    return v;
+  }
+}
+
+const vals = [1,2,3,4,5].map(v => constant(v))
+
+function kyleIterativeAddn(fns) {
+  fns = fns.slice();
+
+  while (fns.length > 2) {
+    let [fn0, fn1, ...rest] = fns;
+    fns = [
+      constant(add2(fn0, fn1)),
+      ...rest
+    ];
+  }
+  return add2( fns[0], fns[1] )
+}
+
+assert(() => kyleIterativeAddn(vals) === 15, 'kylesIterativeAddn')
+/* Call  Stack looks like
+fns = [1,2,3,4,5]
+  fn0 = 1
+  fn1 = 2
+  rest = [3,4,5]
+  fns = [ constant(add2(1,2)), 3, 4, 5]
+    fn0 = constant(add2(1,2))
+    fn1 = 3
+    rest = [4,5]
+    fns = [ constant(add2( constant(add2(1,2))) , 3}
+      , 4, 5]
+*/
+
+function kylesRecursiveAddn([fn0, fn1, ...fns]) {
+  if (fns.length > 0) {
+    return kylesRecursiveAddn([
+      function(){ return (add2(fn0, fn1)) },
+      ...fns
+    ])
+  }
+
+  return add2(fn0, fn1);
+}
+
+assert(() => kylesRecursiveAddn(vals) === 15, 'kylesRecursiveAddn')
