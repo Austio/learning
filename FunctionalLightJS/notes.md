@@ -201,4 +201,35 @@ Me: Similar in that they both return functions that accept more arguments that w
 Kyle: Techniques for specializing a generalized function
       Partial application takes all now and the rest later, currying is 1 at a time    
 
+# Recursive CPS Continuation Passing Style
 
+Instead of passing a value around, you pass a function that will eval.  Defers all of the work until the very end.
+```
+var sumRecur = (function() {
+  return function(...nums) {
+    return recur(nums, v => v);
+  }
+
+  function recur([sum, ...nums], cont) {
+    if (nums.length == 0) return cont(sum);
+    return recur(nums, function(v) {
+      return cont(sum + v);
+    })
+  }
+}());
+
+// Walkthrough of stack, it is the final call up that does the summing by continuing
+sumRecur(3,4,5)
+recur([3,4,5], v=>v)
+  sum 3
+  nums [4,5]
+  return recur([4,5], func(v) { return cont(3 + v)})
+    sum 4
+    nums [5]
+    return recur([5], func(v) { return cont(4 + v)})
+      sum 5
+      nums []
+      return cont(5)
+        // return cont(4 + 5)
+        //   return cont(3 + 9)
+```
