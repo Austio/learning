@@ -243,10 +243,16 @@ recur([3,4,5], v=>v)
   -> exclusion vs inclusion -> when you put spaghetti noodles through a strainer do you filter out the water or filter in the noodles?
   -> programming always looks at it as inclusion, kyle creates filterIn and filterOut functions to be clear
  - Reduction 
- 
- 
- 
- 
+
+# Fusion
+ - combining multiple congruent (same input/output) maps into a single step to run a single time across each element on a list 
+```
+arr.map(add2).map(mul3).map(sub1)
+
+comp = pipe(add2, mul3, sub1)
+arr.map(comp)
+```
+
  
 # Definitions
  - Constant, function that accepts a value and returns a function which will return the value function(v){ return function() { return v }}
