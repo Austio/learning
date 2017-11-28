@@ -129,3 +129,25 @@ function kylesRecursiveAddn([fn0, fn1, ...fns]) {
 }
 
 assert(() => kylesRecursiveAddn(vals) === 15, 'kylesRecursiveAddn')
+
+// This is really nice!
+function kylesReductiveAddn(fns) {
+  return fns.reduce(function reduceExternal(acc, curr) {
+    return function internal() {
+      return add2(acc, curr);
+    }
+  })()
+}
+// acc 1(), curr 2()
+// return function() { return add2(1(), 2()) }
+/// acc function internalA() { return add2(1(), 2()) }
+/// curr 3()
+//// acc function internalB() { return add2(internalA, 3()) }
+//// curr 4()
+//// acc function internalC() { return add2(internalB, 4()) }
+//// curr 5()
+//// acc function internalD() { return add2(internalc, 4()) }
+
+// internalD() return add2(internalc => internalb => internala => 1, 2, => b 3 => d 4, 5)
+
+assert(() => kylesReductiveAddn(vals) === 15, 'kylesReductiveAddn')
