@@ -64,5 +64,8 @@ for {
 
 ### If
 
-Condition parens optional
+Condition parens optional {} mandatory
 https://tour.golang.org/flowcontrol/6
+
+
+### Interfaces and Types
