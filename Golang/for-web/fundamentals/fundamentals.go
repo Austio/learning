@@ -8,7 +8,7 @@ import (
 
 var packageScope string
 
-func printing() {
+func printLineStuff() {
 	packageScope = "foo"
 	fmt.Println(packageScope)
 	blockScopeX := 7
@@ -20,41 +20,51 @@ func printing() {
 	fmt.Printf("Now you have %g problems.\n", math.Sqrt(7))
 }
 
-func interfacesAndTypes() {
-  type person struct {
-    first string
-    last string
-  }
-
-  type secretAgent struct {
-    person
-    licenseToKill bool
-  }
-
-  type human interface {
-    speak()
-  }
-
-  func (secretAgent) speak() {
-    fmt.Println(secretAgent.last, "regular")
-  }
-
-  func (sa secretAgent) speak() {
-    fmt.printLn(sa.last, "licence to kill")
-  }
-
-  james := secretAgent(
-    person() {
-      "James",
-      "Bond"
-    },
-    true
-  )
-
-  james.speak()
+type person struct {
+	first string
+	last  string
 }
 
+type secretAgent struct {
+	person
+	licenseToKill bool
+}
+
+type human interface {
+	speak()
+}
+
+func (p person) speak() {
+	fmt.Println(p.first, p.last, ": good to see you mister bond")
+}
+
+func (sa secretAgent) speak() {
+	fmt.Println(sa.person.first, sa.person.last, ": shaken, not stirred")
+}
+
+func saySomething(h human) {
+	h.speak()
+}
+
+func demoPolymorphism() {
+	mp := person{
+		"Miss",
+		"Moneypenny",
+	}
+
+	james := secretAgent{
+		person{
+			"James",
+			"Bond",
+		},
+		true,
+	}
+
+	saySomething(mp)
+	saySomething(james)
+}
 
 func main() {
-  printing()
+	printLineStuff()
+	demoPolymorphism()
 }
