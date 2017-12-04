@@ -3,11 +3,15 @@ package main
 
 import "fmt"
 
-func mustache(template string) {
-	fmt.Println(template)
+func mustache(template string, terms map[string]string) {
+	fmt.Println(template, terms)
 }
 
 func main() {
-	template := "foo"
-	mustache(template)
+	var terms = map[string]string{
+		"foo": "bar",
+	}
+
+	template := terms["foo"]
+	mustache(template, terms)
 }
