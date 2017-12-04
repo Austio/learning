@@ -13,10 +13,12 @@ func interp(title string) {
 func mustache(template string, dict map[string]string) {
 	fmt.Println("initial:", template, dict)
 
-	r, _ := regexp.Compile("{{title}}")
-	newTemplate := r.ReplaceAllString(template, dict["title"])
+	for k, v := range dict {
+		r, _ := regexp.Compile(fmt.Sprintf("{{%v}}", k))
+		template = r.ReplaceAllString(template, v)
+	}
 
-	fmt.Println(newTemplate)
+	fmt.Println(template)
 }
 
 func main() {
@@ -25,8 +27,9 @@ func main() {
 
 	var terms = map[string]string{
 		"title": "Using Mustache Syntax",
+		"body":  "Insightful Content",
 	}
 
-	template := "<DOCTYPE html><head><title>{{title}}<title></head><body>Hiya</body></html>"
+	template := "<DOCTYPE html><head><title>{{title}}<title></head><body>{{body}}</body></html>"
 	mustache(template, terms)
 }
