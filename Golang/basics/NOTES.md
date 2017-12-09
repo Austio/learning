@@ -84,6 +84,8 @@ func name(val type) return_type {
 ```
 
  - pass by value by using the stack
+ - function calls cause the value of what is passed in to be copied onto the stack, and that value is passed in
+ 
 
 ```
 # Example of pass by value and stack usage
