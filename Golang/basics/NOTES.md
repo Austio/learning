@@ -32,6 +32,7 @@ Returns a value by applying functions/operators to operands
 
 ### Control Structures
 
+#### For
 ```
 # For statement anatomy
 for <init-Optional>; <expression>; <post-Optional> {
@@ -50,3 +51,26 @@ for i:=10; i>0; i-- {
     fmt.Println(i)
 }
 ```
+
+#### If
+```
+if <boolean> {
+    <code block>
+} else if <boolean> {
+
+} else {
+
+}
+```
+
+#### Switch
+```
+switch <expression> {
+    case <expression>:
+    <code>
+    fallthrough (optional, means keep going)
+    case <expression>:
+      <code>
+    default: 
+      <code>  
+}
