@@ -1,11 +1,17 @@
 package main
 
 import (
+	"log"
+	"os"
 	"text/template"
 )
 
 func main() {
-	t, err1 = template.ParseFiles("./index.go.html")
+	t, err := template.ParseFiles("./index.go.html")
+	err = t.Execute(os.Stdout, nil)
 
-	err2 = template.Execute(t)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
 }
