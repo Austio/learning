@@ -25,3 +25,28 @@ var a int32 = 15
 var a = 15 
 a := 15
 ```
+
+### Expressions
+
+Returns a value by applying functions/operators to operands
+
+### Control Structures
+
+```
+# For statement anatomy
+for <init-Optional>; <expression>; <post-Optional> {
+    <codeblock>
+    <breakStatement-Optional>
+}
+
+i := 10
+
+for i > 0 {
+	fmt.Println(i)
+	i = i - 1
+}
+
+for i:=10; i>0; i-- {
+    fmt.Println(i)
+}
+```
