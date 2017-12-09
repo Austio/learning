@@ -74,3 +74,33 @@ switch <expression> {
     default: 
       <code>  
 }
+```
+### Functions
+  
+```
+func name(val type) return_type {
+    <code>
+}
+```
+
+ - pass by value by using the stack
+
+```
+# Example of pass by value and stack usage
+package main
+
+import "fmt"
+
+func reset_value(i int) {
+    fmt.Println("reset_value i:", i, "Location:", &i)
+    i = 0
+    fmt.Println("reset_value i:", i, "Location:", &i)
+}
+
+func main() {
+    j := 15
+    fmt.Println("main j:", j, "Location:", &j)
+    reset_value(j)
+    fmt.Println("main j:", j, "Location:", &j)
+}
+```
