@@ -106,3 +106,30 @@ func main() {
     fmt.Println("main j:", j, "Location:", &j)
 }
 ```
+
+#### Pointers and Dereferencing
+ - & -> the memory access for a variable
+ - * -> the value of the memory reference 
+
+ ```
+
+func maxMutateExample(a, b int, ref *string) int {
+	if a > b {
+		*ref = "a is highest"
+		return a
+	}
+
+	*ref = "b is highest"
+	return b
+}
+
+func main() {
+	a := 1
+	b := 2
+	high := "?"
+
+	fmt.Println("Before", high)
+	fmt.Println("Calling Function: Highest is", maxMutateExample(a, b, &high))
+	fmt.Println("After ", high)
+}
+```
