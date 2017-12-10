@@ -112,7 +112,6 @@ func main() {
  - * -> the value of the memory reference 
 
  ```
-
 func maxMutateExample(a, b int, ref *string) int {
 	if a > b {
 		*ref = "a is highest"
@@ -133,3 +132,33 @@ func main() {
 	fmt.Println("After ", high)
 }
 ```
+
+### Scope
+
+Go is lexically block scoped
+
+ - Package level, it is accessible everywhere
+ - Go only errors on unused variables inside of functions
+ - Implicit operator only usable in functions (:=)
+ - Functions can only use variables after the point they are declared 
+ - golang.org/ref/spec#Declarations_and_scope
+ - golang-books.com/books/web/01-02
+```
+# If we remove this global outer, the check() would error on the first fmt
+var a = "outer"
+
+func check() {
+	fmt.Println(&a, a)
+	a := "inner"
+	fmt.Println(&a, a)
+}
+
+func main() {
+	fmt.Println(&a, a)
+	check()
+}
+
+0x1139150 outer
+0x1139150 outer
+0xc42000e1f0 inner
+```  
