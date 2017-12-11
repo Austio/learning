@@ -187,7 +187,7 @@ a := [5]int {0,1,2,3,4}
 
 * WHY *
 - Can manage arrays for us and manage them in the background 
-- Allow you to pass arrays (easily) by reference
+- Allow you to pass arrays (easily) by reference 
 
 ```
 array[low:high]
@@ -216,4 +216,44 @@ append(x, 5)
 
 cap()
 len()
+```
+
+### Simple Statements
+
+- goo.gl/8HLO75
+- goo.gl/Vhpujb
+
+#### Extending If
+
+- Are block scoped along with the construct that is used with
+
+```
+if <simple statement>; <boolean> {
+    <codeblock>
+}
+
+# the err is block scopes to the if condition
+if err := file.Chmod(0664); err != nil {
+    <codeblock>
+}
+```
+
+### Range 
+- looping over slice, forEach ish like concept
+- Index and elm are mandatory for capturing returns
+
+```
+for index, elm := range slice {
+
+}
+```
+
+### Variadic Functions
+- ...
+- Allow you to set the arity of a function to be 0..many of something
+- The parameter for the variadic function is a slice
+```
+func max(numbers ...int) int {
+
+}
 ```
