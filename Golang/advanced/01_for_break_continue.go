@@ -16,6 +16,9 @@ func main() {
 	// Count number of even, odd and total
 	// Don't count 0
 	// Stop counting if you hit a 7
+
+Abort:
+    while {
 	for _, num := range numbers {
 		total++
 		if num == 0 {
@@ -25,7 +28,7 @@ func main() {
 
 		if num == 7 {
 			// Exits loop completely
-			break
+			break Abort
 		}
 
 		if num%2 == 0 {
@@ -34,6 +37,7 @@ func main() {
 			odd++
 		}
 	}
+}
 
 	fmt.Printf("Even %d, Odd %d\nTotal %d\n", odd, even, total)
 }

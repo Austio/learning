@@ -251,7 +251,7 @@ for index, elm := range slice {
 ### Variadic Functions
 - ...
 - Allow you to set the arity of a function to be 0..many of something
-- The parameter for the variadic function is a slice
+- The parameter for the variadic function is a slice 
 ```
 func max(numbers ...int) int {
 
