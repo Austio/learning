@@ -253,6 +253,22 @@ comp = pipe(add2, mul3, sub1)
 arr.map(comp)
 ```
 
+# Transducing
+ - A way to make functions with separate interfaces that can work together
+ - ... TODO watch again in future when brain is bigger (8.8)
+```
+ function isOdd(v) { return v % 2 === 1 }
+ function add1(v) { return v + 1 }
+ function sum(total, v) { return total + v }
+ 
+ 
+ var list = [1,2,3,4]
+ list
+   .map(add1)
+   .filter(isOdd)
+   .reduce(sum)
+ ```
+
  
 # Definitions
  - Constant, function that accepts a value and returns a function which will return the value function(v){ return function() { return v }}
