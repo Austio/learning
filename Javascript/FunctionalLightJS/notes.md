@@ -255,7 +255,7 @@ arr.map(comp)
 
 # Transducing
  - A way to make functions with separate interfaces that can work together
- - ... TODO watch again in future when brain is bigger (8.8)
+ - ... TODO watch again in future when brain is bigger (8.8 Data Structures)
 ```
  function isOdd(v) { return v % 2 === 1 }
  function add1(v) { return v + 1 }
