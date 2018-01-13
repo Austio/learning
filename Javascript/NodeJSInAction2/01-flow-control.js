@@ -1,9 +1,12 @@
 flow = (
   function() {
-    forEach = Array.prototype.forEach;
+    reduce = Array.prototype.reduce;
+    slice = Array.prototype.slice;
 
     function series() {
-      forEach.call(arguments, arg => arg())
+      var afterFirstArg = slice.call(arguments, 1);
+
+      reduce.call(afterFirstArg, (acc, curr) => curr(acc), arguments[0]())
     }
 
     return {
@@ -15,13 +18,17 @@ flow = (
 
 describe('Flow Chapter 2.12', () => {
   describe('series', () => {
-    it('executes a series of functions 1 after the other', () => {
+    it('executes a series of functions calling each function', () => {
       callSpy = jest.fn()
-      const call = v => () => callSpy(v);
+      const call = v => () => {
+        callSpy(v);
+        return v;
+      }
 
-      flow.series(call(1), call(2));
+      flow.series(call(1), callSpy);
       expect(callSpy.mock.calls[0][0]).toBe(1);
-      expect(callSpy.mock.calls[1][0]).toBe(2);
+      expect(callSpy.mock.calls[1][0]).toBe(1);
     });
   });
+
 });
