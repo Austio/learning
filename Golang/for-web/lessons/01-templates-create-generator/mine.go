@@ -11,8 +11,6 @@ func interp(title string) {
 }
 
 func mustache(template string, dict map[string]string) {
-	fmt.Println("initial:", template, dict)
-
 	for k, v := range dict {
 		r, _ := regexp.Compile(fmt.Sprintf("{{%v}}", k))
 		template = r.ReplaceAllString(template, v)
