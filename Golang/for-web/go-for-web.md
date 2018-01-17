@@ -8,3 +8,7 @@
  
   - naming -> `template.gohtml` ish
   - template.ParseFiles returns Pointer to a template -> Container holding all templates passed in
+  - template.ParseFiles - template.ParseGlob
+  - Parse files only once, can do in an init() func
+  - template.Must does error checking for you, takes a *template and error which is what ParseGlob/ParseTemplate return
+  
