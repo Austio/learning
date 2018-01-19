@@ -1,10 +1,10 @@
+[Getting Started](https://www.elastic.co/guide/en/elasticsearch/guide/current/intro.html)
+
 ### Definitions
  - index(noun) -> like a database tableish, is a store of documents
  - index(verb) -> store a doc in an index (INSERT)
  - inverted index -> Allows search, is like a B-Tree index in sql
  - relevancy -> Score associated with a search result and is relative to other searches in the query
- 
- 
 
 #### Paths
  - localhost:9200/_stats
@@ -174,3 +174,12 @@ curl -XGET 'localhost:9200/megacorp/employee/_search?pretty' -H 'Content-Type: a
 
 ``` 
  
+### Search Result Keys
+ - hits -> Results and metadata from the search in an array
+ - hits.total -> how many returned
+ - hits.hits -> actual result from the query
+ - hits.max_score -> highest result in this search
+ - took -> how many ms to run
+ - shards.(total|failed|successful) -> How many shards helped in this query
+ - timed_out -> Boolean, if took longer than timeout specified in q, default is no timeout
+  
