@@ -183,3 +183,57 @@ curl -XGET 'localhost:9200/megacorp/employee/_search?pretty' -H 'Content-Type: a
  - shards.(total|failed|successful) -> How many shards helped in this query
  - timed_out -> Boolean, if took longer than timeout specified in q, default is no timeout
   
+### [Multi-index](https://www.elastic.co/guide/en/elasticsearch/guide/current/multi-index-multi-type.html)  
+
+Searches can specify the index/type that it needs inside of the query string
+```
+/_search -> all indexes
+/us/_search -> only us
+/us,gb/_search -> gb and us
+/us,gb/users,tweets/_search -> gb/us and users
+```
+
+### Paging
+
+from: amount to skip
+size: total
+
+```
+Deep Paging in Distributed Systems
+
+To understand why deep paging is problematic, let’s imagine that we are searching within a single index with five primary shards. When we request the first page of results (results 1 to 10), each shard produces its own top 10 results and returns them to the coordinating node, which then sorts all 50 results in order to select the overall top 10.
+
+Now imagine that we ask for page 1,000—results 10,001 to 10,010. Everything works in the same way except that each shard has to produce its top 10,010 results. The coordinating node then sorts through all 50,050 results and discards 50,040 of them!
+
+You can see that, in a distributed system, the cost of sorting results grows exponentially the deeper we page. There is a good reason that web search engines don’t return more than 1,000 results for any query.
+```
+
+### [Mapping](https://www.elastic.co/guide/en/elasticsearch/guide/current/mapping-analysis.html)
+
+How does ES Map data? `/gb/_mapping/tweet`
+
+Big distinction between exact and full text matches
+ - exact -> easy, does it exactly match
+ - full text -> subtle, how well does the document match within the full text based on intent
+  - uses inverted index
+  - UK should also return United Kingdom and UK and uk
+  - Jump should return jumps, jump, jumping, maybe even leap
+  
+#### [Inverted Index](https://www.elastic.co/guide/en/elasticsearch/guide/current/inverted-index.html)
+
+A list of unique words and the document they appear.  If we analyze these
+
+The quick brown fox
+Quick brown foxes
+
+we would
+ - pick the unique words [The, quick, brown, fox, Quick, foxes]
+ - normalize the casing  [the, quick, brown, fox, foxes]
+ - stem similar results  [the, quick, brown, fox] foxes -> fox
+ 
+#### [Analyzers](https://www.elastic.co/guide/en/elasticsearch/guide/current/analysis-intro.html) 
+Analysis helps us with this by going through and tokenizing the string and then anlyzing it to normalize results they encapsulate three functions
+ - Character filters - Tidy up string before tokenizing (convert & to and, strip html)
+ - Tokenizer - Split based on spacing, or even more granular
+ - Token filters  - Each token is filtered where it can be deduped, lowercased, removed (a, and the), combined (jump/leap)
+ 
