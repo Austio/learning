@@ -27,7 +27,18 @@ func demoStruct() {
 	tmpl.ExecuteTemplate(os.Stdout, "struct.gohtml", data)
 }
 
+func demoMap() {
+	d := map[string]string{
+		"first":  "Jim",
+		"second": "John",
+		"third":  "Patsy",
+	}
+
+	tmpl.ExecuteTemplate(os.Stdout, "map.gohtml", d)
+}
+
 func main() {
 	demoStruct()
+	demoMap()
 
 }
