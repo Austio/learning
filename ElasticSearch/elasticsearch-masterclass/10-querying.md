@@ -127,6 +127,13 @@ GET /index/_search
 }
 ```
 
+## Filter
+ - faster than query b/c does not do relevancy and caches
+ - does not do relevancy matching
+ - is nested inside query:bool
+ 
+ 
+ 
 
 
 
