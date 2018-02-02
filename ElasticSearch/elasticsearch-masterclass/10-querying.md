@@ -131,9 +131,27 @@ GET /index/_search
  - faster than query b/c does not do relevancy and caches
  - does not do relevancy matching
  - is nested inside query:bool
- 
- 
- 
+
+## Aggregations
+Use cars in seed-kibana to use
+
+```
+// Sort by price order descending
+GET /vehicles/cars/_search
+{
+  "from": 0,
+  "size": 5,
+  "query": {
+    "match_all": {}
+  },
+  "sort": [
+    {"price":{"order":"desc"}}  
+  ]
+}
+
+
+
+```
 
 
 
