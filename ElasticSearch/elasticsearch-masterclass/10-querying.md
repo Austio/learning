@@ -1,3 +1,7 @@
+## Count
+
+GET /index/_count
+
 ## Query
 
 GET /index/_search
@@ -127,14 +131,7 @@ GET /index/_search
 }
 ```
 
-## Filter
- - faster than query b/c does not do relevancy and caches
- - does not do relevancy matching
- - is nested inside query:bool
-
-## Aggregations
-Use cars in seed-kibana to use
-
+## Sorting/Paging
 ```
 // Sort by price order descending
 GET /vehicles/cars/_search
@@ -148,9 +145,81 @@ GET /vehicles/cars/_search
     {"price":{"order":"desc"}}  
   ]
 }
+```
 
+## Filter
+ - faster than query b/c does not do relevancy and caches
+ - does not do relevancy matching
+ - is nested inside query:bool
 
+## Aggregations
+Use cars in seed-kibana to use
 
+GET /index/_search
+
+```
+// make.keyword => .keyword ensures that es knows we are looking for the key and not a text match, only needed on text fields
+GET /vehicles/cars/_search
+{
+  "aggs": {
+    "popular_cars": {
+      "terms": {
+        "field": "make.keyword"
+      },
+      "aggs": {
+        "avg_price": {
+          "avg": {
+            "field": "price"
+          }
+        },
+        "max_price": {
+          "max": {
+            "field": "price"
+          }
+        },
+        "min_price": {
+          "min": {
+            "field": "price"
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+### Limiting Aggregations with Query
+```
+{
+  "size": 5,
+  "query": {
+    "match": {"color":"red"}
+  },
+  "aggs": {
+    "popular_cars": {
+      "terms": {
+        "field": "make.keyword"
+      },
+      "aggs": {
+        "avg_price": {
+          "avg": {
+            "field": "price"
+          }
+        },
+        "max_price": {
+          "max": {
+            "field": "price"
+          }
+        },
+        "min_price": {
+          "min": {
+            "field": "price"
+          }
+        }
+      }
+    }
+  }
+}
 ```
 
 
