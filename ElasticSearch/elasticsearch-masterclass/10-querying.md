@@ -186,6 +186,22 @@ GET /vehicles/cars/_search
     }
   }
 }
+
+// Can consolidate min/max/avg/sum together with the stats field
+{
+  "aggs": {
+    "popular_cars": {
+      "terms": {
+        "field": "make.keyword"
+      },
+      "aggs": {
+        "stats_on_price": {
+          "field": "price"
+        },
+      }
+    }
+  }
+}  
 ```
 
 ### Limiting Aggregations with Query
@@ -196,28 +212,9 @@ GET /vehicles/cars/_search
     "match": {"color":"red"}
   },
   "aggs": {
-    "popular_cars": {
-      "terms": {
-        "field": "make.keyword"
-      },
-      "aggs": {
-        "avg_price": {
-          "avg": {
-            "field": "price"
-          }
-        },
-        "max_price": {
-          "max": {
-            "field": "price"
-          }
-        },
-        "min_price": {
-          "min": {
-            "field": "price"
-          }
-        }
-      }
-    }
+    "stats_on_price": {
+      "field": "price"
+    },
   }
 }
 ```
