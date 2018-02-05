@@ -217,6 +217,134 @@ GET /vehicles/cars/_search
     },
   }
 }
+
+// Ranges, the to is non-inclusive
+GET /vehicles/cars/_search
+{
+  "size": 5,
+  "query": {
+    "match": {"color":"red"}
+  },
+  "aggs": {
+    "popular_cars": {
+      "terms": {
+        "field": "make.keyword"
+      },
+      "aggs": {
+        "sold_date_ranges": {
+          "range": {
+            "field": "sold",
+            "ranges": [
+              {
+                "from": "2016-01-01",
+                "to": "2016-05-18"
+              },
+              {
+                "from": "2016-05-18",
+                "to": "2017-01-01"
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}
+
+// Sum range by average
+GET /vehicles/cars/_search
+{
+  "size": 5,
+  "query": {
+    "match": {"color":"red"}
+  },
+  "aggs": {
+    "popular_cars": {
+      "terms": {
+        "field": "make.keyword"
+      },
+      "aggs": {
+        "sold_date_ranges": {
+          "range": {
+            "field": "sold",
+            "ranges": [
+              {
+                "from": "2016-01-01",
+                "to": "2016-05-18"
+              },
+              {
+                "from": "2016-05-18",
+                "to": "2017-01-01"
+              }
+            ]
+          },
+          "aggs": {
+          "avg_price": {
+            "avg": {
+              "field": "price"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// Average price of cars by condition
+GET /vehicles/cars/_search
+{
+  "aggs": {
+    "car_condition": {
+      "terms": {
+        "field": "condition.keyword"
+      },
+      "aggs": {
+        "avg_value": {
+          "avg": {
+            "field": "price"
+          }
+        },
+        "make": {
+          "terms": {
+            "field": "make.keyword"
+          }
+        }
+      }
+    }
+  }
+}
+
+// Get Ma value of the makes of cars
+GET /vehicles/cars/_search
+{
+  "aggs": {
+    "car_condition": {
+      "terms": {
+        "field": "condition.keyword"
+      },
+      "aggs": {
+        "avg_value": {
+          "avg": {
+            "field": "price"
+          }
+        },
+        "make": {
+          "terms": {
+            "field": "make.keyword"
+          },
+          "aggs": {
+            "max_value": {
+              "max": {
+                "field": "price"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
 ```
 
 
