@@ -15,4 +15,6 @@
 ### Interpolation
   - {{.}} when interpolating a template represents the data that is passed in
   - {{$foo := .}} -> would allow us to assign data to $foo inside of a template
-  
+
+#### Links
+[](https://github.com/GoesToEleven/golang-web-dev)

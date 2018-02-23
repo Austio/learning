@@ -12,7 +12,6 @@ func main() {
 		fmt.Println(err)
 	}
 
-
 	fmt.Fprintf(conn, "GET / HTTP/1.0\r\n\r\n")
 	status, err := bufio.NewReader(conn).ReadString('\n')
 	fmt.Println(status)
