@@ -3,7 +3,6 @@ An elasticsearch index has two fiels
  - settings:
 
 
-
 ### Create Business Things
 
 PUT /business/employee/330
