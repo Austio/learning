@@ -1,0 +1,38 @@
+## Good Babel Plugins
+
+babel-lodash-plugin =>
+  import _ from ‘lodash’ to import _map from ‘lodash/map’
+
+babel-plugin-module-alias => 
+  '../../../../utils/foo.js' to <util>/foo.js
+
+## What is an AST Resources
+
+resources.jointjs.com/demos/rappid/apps/Ast/index.html
+astexploerer.net
+
+### Visitor Pattern
+
+module.exports = {
+    meta: {
+        docs: {
+            description: "disallow direct lodash imports",
+            category: "Possible Errors",
+            recommended: true
+        },
+        fixable: "code",
+        schema: [] // no options
+    },
+    create: function(context) {
+        return {
+          ImportDeclaration(node){
+            if (node.source && node.source.value !== 'lodash') return;
+            
+            context.report({
+              node: node,
+              message: 'Prefer cherry picking from lodash like `import _get from "lodash/get"`'
+            })
+          }
+        }
+    }
+};
