@@ -25,7 +25,7 @@ foo = Foo.new
  - default receiver: current object is the default receiver, so any invokations without `.` (`foo.one`) are self 
  - where instance variables are found
 
-#### 2 ways to change Self
+#### 2 ways to change Self:  First is explicit reciever
 Explicit Receiver (dot notation access) `foo.one`
 
 Ruby performs these steps
@@ -67,4 +67,61 @@ animal ->   EigenClass
 This allows only animal to have the special method and still follow the standard Ruby Object Model.
 Once you you have the EigenClass, the instance will put any special methods there, so adding `animal.purr = 'purr'` would go into the same one as animal.speak
 
-  
+#### Class Definitions and Constants
+
+```
+
+class Foo
+  def bar
+    'baz'
+  end
+  99
+end
+
+f = Foo.new
+
+# Classes are just constants
+puts defined?(Foo)
+#> constant
+
+# The class of a constant referencing a class is `Class`
+Foo.class
+#> Class
+
+# Because classes are constants, you can reference them however you like
+my_class = Foo
+s = my_class.new
+s.bar
+#> baz
+```
+
+Classes are active code
+```
+puts "Before"
+class Foo
+  puts "Inside"
+  def bar
+    'baz'
+  end
+end
+puts "After"
+
+# Evaulate the code in a file through include, you will see that the file is Ruby being parsed.
+
+#> Before
+#> Inside
+#> After
+#> baz
+
+# Because it is just ruby being parsed, you can assign variables to class assignments of last returned item
+d = class Foo
+  def bar
+    'baz'
+  end
+  99
+end 
+puts d
+#> 99
+   
+```
+
