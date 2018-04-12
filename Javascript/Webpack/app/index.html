@@ -4,5 +4,32 @@
   </head>
   <body>
     <script src="../dist/bundle.js"></script>
+
+
+    <p>Exported/Imported Primatives: Demonstrates and static</p>
+    <div id="exportedObject"></div>
+
+    <p>Dynamic When Using Getter</p>
+    <div id="getters" style="white-space: pre"></div>
+    <input id="newVal" />
+    <button onclick="setProperty()">Set Property Value</button>
+
+    <script type="application/javascript">
+      function render() {
+        var exportedObjectNode = document.getElementById('exportedObject');
+        exportedObjectNode.innerText = JSON.stringify(window.static, null, 2);
+
+        var getterNode = document.getElementById('getters');
+        getterNode.innerText = window.dynamic.property;
+      }
+
+      function setProperty() {
+        var newValue = document.getElementById('newVal').value;
+        window.dynamic.property = newValue;
+        render()
+      }
+
+      setInterval(render, 1000)
+    </script>
   </body>
 </html>
