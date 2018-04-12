@@ -1,6 +1,6 @@
 ### Intro
 
-```ruby
+```
 class Foo
   def one
     @var = 'x'
@@ -125,3 +125,41 @@ puts d
    
 ```
 
+#### 2 ways to change self: second is a class definition
+20:07
+```
+# Notice how self changes while inside the class Foo definition
+puts "Before: self #{self}"
+c = class Foo
+  puts "Inside: self #{self}"
+  def bar
+    "baz: self #{self}"
+  end
+
+  # returning self so that c receives the value of the class
+  self  
+end
+puts "After: self #{self}"
+
+other = c
+other.new.bar
+```
+
+#### Classes
+ - don't require a name
+ - don't have a name until you assign a constant to their definition
+ - The act of assigning a constant to a class mutates anonymous class to reference the real value
+ - Class methods don't exist
+ 
+```
+#assigning a constant to a class
+cls = Class.new
+puts cls
+
+Me = cls
+puts cls
+puts Me
+```
+
+```
+```
