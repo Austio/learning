@@ -70,22 +70,36 @@
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__setupReactiveGetter__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__setupObject__ = __webpack_require__(2);
 // References for why config directly does not work
 // https://stackoverflow.com/questions/35176036/es6-exporting-module-with-a-getter
 
 
 
-console.log('opened');
 
-var byValueProperty = __WEBPACK_IMPORTED_MODULE_0__setupReactiveGetter__["b" /* object */].property;
+var assignedProperty = __WEBPACK_IMPORTED_MODULE_0__setupReactiveGetter__["b" /* object */].property;
+var assignedFoo = __WEBPACK_IMPORTED_MODULE_1__setupObject__["b" /* myObj */].foo;
 
 // These will not update when we change the value of object.property b/c they are not associated with the getter, just the primative
 window.static = {
-  property: __WEBPACK_IMPORTED_MODULE_0__setupReactiveGetter__["a" /* default */],
-  byValueProperty
-}
+  fromSetupReactiveGetter: {
+    importedProperty: __WEBPACK_IMPORTED_MODULE_0__setupReactiveGetter__["a" /* default */],
+    assignedProperty
+  },
+  fromSetupObject: {
+    importedFoo: __WEBPACK_IMPORTED_MODULE_1__setupObject__["a" /* default */],
+    assignedFoo
+  }
+};
 
-window.dynamic = __WEBPACK_IMPORTED_MODULE_0__setupReactiveGetter__["b" /* object */];
+window.dynamic = {
+  fromSetupReactiveGetter: {
+    object: __WEBPACK_IMPORTED_MODULE_0__setupReactiveGetter__["b" /* object */]
+  },
+  fromSetupObject: {
+    myObj: __WEBPACK_IMPORTED_MODULE_1__setupObject__["b" /* myObj */]
+  }
+};
 
 
 /***/ }),
@@ -116,6 +130,20 @@ Object.defineProperty(object, 'property', {
 // When we assign the property variable here it is the value of the object.property, which is a string
 var property = object.property;
 /* harmony default export */ __webpack_exports__["a"] = (property);
+
+
+
+/***/ }),
+/* 2 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return myObj; });
+var myObj = {
+  foo: 'bar'
+}
+
+/* harmony default export */ __webpack_exports__["a"] = (myObj.foo);
 
 
 

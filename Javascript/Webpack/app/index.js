@@ -2,15 +2,28 @@
 // https://stackoverflow.com/questions/35176036/es6-exporting-module-with-a-getter
 
 import property, { object } from './setupReactiveGetter';
+import foo, { myObj } from './setupObject';
 
-console.log('opened');
-
-var byValueProperty = object.property;
+var assignedProperty = object.property;
+var assignedFoo = myObj.foo;
 
 // These will not update when we change the value of object.property b/c they are not associated with the getter, just the primative
 window.static = {
-  property,
-  byValueProperty
-}
+  fromSetupReactiveGetter: {
+    importedProperty: property,
+    assignedProperty
+  },
+  fromSetupObject: {
+    importedFoo: foo,
+    assignedFoo
+  }
+};
 
-window.dynamic = object;
+window.dynamic = {
+  fromSetupReactiveGetter: {
+    object
+  },
+  fromSetupObject: {
+    myObj
+  }
+};
