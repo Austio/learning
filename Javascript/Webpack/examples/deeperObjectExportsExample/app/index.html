@@ -1,0 +1,43 @@
+<html>
+  <head>
+      <title>Webpack 2</title>
+  </head>
+  <body>
+    <script src="../dist/bundle.js"></script>
+
+
+    <p>Exported/Imported Primatives: Demonstrates and static</p>
+    <div id="exportedObject"></div>
+
+    <p>Dynamic When Using Getter</p>
+    <div id="fromSetupReactiveGetter"></div>
+    <p>Dynamic When Accessing Obj by Reference</p>
+    <div id="fromSetupObject"></div>
+
+    <input id="newVal" />
+    <button onclick="setProperty()">Set All Property Value</button>
+
+    <script type="application/javascript">
+      function render() {
+        var exportedObjectNode = document.getElementById('exportedObject');
+        exportedObjectNode.innerText = JSON.stringify(window.static, null, 2);
+
+        var getterNode = document.getElementById('fromSetupReactiveGetter');
+        getterNode.innerText = window.dynamic.fromSetupReactiveGetter.object.property;
+
+        var getterNode = document.getElementById('fromSetupObject');
+        getterNode.innerText = window.dynamic.fromSetupObject.myObj.foo;
+      }
+
+      function setProperty() {
+        var newValue = document.getElementById('newVal').value;
+
+        window.dynamic.fromSetupReactiveGetter.property = newValue;
+        window.dynamic.fromSetupObject.myObj.foo = newValue;
+        render()
+      }
+
+      setInterval(render, 1000)
+    </script>
+  </body>
+</html>
