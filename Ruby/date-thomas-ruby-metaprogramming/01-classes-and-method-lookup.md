@@ -1,5 +1,12 @@
 ### Intro
 
+ - Objects: State + Behavior
+ - Method calling: check self, go to class, then up super chain of classes until we find it 
+ - Single Ton methods go on anonymous ghost class that is inserted between instance and class
+ - Only 1 ghost class per instance/class pair, all additional anonymous methods go in that ghost class
+ - Ruby class methods work exactly the same way as last 2 steps, so class mathods are singletons on ghost class
+ - Ruby keeps reference to self at all times and it is the current_class
+
 ```
 class Foo
   def one
@@ -161,5 +168,21 @@ puts cls
 puts Me
 ```
 
+So when you see things like this
 ```
+class Dave
+  def self.say_hello
+    "foo"
+  end
+end
 ```
+
+It is setting methods on the instance of the Class object because when you start a class definitoin, self is set to the class.  So `self.method` is assigning to self, which at that time is the class due to the value of self chaing.
+
+See class-methods-dont-exit.png
+
+So when we define `say_hello` on self here.
+ - self is Dave, which is an instance of an Object
+ - its class is the Class method (that is why we can call new on Classes)
+ - when we define the method `say_hello`, Ruby creates a ghost class in between Dave and the Class Class
+ - this ghost class now has `say_hello` and it works the way that normal ruby looksups work
