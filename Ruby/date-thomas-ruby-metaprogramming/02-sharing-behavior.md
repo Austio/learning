@@ -48,3 +48,51 @@ parrot = animal.with_feet(2)
 ```
 
 #### Classic Inheritance
+
+ - right hand side of < is not class, it is an expression that returns a class
+ - so can subclass from any expression
+ - << is not inheritance
+ 
+```
+class Foo < Bar
+end
+
+b = Bar
+class Foo < b
+end
+
+c = Baz
+
+class Foo < (b || c)
+end
+
+#
+Person = Struct.new(:name, :likes)
+me = Person.new('austin', 'ruby')
+
+class Erson < Struct.new(:name, :likes)
+end
+
+Son < Struct.new(:name, :likes) do 
+end
+
+Person.superclass #Struct
+Erson.superclass #Class
+```
+
+<< is not inheritance, is is the same as defining a singleton method on your obj
+
+```
+animal = "cat"
+
+class << animal
+  def speak
+    puts "hi"
+  end  
+end
+
+#equivalent to
+def animal.speak
+ puts "hi"
+end
+```
