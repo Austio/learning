@@ -155,3 +155,62 @@ Ship.new.log("floating")
 Logger.log # undefined method log
 Logger.log_class # hiya
 ```
+
+Extending
+```
+class Truck
+  extend Logger
+end
+
+# Equivalent to
+class Truck
+  class << self
+    include Truck 
+  end
+end
+
+Truck.log("Driving")
+```
+
+Extend and Include
+```
+module Persistable
+  module ClassMethods
+    def find
+      "find"
+      new #self will be class extended into so will create instance of self
+    end
+  end
+  
+  def save
+    "d-u-n"
+  end
+end
+
+class Person
+  include Persistable
+  extend Persistable::ClassMethods
+end
+
+# Instead of having to extend, use included hook, it receives class
+module Persistable
+  module ClassMethods
+    def find
+      "find"
+      new #self will be class extended into so will create instance of self
+    end
+  end
+  
+  self.included(klass) do
+    klass.extend(ClassMethods)
+  end
+  
+  def save
+    "d-u-n"
+  end
+end
+
+class Person
+  include Persistable
+end
+```
