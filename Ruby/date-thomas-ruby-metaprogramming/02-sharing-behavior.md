@@ -107,4 +107,51 @@ class Animal
 end
 ```
 
+#### Modules
 
+ - Hold constants
+ - Are no different from classes for storing methods and "class" level methods
+ - include mixins are added in method lookup chain through an eigenclass in heirarcy that points to module object
+ - extend
+ 
+```
+module Math
+  module Calc
+    def self.is_threeven?(num)
+      num % 3 == 0
+    end
+    
+    def i
+  end
+end
+
+c = Math::Calc
+```
+
+For each include of the module, ruby creates a separate eigenclass and inserts in the ancestor chain
+
+```
+# 02-mixin-eigenclass-method-lookup
+module Logger
+  def log(message = "msg")
+    STDERR.puts message
+  end
+  
+  def self.log_class
+    "hiya"
+  end
+end
+
+class Truck
+  include Logger
+end
+
+class Ship
+  include Logger
+end    
+
+Truck.new.log("driving")
+Ship.new.log("floating")
+Logger.log # undefined method log
+Logger.log_class # hiya
+```
