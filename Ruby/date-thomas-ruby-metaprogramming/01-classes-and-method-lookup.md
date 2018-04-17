@@ -179,7 +179,7 @@ end
 
 It is setting methods on the instance of the Class object because when you start a class definitoin, self is set to the class.  So `self.method` is assigning to self, which at that time is the class due to the value of self chaing.
 
-See class-methods-dont-exit.png
+See 01-class-methods-dont-exit.png
 
 So when we define `say_hello` on self here.
  - self is Dave, which is an instance of an Object
