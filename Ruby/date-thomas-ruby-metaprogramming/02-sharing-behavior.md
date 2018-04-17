@@ -81,8 +81,9 @@ Erson.superclass #Class
 ```
 
 << is not inheritance, is is the same as defining a singleton method on your obj
-
+ - Dave recommends against this b/c it can obscure where method belongs if too many class methods 
 ```
+# see class-define-method.png
 animal = "cat"
 
 class << animal
@@ -95,4 +96,15 @@ end
 def animal.speak
  puts "hi"
 end
+
+
+# Good Use Case: attr_accessor on class
+class Animal
+  @count = 0 #on the Animal class
+  class << self
+    attr_accessor :count
+  end
+end
 ```
+
+
