@@ -115,3 +115,38 @@ end
 
 counter = count_with_increment(10,3)
 ```
+
+### define_method
+
+```
+class Example
+  def one
+    def two
+      'hiya'
+    end
+  end
+end
+
+a = Example.new
+a.two #NoMethodError
+a.one
+a.two # hiya
+
+# Example with memoizing
+class Example
+  def one
+    def one
+      puts @value
+    end
+    puts "calculating expensive method"
+    @value = 100
+    one
+  end
+end
+
+a = Example.new
+a.one #calculatin, #100
+a.one #100
+```
+ 
+
