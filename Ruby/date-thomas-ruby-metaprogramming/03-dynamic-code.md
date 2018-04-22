@@ -64,3 +64,54 @@ puts "after method"
 
 ### Here you might expect method to return 2, this happens b/c ruby converts the block using &block, which uses proc.new so on the return it exits the enclosing `method` method
 ```
+
+### Bindings
+
+ - encapsulates: self, local variables, any associated block, return stack
+ - 
+
+ - You can get access to the context of bindings using `binding` and dig into those using `eval string binding`
+```
+class Simple
+  def initialize
+    @ivar = 'instance variable'
+  end
+  
+  def call(param)
+    local = "local var"
+  
+    binding
+  end
+end
+
+### Access using eval, get self and all variables
+b = Simple.new.call('my param') { "imablock" }
+eval 'puts param', b # my param
+eval 'puts local', b # local var
+eval 'puts @ivar', b # instance variable
+eval 'puts self', b # <Simple:0xjibberish....>
+eval 'puts yield', b # imablock
+```
+
+ - The binding happens and construction time and hangs around until it is no longer used
+ 
+```
+def times(n)
+  lambda {|x| x * n }
+end
+
+two_times = times(2)
+two_times.call(3) # 6
+```
+
+```
+# exercise
+def count_with_increment(start, inc)
+  lambda do
+    puts start
+    start = start + inc
+  end
+end
+
+counter = count_with_increment(10,3)
+```
