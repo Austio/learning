@@ -198,7 +198,7 @@ end
 # Daves much better prettier approach
 module Accessor
   def my_attr_accessor(name)
-    class_eval(%{
+    class_eval %{
       def #{name}
         @#{name}
       end
@@ -206,7 +206,7 @@ module Accessor
       def #{name}=(other)
         @#{name}=other
       end
-    })
+    } 
   end
 end
 
@@ -214,5 +214,70 @@ class Foo
   extend Accessor
   my_attr_access :baz
 end
+```
 
+ - defining things in classes given a class object
+ 
+```
+module Hello
+  def say_hi
+    "Hi from #{self}"
+  end
+end
+
+[String, Array].each do |k|
+  k.class_eval { include Hello }
+end
+
+String.hi #NoMethodError
+"cat".say_hi # "Hi from cat"
+```
+
+ - DSLs in a block
+ 
+```
+class Turtle
+  attr_reader :path
+
+  def initialize
+    @path = []
+  end
+  
+  def right(num = 1)
+    @path.push({ right: 1 })
+  end
+  
+  
+  def up(num = 1)
+    @path.push({ up: 1 })
+  end
+end
+
+t = Turtle.new
+t.right(3)
+t.up(2)
+t.right
+puts t.path
+
+# converting to allow to pass a block to instance t like
+t = Turtle.new
+t.move do 
+  right(3)
+  up(2)
+  right
+end
+puts t.path
+
+class Turtle
+  def move(&block)
+    instance_eval(&block)
+  end
+end
+
+This can be bad b/c the t.move is no longer a closer in the same respect as it was before the instance_eval so this will break
+
+@count = 4
+t.move do 
+  right(@count)
+end
 ``` 
