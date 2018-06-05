@@ -13,3 +13,12 @@ When thinking about relevancy, consider these perspectives
  - What are the valuable features of our content
  - What are the valuable signals that things are going well with search
 
+#### Chapter 8 - Providing Relevant Feedback
+
+Problems with results and suggestions as you type
+ - Confusing for users to discern between them
+ - Confusing for users to know why a search surfaced
+ - Unless matching on 1 field (title) it is hard to provide feedback on why a search surfaced
+ - Google eliminates this by only displaying search suggestions in query and surfacing results in result area
+ 
+ 
