@@ -1,5 +1,7 @@
 ## [Relevant Search](https://www.manning.com/books/relevant-search)
 
+[Good Seed Data](https://www.elastic.co/guide/en/kibana/current/tutorial-load-dataset.html)
+
 ### Chapter 1 - What is relevancy
 
 Definition: The Practice of improving search results `for users` by satisfying the `information needs` in the context of a particular `user experience` while balancing how raking `impacts business needs`.
@@ -12,6 +14,12 @@ When thinking about relevancy, consider these perspectives
  - What does employer hope to get out of this
  - What are the valuable features of our content
  - What are the valuable signals that things are going well with search
+ 
+To get full relevance you must identify valuable features of content and use those to computer relevance signals all within the context of feedback.
+
+### Chapter 2 - Search Under the Hood
+
+ 
 
 ### Chapter 8 - Providing Relevant Feedback
 
@@ -63,4 +71,7 @@ There are 3 methods to build search completions
  - Consider if you are in a `short-tail` with hundreds of searches or `long-tail` with millions.  With too few queries you have insufficient data to build a satisfactory completion experience.  With too many you have to discern importance. 
  - Consider staleness factor, for instance consider how e-commerce with frequently changing content has to deal with rotating contnet
  - Ensure no 0 length results
+ 
+###### Current Input:
+ -  
  
