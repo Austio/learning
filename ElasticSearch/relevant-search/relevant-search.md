@@ -13,6 +13,23 @@ When thinking about relevancy, consider these perspectives
  - What are the valuable features of our content
  - What are the valuable signals that things are going well with search
 
+### Chapter 3 - Debugging
+
+ - Explaining behavior of the query
+
+```
+curl -X GET 'http://localhost:9200/INDEX/TYPE/_validate/query?explain' -d 'JSON'
+
+curl -XGET "http://localhost:9200/*user*/user/_validate/query?explain" -H 'Content-Type: application/json' -d'
+{
+  "query": {
+    "multi_match": {
+      "query": "Something Searched"
+    }
+  }
+}'
+```
+
 ### Chapter 8 - Providing Relevant Feedback
 
 #### 8.1 Relevant Feedback at search box
