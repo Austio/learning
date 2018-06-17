@@ -1,0 +1,70 @@
+PUT /omdb
+{
+  "mappings": {
+    "omdb": {
+      "properties": {
+        "Title": {
+          "type": "text"
+        },
+        "Year": {
+          "type": "integer"
+        },
+        "Rated": {
+          "type": "keyword"
+        },
+        "Released": {
+          "type": "date",
+          "format": "dd-mm-yyyy"
+        },
+        "Runtime": {
+          "type": "integer"
+        },
+        "Genre": {
+          "type": "text"
+        },
+        "Director": {
+          "type": "text"
+        },
+        "Writer": {
+          "type": "text"
+        },
+        "Actors": {
+          "type": "text"
+        },
+        "Plot": {
+          "type": "text"
+        },
+        "Language": {
+          "type": "text"
+        },
+        "Country": {
+          "type": "keyword"
+        },
+        "Awards": {
+          "type": "text"
+        },
+        "Poster": {
+          "type": "keyword"
+        },
+        "Metascore": {
+          "type": "integer"
+        },
+        "imdbRating": {
+          "type": "double"
+        },
+        "imdbVotes": {
+          "type": "integer"
+        },
+        "imdbID": {
+          "type": "keyword"
+        },
+        "Type": {
+          "type": "keyword"
+        },
+        "totalSeasons": {
+          "type": "integer"
+        }
+      }
+    }
+  }
+}
