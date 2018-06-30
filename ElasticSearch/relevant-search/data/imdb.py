@@ -23,7 +23,8 @@ def extract():
         return json.loads(f.read())
     return {}
 
-def reindex(analysisSettings={}, mappingSettings={}, movieDict=extract()):
+def reindex(analysisSettings={}, mappingSettings={}, movieDict=extract(), index="imdb", type="movie"):
+    index_path_url = "http://localhost:9200/{index}".format(index=index)
     settings = {
         "settings": {
              "number_of_shards": 1,
@@ -32,16 +33,18 @@ def reindex(analysisSettings={}, mappingSettings={}, movieDict=extract()):
              },
              "mappings": mappingSettings
              }}
-    resp = requests.delete("http://localhost:9200/imdb")
-    print resp
-    print settings
-    resp = requests.put("http://localhost:9200/imdb",data=json.dumps(settings), headers = headers)
-    print resp
+    resp = requests.delete(index_path_url)
+    print "Deleting Old Index: {resp}".format(resp=resp)
+    resp = requests.put(index_path_url,data=json.dumps(settings), headers = headers)
+    print "Creating Settings: {resp}".format(resp=resp,settings=settings)
     bulkMovies = ""
-    print "building..."
+    print "\nBuilding Bulk Index Command.  index: {index}, type: {type}".format(type=type,index=index)
     for id, movie in movieDict.iteritems():
-        addCmd = {"index": {"_index": "imdb", "_type": "movie", "_id": movie["id"]}}
+        addCmd = {"index": {"_index": index,
+                            "_type": type,
+                            "_id": movie["id"]}}
         bulkMovies += json.dumps(addCmd) + "\n" + json.dumps(movie) + "\n"
     print "indexing..."
     resp = requests.post("http://localhost:9200/_bulk", data = bulkMovies, headers = headers)
+    print "Bulk Index Response: {resp}".format(resp=resp)
     return resp
