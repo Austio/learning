@@ -1,6 +1,7 @@
 import requests
 import json
 
+headers = {'content-type': 'application/json'}
 
 def flatten(l):
     [item for sublist in l for item in sublist]
@@ -22,8 +23,7 @@ def extract():
         return json.loads(f.read())
     return {}
 
-
-def reindex(analysisSettings={}, mappingSettings={}, movieDict={}):
+def reindex(analysisSettings={}, mappingSettings={}, movieDict=extract()):
     settings = {
         "settings": {
              "number_of_shards": 1,
@@ -32,14 +32,16 @@ def reindex(analysisSettings={}, mappingSettings={}, movieDict={}):
              },
              "mappings": mappingSettings
              }}
-    requests.delete("http://localhost:9200/imdb")
-    requests.put("http://localhost:9200/imdb",data=json.dumps(settings))
+    resp = requests.delete("http://localhost:9200/imdb")
+    print resp
+    print settings
+    resp = requests.put("http://localhost:9200/imdb",data=json.dumps(settings), headers = headers)
+    print resp
     bulkMovies = ""
     print "building..."
     for id, movie in movieDict.iteritems():
-        addCmd = {"index": {"_index": "imdb",
-                            "_type": "movie",
-                            "_id": movie["id"]}}
+        addCmd = {"index": {"_index": "imdb", "_type": "movie", "_id": movie["id"]}}
         bulkMovies += json.dumps(addCmd) + "\n" + json.dumps(movie) + "\n"
     print "indexing..."
-    resp = requests.post("http://localhost:9200/_bulk", data = bulkMovies)
+    resp = requests.post("http://localhost:9200/_bulk", data = bulkMovies, headers = headers)
+    return resp
