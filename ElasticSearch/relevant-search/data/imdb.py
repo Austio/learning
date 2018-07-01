@@ -65,7 +65,8 @@ def search(query=query, index="imdb", type="movie"):
     httpResp = requests.get(url,data=json.dumps(query),headers=headers)
     hits = json.loads(httpResp.text)['hits']
     print "Num\tRelevance Score\t\tMovie Title"
+    print hits
     for idx, hit in enumerate(hits['hits']):
-        print "%s\t%s\t\t%s" % (idx+1, hit["_score"], hit["source"]["title"])
+        print "%s\t%s\t\t%s" % (idx+1, hit["_score"], hit["_source"]["title"])
 
 search()
