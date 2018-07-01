@@ -48,3 +48,24 @@ def reindex(analysisSettings={}, mappingSettings={}, movieDict=extract(), index=
     resp = requests.post("http://localhost:9200/_bulk", data = bulkMovies, headers = headers)
     print "Bulk Index Response: {resp}".format(resp=resp)
     return resp
+
+
+userSearch = 'basketball with cartoon aliens'
+query = {
+    "query": {
+        "multi_match": {
+            "query": userSearch,
+            "fields": ["title^10","overview"]
+        }
+    }
+}
+
+def search(query=query, index="imdb", type="movie"):
+    url = "http://localhost:9200/{index}/{type}/_search".format(index=index,type=type)
+    httpResp = requests.get(url,data=json.dumps(query),headers=headers)
+    hits = json.loads(httpResp.text)['hits']
+    print "Num\tRelevance Score\t\tMovie Title"
+    for idx, hit in enumerate(hits['hits']):
+        print "%s\t%s\t\t%s" % (idx+1, hit["_score"], hit["source"]["title"])
+
+search()
