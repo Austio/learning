@@ -69,4 +69,17 @@ def search(query=query, index="imdb", type="movie"):
     for idx, hit in enumerate(hits['hits']):
         print "%s\t%s\t\t%s" % (idx+1, hit["_score"], hit["_source"]["title"])
 
-search()
+def explain(query=query, index="imdb", type="movie"):
+    url = 'http://localhost:9200/{index}/{type}/_validate/query?explain'.format(index=index,type=type)
+    httpResp = requests.get(url, data=json.dumps(query), headers=headers)
+    print json.loads(httpResp.text)
+
+def analyze(query):
+    url = 'http://localhost:9200/analyze'
+    httpResp = requests.get(url, data=json.dumps(query), headers=headers)
+    print json.loads(httpResp.text)
+#
+# def analyze_debug(index, data, analyzer="standard"):
+#     url = 'http://localhost:9200/${index}/_analyze?analyzer=${analyzer}&format=yaml'.format(index=index,analyzer=analyzer)
+#     httpResp = requests.get(url, data=data, headers=headers)
+#     print httpResp.text
