@@ -78,8 +78,11 @@ def analyze(query):
     url = 'http://localhost:9200/analyze'
     httpResp = requests.get(url, data=json.dumps(query), headers=headers)
     print json.loads(httpResp.text)
-#
-# def analyze_debug(index, data, analyzer="standard"):
-#     url = 'http://localhost:9200/${index}/_analyze?analyzer=${analyzer}&format=yaml'.format(index=index,analyzer=analyzer)
-#     httpResp = requests.get(url, data=data, headers=headers)
-#     print httpResp.text
+
+def analyze_debug(data=data, analyzer="standard"):
+    data = {
+        "analyzer": analyzer,
+        "text": data
+    }
+    url = 'http://localhost:9200/_analyze?format=yaml'
+    print requests.get(url, data=json.dumps(data), headers=headers).text
