@@ -74,15 +74,10 @@ def explain(query=query, index="imdb", type="movie"):
     httpResp = requests.get(url, data=json.dumps(query), headers=headers)
     print json.loads(httpResp.text)
 
-def analyze(query):
-    url = 'http://localhost:9200/analyze'
-    httpResp = requests.get(url, data=json.dumps(query), headers=headers)
-    print json.loads(httpResp.text)
-
-def analyze_debug(data=data, analyzer="standard"):
-    data = {
+def analyze(data, analyzer="standard"):
+    d = {
         "analyzer": analyzer,
         "text": data
     }
     url = 'http://localhost:9200/_analyze?format=yaml'
-    print requests.get(url, data=json.dumps(data), headers=headers).text
+    print requests.get(url, data=json.dumps(d), headers=headers).text

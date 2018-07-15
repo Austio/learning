@@ -38,6 +38,22 @@ curl -XGET "http://localhost:9200/*user*/user/_validate/query?explain" -H 'Conte
 }'
 ```
 
+  - Lucene 
+fieldWeight: how lucene computes the importance of the term in the field text
+queryWeight: weight of the term in the users query
+
+ - Calculating Weights with Similarity
+similarity: lucene attaches statistics to documents relative to terms in the corpus.  Most are TF * IDF
+TF: term frequency - how frequently a term occurs in a field (description: Aliens who do alien things).  Alien is 2 times so more likely about aliens
+DF: document frequency - number of documents containing the term.  If it is more common it will have a higher DF
+IDF: inverse document frequency -  1/DF - used to determine how rare is a word
+
+TF * IDF b/c we want to know how many times something shows up in a field AND how rare that field is relative to matches in all of our documents.
+
+Lucene dampens the td * idf in the following weights
+TF Weight = sqrt(tf)
+IDF Weight = log(numDox/ (df + 1)) + 1
+
 ### Chapter 8 - Providing Relevant Feedback
 
 #### 8.1 Relevant Feedback at search box
