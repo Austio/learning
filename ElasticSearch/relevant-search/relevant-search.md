@@ -54,6 +54,20 @@ Lucene dampens the td * idf in the following weights
 TF Weight = sqrt(tf)
 IDF Weight = log(numDox/ (df + 1)) + 1
 
+Finally, a term showing up in a field that is short is probably more relevant that one that shows up in a long description.  For instance, 1 alien word in a 3 sentence blurb vs in a 1000 page book.  To handle this they normalize 
+fieldNorm = 1 / sqrt(fieldlength)
+
+Ex example explain from these would be
+```
+0.4414702, fieldWeight in 31, product of: 
+  1.4142135, tf(freq=2.0), with freq of: 
+    2.0, termFreq=2.0 
+  3.9957323, idf(docFreq=1, maxDocs=40) 
+  0.078125, fieldNorm(doc=31)
+```
+ - NOTE: This uses classic similarity, not the new BM25
+
+
 ### Chapter 8 - Providing Relevant Feedback
 
 #### 8.1 Relevant Feedback at search box
