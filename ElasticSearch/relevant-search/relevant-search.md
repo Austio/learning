@@ -19,7 +19,10 @@ To get full relevance you must identify valuable features of content and use tho
 
 ### Chapter 2 - Search Under the Hood
 
- 
+Analysis of a query has 3 steps
+ - character filtering: ability to modify entire piece of text
+ - tokenizing: chops up into stream of tokens
+ - token filtering: modify/remove/insert tokens in the stream
 
 ### Chapter 3 - Debugging
 
@@ -71,6 +74,98 @@ queryWeight: we also boost on the text the user is searching with.  Combo of
   - queryNorm: without boosting does not matter, attempts to make searches outside of this search comparrible.  there is much debate on if this is usefule
   - query Boosting: the amount of importance we give to one field `title^10`
 [See Real Example of norm on a title boost of 10](./CH3:alienTitleBoosting.png)  
+
+### Chapter 4 - Taming Tokens
+
+Search engines are little more than sophisticated token matching systems so the way that we interpret tokens is an important feature of the system.
+It is up to the relevance engineer to tokenize the search in such a way that meaning is captured.  
+
+`Should NOT map words to tokens, it should map meaning to user intent to tokens`
+
+These two are normally at odds
+ - Precision: Percentage of documents in a result that are relevant
+ - Recall - Percentage of relevant documents returned in the result set
+
+To understand how ES receives a query, you must look at the way that it is tokenizing your string.  Put this for the example
+
+```
+curl -XPUT 'http://localhost:9200/my_library' -H 'Content-Type:application/json' -d '
+{
+  "settings": {
+    "analysis": {
+      "analyzer": {
+        "standard_clone": {
+          "tokenizer": "standard",
+          "filter": [ "standard", "lowercase", "stop" ]
+        }
+      }
+    }
+  }
+}
+'
+```
+
+Here we are cloning the standard tokenizer and using the filters
+ - standard tokenizer: splits on whitespace and punctuation
+ - filter
+   - standard: does nothing, placeholder
+   - lowercase: ...
+   - stop: removes common words (the, is)
+   
+Now we can use the analyze endpoint to see the stream from the updates
+
+```
+curl -XGET  http://localhost:9200/my_library/_analyze -H "Content-Type:application/json" -d'
+{
+  "analyzer": "standard_clone",
+  "text":"Dr strangelove.  Or how i learned to stop worrying and love the bomb"
+}'
+```
+
+Here is an example of how the english analyzer is created #HERE 135
+```
+curl -XPUT "http://localhost:9200/my_library -H "Content-Type:application/json" -d '
+{ 
+  "settings": { 
+    "analysis": { 
+      "filter": { 
+        "english_stop": { 
+          "type": "stop", 
+          "stopwords": "_english_"
+        }, 
+        "english_keywords": { 
+          "type": "keyword_marker", 
+          "keywords_path": "/tmp/keywords.txt"
+        }, 
+        "english_stemmer": { 
+          "type": "stemmer", 
+          "language": "english"
+        }, 
+        "english_possessive_stemmer": { 
+          "type": "stemmer", 
+          "language": "possessive_english"
+        }
+      }, 
+      "analyzer": { 
+        "english_clone": { 
+          "tokenizer": "standard", 
+          "filter": [ 
+            "english_possessive_stemmer", 
+            "lowercase", 
+            "english_stop", 
+            "english_keywords", 
+            "english_stemmer"
+          ]
+        }
+      }
+    }
+  }
+}
+'
+```
+
+
+
 
 ### Chapter 8 - Providing Relevant Feedback
 
