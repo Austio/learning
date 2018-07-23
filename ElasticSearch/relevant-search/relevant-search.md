@@ -54,7 +54,7 @@ Lucene dampens the td * idf in the following weights
 TF Weight = sqrt(tf)
 IDF Weight = log(numDox/ (df + 1)) + 1
 
-Finally, a term showing up in a field that is short is probably more relevant that one that shows up in a long description.  For instance, 1 alien word in a 3 sentence blurb vs in a 1000 page book.  To handle this they normalize 
+fieldNorm: a term showing up in a field that is short is probably more relevant that one that shows up in a long description.  For instance, 1 alien word in a 3 sentence blurb vs in a 1000 page book.  To handle this they normalize 
 fieldNorm = 1 / sqrt(fieldlength)
 
 Ex example explain from these would be
@@ -67,6 +67,10 @@ Ex example explain from these would be
 ```
  - NOTE: This uses classic similarity, not the new BM25
 
+queryWeight: we also boost on the text the user is searching with.  Combo of
+  - queryNorm: without boosting does not matter, attempts to make searches outside of this search comparrible.  there is much debate on if this is usefule
+  - query Boosting: the amount of importance we give to one field `title^10`
+[See Real Example of norm on a title boost of 10](./CH3:alienTitleBoosting.png)  
 
 ### Chapter 8 - Providing Relevant Feedback
 
