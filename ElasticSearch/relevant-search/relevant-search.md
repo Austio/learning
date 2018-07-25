@@ -165,7 +165,6 @@ curl -XPUT "http://localhost:9200/my_library" -H "Content-Type:application/json"
 }
 '
 
-
 curl -XGET 'http://localhost:9200/my_library/_analyze' -H "Content-Type:application/json" -d '
 {  
   "analyzer": "english_clone",
@@ -182,9 +181,22 @@ curl -XGET 'http://localhost:9200/my_library/_analyze' -H "Content-Type:applicat
     {"token":"flower","start_offset":25,"end_offset":33,"type":"<ALPHANUM>","position":3},
     {"token":"flower","start_offset":34,"end_offset":40,"type":"<ALPHANUM>","position":4}
   ]
-}    
+}
+
+// Will get similar results for others
+curl -XGET 'http://localhost:9200/my_library/_analyze' -H "Content-Type:application/json" -d '
+{
+  "analyzer": "english_clone", 
+  "text": "silly silliness sillying sillied"
+}  
+'    
 ```
 
+#### Stemming
+
+So english_stemmer doesn't consult a dictionary, it uses a heuristic to map common root words.  
+
+Great example of sacrificing 'precision' for 'recall'.  You are wanting more relevant results in the document so you are willing to accept that searches for Maine may be mangled.
 
 
 ### Chapter 8 - Providing Relevant Feedback
