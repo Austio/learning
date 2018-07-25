@@ -192,12 +192,63 @@ curl -XGET 'http://localhost:9200/my_library/_analyze' -H "Content-Type:applicat
 '    
 ```
 
-#### Stemming
+#### 4.2 Stemming: trading precision for recall
 
-So english_stemmer doesn't consult a dictionary, it uses a heuristic to map common root words.  
+Lesson: To the extent possible, make tokens represent not just words but the meaning of words
+ - that is why stemming is part of analysis, it groups common words (flower, flowers, flowering) so that they are recognized as the same meaning, which greatly increases recall and *may* increase precision but only to the degree that it is useful to the typical search user.
+ - this can be taken too far where too many distinct meanings map to the same token (phonetic analyzer Dali lama and tall llama are same)
+ 
 
-Great example of sacrificing 'precision' for 'recall'.  You are wanting more relevant results in the document so you are willing to accept that searches for Maine may be mangled.
+So english_stemmer doesn't consult a dictionary, it uses a heuristic to map common root words.  This is a Great example of sacrificing 'precision' for 'recall'.  You are wanting more relevant results in the document so you are willing to accept that searches for Maine may be mangled.
 
+However you can take this to extremes, take the [Phonetic Analyzer](https://github.com/elastic/elasticsearch/tree/master/plugins/analysis-phonetic)
+ - groups words together based on sound
+ - allows finding even with misspellings
+ 
+Once you download the plugin, you could setup in the following way
+```
+curl -XDELETE "http://localhost:9200/my_library
+
+curl -XPUT "http://localhost:9200/my_library" -H "Content-Type:application/json" -d '
+{
+  "settings": {
+    "analyzer": { 
+      "phonetic": { 
+        "tokenizer": "standard", 
+        "filter": [ 
+          "standard", 
+          "lowercase", 
+          "my_doublemetaphone"
+        ]
+      }
+    }, 
+    "filter": { 
+      "my_doublemetaphone": { 
+        "type": "phonetic", 
+        "encoder": "doublemetaphone", 
+        "replace": true
+      }
+    }
+  }
+}
+'
+``` 
+
+This setting will do common standard/lowercase things.  Next it will them into a text representation of their sounds apple (APLS) bananas (PNNS)
+
+This is great b/c misspellings will match, but it also causes strings like "Message from the Daili Lama" and "Massage from the tall llama" to match
+
+#### 4.3 Precision and recall
+
+A search engine is nothing more than a sophisticated token matching system and document-ranking system
+
+ - The trick is fine tuning analysis to tightly control when various token representations map to an identical meaning
+ - Analysis controls matching
+ - Analysis manipulates TF * IDF by reducing the number of terms and combining them (run, running, run combined to run)
+
+
+```
+```
 
 ### Chapter 8 - Providing Relevant Feedback
 
