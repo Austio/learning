@@ -122,9 +122,16 @@ curl -XGET  http://localhost:9200/my_library/_analyze -H "Content-Type:applicati
 }'
 ```
 
-Here is an example of how the english analyzer is created #HERE 135
+Here is an example of how the english analyzer is created
+ - english_possessive_stemmer => remove S's
+ - english_stop => common words (this, the)
+ - english_keywords => Protects words from being mangled by upstream stemmer
+ - english_stemmer => walking/walk/walked treated as same word
+ 
 ```
-curl -XPUT "http://localhost:9200/my_library -H "Content-Type:application/json" -d '
+curl -XDELETE "http://localhost:9200/my_library"
+
+curl -XPUT "http://localhost:9200/my_library" -H "Content-Type:application/json" -d '
 { 
   "settings": { 
     "analysis": { 
@@ -132,10 +139,6 @@ curl -XPUT "http://localhost:9200/my_library -H "Content-Type:application/json" 
         "english_stop": { 
           "type": "stop", 
           "stopwords": "_english_"
-        }, 
-        "english_keywords": { 
-          "type": "keyword_marker", 
-          "keywords_path": "/tmp/keywords.txt"
         }, 
         "english_stemmer": { 
           "type": "stemmer", 
@@ -153,7 +156,6 @@ curl -XPUT "http://localhost:9200/my_library -H "Content-Type:application/json" 
             "english_possessive_stemmer", 
             "lowercase", 
             "english_stop", 
-            "english_keywords", 
             "english_stemmer"
           ]
         }
@@ -162,8 +164,26 @@ curl -XPUT "http://localhost:9200/my_library -H "Content-Type:application/json" 
   }
 }
 '
-```
 
+
+curl -XGET 'http://localhost:9200/my_library/_analyze' -H "Content-Type:application/json" -d '
+{  
+  "analyzer": "english_clone",
+  "text": "flower flowers flowering flowered flower"
+}  
+'
+
+// Has a match for flower at each position, pretty cool
+{
+  "tokens":[
+    {"token":"flower","start_offset":0,"end_offset":6,"type":"<ALPHANUM>","position":0},
+    {"token":"flower","start_offset":7,"end_offset":14,"type":"<ALPHANUM>","position":1},
+    {"token":"flower","start_offset":15,"end_offset":24,"type":"<ALPHANUM>","position":2},
+    {"token":"flower","start_offset":25,"end_offset":33,"type":"<ALPHANUM>","position":3},
+    {"token":"flower","start_offset":34,"end_offset":40,"type":"<ALPHANUM>","position":4}
+  ]
+}    
+```
 
 
 
