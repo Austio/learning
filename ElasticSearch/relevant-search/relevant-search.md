@@ -248,7 +248,64 @@ A search engine is nothing more than a sophisticated token matching system and d
 
 
 ```
+curl -XDELETE "http://localhost:9200/my_library"
+
+curl -XPUT "http://localhost:9200/my_library" -H "Content-Type:application/json" -d '
+{
+  "settings": { 
+    "number_of_shards": 1
+  }
+}
+'
+
+curl -X POST "http://localhost:9200/_bulk" -H 'Content-Type: application/json' -d'
+{ "index" : { "_index" : "my_library", "_type" : "_doc", "_id" : "1" } }
+{ "title" : "apple apple apple apple apple" }
+{ "index" : { "_index" : "my_library", "_type" : "_doc", "_id" : "2" } }
+{ "title" : "apple apple apple banana banana" }
+{ "index" : { "_index" : "my_library", "_type" : "_doc", "_id" : "3" } }
+{ "title" : "apple banana blueberry coconut" }
+'
+
+curl -X GET "http://localhost:9200/my_library/_search" -H "Content-Type:application/json" -d'
+{
+  "explain": true,
+  "query": {
+    "match": {
+      "title": "apple"
+    }
+  }
+}
+'
 ```
+
+This matches all 3, however the most important differences are the TermFrequency
+
+ - 1: .30 total with termfreq of 2.23/idf of .3
+   termFreq=5
+ - 2: .23 total with termfreq of 1.73/idf of .3
+   termFreq=3
+ - 3: .15 total with termfreq of 1.0/idf of .3
+   termFreq=1
+ "tfNorm, computed as (freq * (k1 + 1)) / (freq + k1 * (1 - b + b * fieldLength / avgFieldLength))"
+
+
+The engines TFXIDF heuristic help order documents that feature the search term the most prominently.  In other words, which document has the most "apple"-like contents.  It is a scale from very to not at all.
+In the documents some are more about apples than others, this is signaled by the Term Frequency, how often apple or it's stems show up in the document.  Some are all about apples, some just have some apple in them as a side note and that is reflected in their TF score
+
+
+The above has a relevance-ranking bug b/c if you index an additional document.
+```
+curl -XPUT "http://localhost:9200/my_library/_doc/4" -H "Content-Type:application/json" -d '
+{
+  "title": "apples apple"
+}
+'
+```
+
+You might expect this to be high, but apples != apple to the search engine right now so they are matched differently.
+
+
 
 ### Chapter 8 - Providing Relevant Feedback
 
