@@ -20,8 +20,6 @@ docker top mongo
 UID   PID    PPID    C   STIME  TTY  TIME      CMD
 999   15154  15132   0   11:59  ?    00:00:01  mongod --bind_ip_all
 ```
-
-
 ### Commands 
  
 #### Management
@@ -41,7 +39,6 @@ UID   PID    PPID    C   STIME  TTY  TIME      CMD
  - rm
    => delete non running containers: docker container rm
    => delete force: docker container rm -f
-   
    
 #### Monitoring
  - top => docker top nginx
@@ -87,7 +84,12 @@ docker exec -it nginx bash
  - docker container port webhost (show the ports exposed on the thing)
  - docker container inspect --format '{{ .NetworkSettings.IPAddress }}' webhost
    - show me the ip address on one of these containers
-   
+ - docker network ls 
+ - docker network inspect
+ - docker network create --driver
+ - docker network connect (equivalent of putting a nic on it live)
+ - docker network disconnect  
+  
 ## Assignments
 
 ### Containers
@@ -116,4 +118,14 @@ Defaults
 - On boot
  When you start, docker connects all containers to the bridge network /docker0 and those containers can talk however they want
  
+Networks:
+ - bridge: default, uses nat
+ docker network inspect bridge
+ - host: skips virtual network and connects direct to the interface
+ docker network inspect bridge
+ - none: removes eth0 and only leaves with localhost
+ docker network inspect bridge
+ 
+Drivers: 
+ - bridge: default network when creating a new one, has same properties as bridge network (auto increments subnet)
  
