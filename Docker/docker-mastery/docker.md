@@ -89,22 +89,6 @@ docker exec -it nginx bash
  - docker network create --driver
  - docker network connect (equivalent of putting a nic on it live, dynamically creates a nic in a container on an existing virtual network)
  - docker network disconnect  
-   
-## Assignments
- 
-### Containers
- - Setup multiple containers on different processes, apache (8080), nginx (80) and mysql (3306)
- 
-```
-docker container run --publish 80:80 --name nginx -d nginx
-docker container run --publish 8080:80 --name httpd -d httpd
-docker container run --name mysql --publish 3306:3306 -d mysql
-
-docker container ls
-docker ps
-
-docker container stop nginx httpd mysql
-``` 
     
 ### Networking
 Defaults
@@ -130,11 +114,41 @@ Drivers:
  - bridge: default network when creating a new one, has same properties as bridge network (auto increments subnet)
 
 DNS: 
- - Automatic name resolution internetwork using container names
+ - Docker daemon has a build-in dns server that containers use
+ - Automatic name resolution internetwork using container names (do not use ip addresses)
+ - Docker defaults hostname to containers name, but you can set aliases
+ - note: `bridge` network does NOT have dns resolution by default, but you can link them to each other using `--link`
  
 ```
 docker container run --name nginx --publish 80:80 nginx
 docker container run --name nginx_2 --publish 81:80 nginx
 
 docker exec -it nginx ping nginx_2
+``` 
+
+   
+## Assignments
+ 
+### Containers
+ - Setup multiple containers on different processes, apache (8080), nginx (80) and mysql (3306)
+ 
+```
+docker container run --publish 80:80 --name nginx -d nginx
+docker container run --publish 8080:80 --name httpd -d httpd
+docker container run --name mysql --publish 3306:3306 -d mysql
+
+docker container ls
+docker ps
+
+docker container stop nginx httpd mysql
+``` 
+
+### Networks
+ - Setup multiple containers and communicate between them
+ 
+```
+docker network create testing
+
+docker container run -it --network testing --name ubuntu_1 ubuntu
+docker container run -it --network testing --name ubuntu_2 ubuntu
 ``` 
