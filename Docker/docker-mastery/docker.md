@@ -152,3 +152,21 @@ docker network create testing
 docker container run -it --network testing --name ubuntu_1 ubuntu
 docker container run -it --network testing --name ubuntu_2 ubuntu
 ``` 
+
+ - DNS Round Robin, give net-alias search
+2 elasticsearch images, alias with `--network-alias` when creating them to give them additional DNS name
+run alipine nslookup search --net to see the two containers
+curn centos curl -s search:9200 with --net multiple times until you see both name fields 
+```
+docker network create testing
+docker container run --name es1 --network-alias search --network testing elasticsearch
+docker container run --name es2 --network-alias search --network testing elasticsearch
+
+$ docker container run --network testing alpine nslookup search
+  Name:      search
+  Address 1: 172.25.0.3 es2.testing
+  Address 2: 172.25.0.2 es1.testing
+
+MULTIPLE TIMES RUN
+$ docker container run --network testing centos curl -s search:9200
+``` 
