@@ -87,11 +87,11 @@ docker exec -it nginx bash
  - docker network ls 
  - docker network inspect
  - docker network create --driver
- - docker network connect (equivalent of putting a nic on it live)
+ - docker network connect (equivalent of putting a nic on it live, dynamically creates a nic in a container on an existing virtual network)
  - docker network disconnect  
-  
+   
 ## Assignments
-
+ 
 ### Containers
  - Setup multiple containers on different processes, apache (8080), nginx (80) and mysql (3306)
  
@@ -128,4 +128,13 @@ Networks:
  
 Drivers: 
  - bridge: default network when creating a new one, has same properties as bridge network (auto increments subnet)
+
+DNS: 
+ - Automatic name resolution internetwork using container names
  
+```
+docker container run --name nginx --publish 80:80 nginx
+docker container run --name nginx_2 --publish 81:80 nginx
+
+docker exec -it nginx ping nginx_2
+``` 
