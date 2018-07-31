@@ -69,6 +69,7 @@ docker exec -it nginx bash
       
   -i -> keep it open
   -t -> tty like ssh
+  
 ##### Command analysis: Run
  - docker container run --publish 80:80 --name webhost -d nginx:1.11 nginx -T
                                   host port               version    change CMD run on start    
@@ -125,8 +126,88 @@ docker container run --name nginx_2 --publish 81:80 nginx
 
 docker exec -it nginx ping nginx_2
 ``` 
+## Images
 
+What are they
+ - file system changes and metadata
+ - each layer of an image is read only and have their own SHA so that it is only stored once on any system 
+ - A *container* is just a single read/write layer on top of a container
+ - app binaries and dependencies
+ - metadata about image data and how to run
+ - official: "ordered collection of root file system changes and execution parameters for use in container runtime"   
+ - NOT: complete OS. no kernel, kernel modules  
+
+DockerHub
+ - Official Repos don't have a `slash` docker actually has team that upkeeps them and config/docs
+ - tags: alpine
+ 
+Layers
+ - Uses union file system to record series of changes
+   - Each step in a dockerfile or commit creates the equivalent of a new image in the file system that additional changes are added to
+   - Think of it as git for containers
+   - Base (child) images are read only, writing is supported by copy on write
+  - copy on write
+   - when you change a file from the base image, it copies the file up to the child and saves it
    
+
+ View history metadata 
+```
+docker image ls
+docker history (one from above)
+
+IMAGE               CREATED             CREATED BY                                      SIZE                COMMENT
+735f80812f90        3 days ago          /bin/sh -c #(nop)  CMD ["/bin/bash"]            0B                  
+<missing>           3 days ago          /bin/sh -c mkdir -p /run/systemd && echo 'do…   7B                  
+<missing>           3 days ago          /bin/sh -c sed -i 's/^#\s*\(deb.*universe\)$…   2.76kB              
+<missing>           3 days ago          /bin/sh -c rm -rf /var/lib/apt/lists/*          0B                  
+<missing>           3 days ago          /bin/sh -c set -xe   && echo '#!/bin/sh' > /…   745B                
+<missing>           3 days ago          /bin/sh -c #(nop) ADD file:4bb62bb0587406855…   83.5MB  
+
+docker image inspect (one from above)
+``` 
+ 
+Tagging/Docker Hub
+ - point to an image id
+ - are pushed up to dockerhub
+ - latest (generally) means most recent version
+ 
+ `docker image tag SOURCE:tag TARGET:tag` 
+
+## DockerFile
+ - Keep things that change the least at top of dockerfile
+   - When building, all the steps are cachable, but on a change it must rerun every step after that change from cache
+  
+## Data Persistence
+ - Containers are ephemeral and immutable, we don't change things once they are running `immutable infrastructure`
+ - `persistent data` how does that work with autoscaling
+   - volumes: special location outside of container for storage 
+   - bind mounts: link a container path to a host path
+    
+### Volumes
+  declare inside of dockerfile as `VOLUMES` they persist the life of the container.  These are wired up in the container meta
+  - Be sure to name volumes otherwise very hard for others to use
+  
+```
+docker container inspect foo
+
+{ 
+  "Mounts": { ...detailsOnYourConnection },
+  "Volumes": { ...The volumes you list }
+}
+```
+
+### Persistent Data
+  - map a host file or directory to a container file or directory
+  - two location pointing to the same file
+  - cant use docker file, must use docker run
+    - run -v /User/austio/mysql-db:/path/container
+  - publish 8080, use the current working directory as the html nginx  
+    - `docker container run -d --name nginx -publish 80:80 -v $(pwd):/usr/share/nginx/html nginx`
+    - when you make changes to `pwd` all of them are synced to the volume
+
+
+ 
+
 ## Assignments
  
 ### Containers
