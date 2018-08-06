@@ -305,8 +305,65 @@ curl -XPUT "http://localhost:9200/my_library/_doc/4" -H "Content-Type:applicatio
 
 You might expect this to be high, but apples != apple to the search engine right now so they are matched differently.
 
+### Chapter 5 - Basic Multifield Search
+
+def - Signal: a component of the relevance scoring calculation corresponding to meaningful, measureable user or business information
+def - Source Data Model: Structure of original data (database)
+
+When signal modeling you must answer these questions:
+ - How do users intend to search these fields to obtain the needed information
+ - What work needs to occur to improve or adjust that information
+ 
+Fields exist to return a signal that measures information in the form of that fields relevancy score.  They are constructed to generate a similarity relationship between a query and a document. 
+
+#### Pass 1 - No Signals
+- Copying fields With 1 to 1 mapping with database fields mapped directly to fields on index
+
+The issue here is that TF * IDF is the amount of times the term occurs for the documents field and how rarely the term occurs across all documents in this field
+ - So the lucene below `(first_name:adam first_name:p first_name:smith)` will match a user whos first_name is `smith` very highly because that is crazy rare and they will be surfaced to the top
+ - result: Smith P. Adam result WAY outweighs the real result of Adam P. Smith
+ 
+```
+usersSearch = "Adam P. Smith"
+
+search = {
+  "query": {
+    "multi_match": {
+      "query": usersSearch,
+      "fields": ["first_name", "last_name", "middle_name"]
+    }
+}
+
+// Lucene conversion
+(first_name:adam first_name:p first_name:smith)|(...repeat middle_name)|(...repeat last_name)
+```
+
+#### Pass 2 - Name Signal
+If people will be searching for First Middle Last it is valid to create a derived field that is `full_name`.  Then your search in lucene would want to be something like
+
+```
+max(first_name:adam first_name:p first_name:smith)|(...repeat middle_name)|(...repeat last_name) + full_name:"adam p smith"
+
+search = {
+  "query": {
+    "bool": {
+      "should": { 
+        "multi_match": {
+              "query": usersSearch,
+              "fields": ["first_name", "last_name", "middle_name"]
+        },
+        "match_phrase": {
+          "full_name": usersSearch
+        }
+      }
+    }
+  }
+}
+
+```
 
 
+ 
 ### Chapter 8 - Providing Relevant Feedback
 
 #### 8.1 Relevant Feedback at search box
