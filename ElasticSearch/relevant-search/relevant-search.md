@@ -309,6 +309,7 @@ You might expect this to be high, but apples != apple to the search engine right
 
 def - Signal: a component of the relevance scoring calculation corresponding to meaningful, measureable user or business information
 def - Source Data Model: Structure of original data (database)
+def - Signal Modeling: Data modeling for relevance picking fields and analyzers the way you would columns/keys/indexes for regular databases
 
 When signal modeling you must answer these questions:
  - How do users intend to search these fields to obtain the needed information
@@ -316,7 +317,9 @@ When signal modeling you must answer these questions:
  
 Fields exist to return a signal that measures information in the form of that fields relevancy score.  They are constructed to generate a similarity relationship between a query and a document. 
 
-#### Pass 1 - No Signals
+It is not possible to have relevant results in every direction but you cannot prematurely optimize.  You must ship, fail fast, analyze and reindex if need be to find where you need to better signal.
+
+#### Pass 1 of 2 - No Signals
 - Copying fields With 1 to 1 mapping with database fields mapped directly to fields on index
 
 The issue here is that TF * IDF is the amount of times the term occurs for the documents field and how rarely the term occurs across all documents in this field
@@ -338,7 +341,7 @@ search = {
 (first_name:adam first_name:p first_name:smith)|(...repeat middle_name)|(...repeat last_name)
 ```
 
-#### Pass 2 - Name Signal
+#### Pass 2 of 2 - Name Signal
 If people will be searching for First Middle Last it is valid to create a derived field that is `full_name`.  Then your search in lucene would want to be something like
 
 ```
@@ -362,7 +365,69 @@ search = {
 
 ```
 
+#### Data at Rest in Elasticsearch
+How is nested data stored in ES?
 
+```
+httpResp = requests.get("http://localhost:9200/imdb/movie/%s" % spaceJamId)
+doc = json.loads(httpResp.text)
+print json.dumps(doc['_source'], indent=True)
+```
+
+Nested data is flattened.  Downside is that you lose the association with the child object that each field belongs to
+ - More depth see www.elastic.co/blog/managing-relations-inside-elasticsearch for more details
+```
+{ 
+  cast: [ 
+    {
+      name: "Michael Jordan",
+      character: "Himself"
+    },
+    {
+      name: "Danny DeVito",
+      character: "My Swackhammer"
+    }  
+  ]
+}
+
+Is translated into multiple flattened parallel fields
+cast.name = ["Michael Jordan", "Danny DeVito"]
+cast.character = ["Himself", "My Swackhammer"]
+
+ES Actually represents these as `inner objects` and flattens the array
+cast.name = Michael Jordan Danny DeVito
+cast.character = Himself My Swackhammer
+```
+
+#### Signal Modeling
+
+Using our IMDB we determine that title, overview, cast.name and director.name are our possible signals for searching
+
+userSearch = "Basketball with cartoon aliens"
+
+##### Field Centric
+def - Field-centric: `multi_match` scores each field in isolation relative to entire search term and then combines
+  - takes userSearch against the title and against overview then combines
+  - searches each field in isolation, as a discrete unit before combining field scores
+ 
+To combine results uses either best_fields or most_fields
+  - (MAX) best_fields (default): take highest scoring field, takes a tie_breaker parameter.  If title had the best score it would be
+   - winner takes all search, runner ups discarded or discounted
+   - score = Score.title + tie_breaker * (Score.overview + Score.cast.name + Score.directors.name)
+   - works well when documents rarely have multiple fields that match the search string
+  - (SUM) most_fields: boolean match summation.  Uses a `coord` (coordinating) factor to multiply which is the number of matching fields
+   - every field gets a vote
+   - score = (Score.overview + Score.title + Score.cast.name + Score.directors.name) * coord
+   - works best when you expect mutliple fields from a document to match the search string
+   
+   
+      
+ 
+ 
+def - Term-centric: scores each term in search against each field then combines
+ - takes "Basketball" against title and against overview then combines, repeats for each word in query, then combines all results
+ 
+ 
  
 ### Chapter 8 - Providing Relevant Feedback
 
