@@ -416,19 +416,33 @@ To combine results uses either best_fields or most_fields
    - score = Score.title + tie_breaker * (Score.overview + Score.cast.name + Score.directors.name)
    - works well when documents rarely have multiple fields that match the search string
 
-
-
-
-
   - (SUM) most_fields: boolean match summation.  Uses a `coord` (coordinating) factor to multiply which is the number of matching fields
    - every field gets a vote
    - score = (Score.overview + Score.title + Score.cast.name + Score.directors.name) * coord
    - works best when you expect mutliple fields from a document to match the search string
    
+###### Analyzing BestFields
+
+If you pass the query 
+
+```
+mostSearch = {
+  "query": {
+    "multi_match": {
+      "query": "Patrick Stewart",
+      "fields": ["title", "overview", "cast.name", "directors.name"],
+      "type": "best_fields"
+    }
+  }
+}
+```
+
+You will get odd results because of how scoring happens in best fields
+https://www.elastic.co/guide/en/elasticsearch/guide/current/practical-scoring-function.html
    
    
-   
-   
+   5.3.1. Starting out with best_fields
+
       
  
  
