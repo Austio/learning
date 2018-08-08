@@ -415,10 +415,18 @@ To combine results uses either best_fields or most_fields
    - winner takes all search, runner ups discarded or discounted
    - score = Score.title + tie_breaker * (Score.overview + Score.cast.name + Score.directors.name)
    - works well when documents rarely have multiple fields that match the search string
+
+
+
+
+
   - (SUM) most_fields: boolean match summation.  Uses a `coord` (coordinating) factor to multiply which is the number of matching fields
    - every field gets a vote
    - score = (Score.overview + Score.title + Score.cast.name + Score.directors.name) * coord
    - works best when you expect mutliple fields from a document to match the search string
+   
+   
+   
    
    
       

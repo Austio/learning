@@ -60,17 +60,31 @@ query = {
     }
 }
 
-def search(query=query, index="imdb", type="movie"):
-    url = "http://localhost:9200/{index}/{type}/_search".format(index=index,type=type)
+mostSearch = {
+  "query": {
+    "multi_match": {
+      "query": userSearch,
+      "fields": ["title", "overview", "cast.name", "directors.name"],
+      "type": "best_fields"
+    }
+  }
+}
+
+
+def search(query=query, index="imdb", type="movie", explain="false"):
+    url = "http://localhost:9200/{index}/{type}/_search?explain={explain}".format(index=index,type=type, explain=explain)
     httpResp = requests.get(url,data=json.dumps(query),headers=headers)
     hits = json.loads(httpResp.text)['hits']
     print "Num\tRelevance Score\t\tMovie Title"
-    print hits
     for idx, hit in enumerate(hits['hits']):
         print "%s\t%s\t\t%s" % (idx+1, hit["_score"], hit["_source"]["title"])
+        if explain == "true":
+            e = simplerExplain(hit["_explanation"])
+            print "{exp}".format(exp=e)
 
-def explain(query=query, index="imdb", type="movie"):
-    url = 'http://localhost:9200/{index}/{type}/_validate/query?explain'.format(index=index,type=type)
+
+def getLuceneSyntax(query=query, index="imdb", type="movie"):
+    url = 'http://localhost:9200/{index}/{type}/_validate/query?explain=true'.format(index=index,type=type)
     httpResp = requests.get(url, data=json.dumps(query), headers=headers)
     print json.loads(httpResp.text)
 
