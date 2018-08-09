@@ -311,6 +311,8 @@ def - Signal: a component of the relevance scoring calculation corresponding to 
 def - Source Data Model: Structure of original data (database)
 def - Signal Modeling: Data modeling for relevance picking fields and analyzers the way you would columns/keys/indexes for regular databases
 
+See [Deep Dive on Practical Scoring](https://www.elastic.co/guide/en/elasticsearch/guide/current/practical-scoring-function.html)
+
 When signal modeling you must answer these questions:
  - How do users intend to search these fields to obtain the needed information
  - What work needs to occur to improve or adjust that information
@@ -423,7 +425,15 @@ To combine results uses either best_fields or most_fields
    
 ###### Analyzing BestFields
 
-If you pass the query 
+Without help from us through boosting, best_fields can be unintuitive because
+ - field scores don't reliably line up.  You can't reliably compare two different fields (directors.name vs case.name) becuase they have different term frequency, document lengths and idf.
+   - because they don't line up, 2 could be a terrible score or director.name but .2 a great one for cast.name but director.name will win out of the box
+   - like choosing max between a persons shoe size and height in feet.  They don't line up.
+ - TF X IDF bias heavily toward rare terms, but use is most likely to be searching for regular items.
+   - **when asking for coffee while shopping, you would be more happy to be brought to coffee aisle vs the ice cream isle that has a coffee flavored ice cream**
+
+In our example below, stewart corresponds to a commonplace actor but a rare director.  It is far more likely the user is searching for the actor, not director but the tf x IDF does the opposite and rewards rareness.
+ - iow - lopsided results towards obscure fields
 
 ```
 mostSearch = {
@@ -437,15 +447,31 @@ mostSearch = {
 }
 ```
 
-You will get odd results because of how scoring happens in best fields
-https://www.elastic.co/guide/en/elasticsearch/guide/current/practical-scoring-function.html
-   
-   
-   5.3.1. Starting out with best_fields
+You will get odd results because of how scoring happens in best fields.  It picks only one field.  
+Below is a result and you can see that it matched on overview and had the words with and aliens in it.
 
-      
- 
- 
+```
+9.522362, max of:
+  9.522362, sum of:
+    1.0380441, weight(`overview:with` in 315) [PerFieldSimilarity], result of:
+      1.0380441, score(doc=315,freq=1.0 = termFreq=1.0
+), product of:
+        0.8842849, idf, computed as log(1 + (docCount - docFreq + 0.5) / (docFreq + 0.5)) from:
+          263.0, docFreq 637.0, docCount
+        1.1738796, tfNorm, computed as (freq * (k1 + 1)) / (freq + k1 * (1 - b + b * fieldLength / avgFieldLength)) from:
+          1.0, termFreq=1.0 1.2, parameter k1 0.75, parameter b 53.298275, avgFieldLength 34.0, fieldLength
+    8.484318, weight(`overview:aliens` in 315) [PerFieldSimilarity], result of:
+      8.484318, score(doc=315,freq=2.0 = termFreq=2.0
+), product of:
+        5.5420475, idf, computed as log(1 + (docCount - docFreq + 0.5) / (docFreq + 0.5)) from:
+          2.0, docFreq 637.0, docCount
+        1.5308995, tfNorm, computed as (freq * (k1 + 1)) / (freq + k1 * (1 - b + b * fieldLength / avgFieldLength)) from:
+          2.0, termFreq=2.0 1.2, parameter k1 0.75, parameter b 53.298275, avgFieldLength 34.0, fieldLength
+```   
+
+coord could be seen here and it would represent how many of all the tokens we pass in match ('patrick steward') (just patrick would be 1/2)       
+
+       
 def - Term-centric: scores each term in search against each field then combines
  - takes "Basketball" against title and against overview then combines, repeats for each word in query, then combines all results
  

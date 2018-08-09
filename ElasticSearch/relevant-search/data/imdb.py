@@ -63,7 +63,7 @@ query = {
 mostSearch = {
   "query": {
     "multi_match": {
-      "query": userSearch,
+      "query": "Patrick Stewart",
       "fields": ["title", "overview", "cast.name", "directors.name"],
       "type": "best_fields"
     }
