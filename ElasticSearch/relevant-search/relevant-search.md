@@ -83,8 +83,12 @@ It is up to the relevance engineer to tokenize the search in such a way that mea
 `Should NOT map words to tokens, it should map meaning to user intent to tokens`
 
 These two are normally at odds
- - Precision: Percentage of documents in a result that are relevant
- - Recall - Percentage of relevant documents returned in the result set
+ - Precision: Percentage of documents in a result that are relevant (returned relevancy to what you were looking for)
+ - Recall - Percentage of relevant documents returned in the result set (global correct vs returned correct)
+ 
+For fruit example: say you want an apple and search for "red medium fruit"
+ - Precision: if you return 4 fruit, 2 apples, a tomato and a bell pepper, your precision is 50%
+ - Recall: If you have 5 apples total, and only 2 were returned in previous example, recall is 40%
 
 To understand how ES receives a query, you must look at the way that it is tokenizing your string.  Put this for the example
 
@@ -425,6 +429,8 @@ To combine results uses either best_fields or most_fields
    
 ###### Analyzing BestFields
 
+ - best_fields is useful for when you want to create lopsided rankings where one field dominates others, follwed by another. 
+
 Without help from us through boosting, best_fields can be unintuitive because
  - field scores don't reliably line up.  You can't reliably compare two different fields (directors.name vs case.name) becuase they have different term frequency, document lengths and idf.
    - because they don't line up, 2 could be a terrible score or director.name but .2 a great one for cast.name but director.name will win out of the box
@@ -475,6 +481,19 @@ coord could be seen here and it would represent how many of all the tokens we pa
 def - Term-centric: scores each term in search against each field then combines
  - takes "Basketball" against title and against overview then combines, repeats for each word in query, then combines all results
  
+However, you can control search relevance with boosting to product intentional lopsided-ness inside of boosted fields.
+
+```
+mostSearch = {
+  "query": {
+    "multi_match": {
+      "query": "Patrick Stewart",
+      "fields": ["title", "overview", "cast.name", "directors.name^0.1"],
+      "type": "best_fields"
+    }
+  }
+}
+```
  
  
 ### Chapter 8 - Providing Relevant Feedback
