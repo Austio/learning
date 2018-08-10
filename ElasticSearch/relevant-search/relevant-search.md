@@ -481,7 +481,10 @@ coord could be seen here and it would represent how many of all the tokens we pa
 def - Term-centric: scores each term in search against each field then combines
  - takes "Basketball" against title and against overview then combines, repeats for each word in query, then combines all results
  
+###### Improving best_fields with boosting 
 However, you can control search relevance with boosting to product intentional lopsided-ness inside of boosted fields.
+ - This allows you to ensure that results are skewed towards the most important result type 
+ - keep in mind that the boosting is not relative in any way to other fields, it is a simple multiplier
 
 ```
 mostSearch = {
@@ -495,6 +498,52 @@ mostSearch = {
 }
 ```
  
+###### Improving best_fields with phrasing (bigrams, trigrams)
+You can break out a shingle so that the token filter can generate subphrases.  For bigrams that would turn "Patrick Stewart Runs" into both Patrick Stewart and Stewart Runs
+
+```
+curl -X put localhost:9200/imdb -H 'Content-Type:application/json' -d '
+{
+  "settings": {
+    "analysis": {
+      "analyzer": {
+        "default": { "type": "english" },
+        "english_bigrams": {
+          "type": "custom",
+          "tokenizer": "standard",
+          "filter": [
+            "standard",
+            "lowercase",
+            "porter_stem",
+            "bigram_filter"
+          ]
+        }
+      },
+      "filter": {
+        "bigram_filter": {
+          "type": "shingle",
+          "max_shingle_size": 2,
+          "min_shingle_size": 3, 
+          "output_unigrams": "false"
+        }
+      }
+    }
+  }     
+}
+'
+```
+ 
+```
+mostSearch = {
+  "query": {
+    "multi_match": {
+      "query": "Patrick Stewart",
+      "fields": ["title", "overview", "cast.name.;lk", "directors.name^0.1"],
+      "type": "best_fields"
+    }
+  }
+}
+```
  
 ### Chapter 8 - Providing Relevant Feedback
 
