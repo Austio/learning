@@ -126,7 +126,7 @@ docker container run --name nginx_2 --publish 81:80 nginx
 
 docker exec -it nginx ping nginx_2
 ``` 
-## Images
+### Images
 
 What are they
  - file system changes and metadata
@@ -206,6 +206,24 @@ docker container inspect foo
     - when you make changes to `pwd` all of them are synced to the volume
 
 
+### Docker Compose
+ -yaml and cli tool
+
+#### YML File
+ - services (containers)
+  - image
+  - command (override docker CMD)
+  - environment (env vars)
+  - volumes (can append :ro to get read only file copied on bind mount)
+  - deponds_on 
+ - volumes
+ - networks
+
+#### CLI
+ - up (start and get going)
+ - down (stop stuff)
+ 
+ 
  
 
 ## Assignments
