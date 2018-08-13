@@ -311,6 +311,11 @@ You might expect this to be high, but apples != apple to the search engine right
 
 ### Chapter 5 - Basic Multifield Search
 
+ - Signals map relevance scores to meaningful ranking criteria
+ - Signal modeling builds fields that better map to criteria thats meaningful to users
+ - best_fields is winner take all and allows for a tie_breaker to consider the others
+ - most_fields takes a democratic approach and encourages multiple field matches
+
 def - Signal: a component of the relevance scoring calculation corresponding to meaningful, measureable user or business information
 def - Source Data Model: Structure of original data (database)
 def - Signal Modeling: Data modeling for relevance picking fields and analyzers the way you would columns/keys/indexes for regular databases
@@ -427,10 +432,11 @@ To combine results uses either best_fields or most_fields
    - score = (Score.overview + Score.title + Score.cast.name + Score.directors.name) * coord
    - works best when you expect mutliple fields from a document to match the search string
    
-###### Analyzing BestFields
+###### Analyzing BestFields best_fields
 
  - best_fields is useful for when you want to create lopsided rankings where one field dominates others, follwed by another. 
-
+ - also when you want to decide ('is this search for a person' or 'is this search for a movie') if your signals are strong
+ 
 Without help from us through boosting, best_fields can be unintuitive because
  - field scores don't reliably line up.  You can't reliably compare two different fields (directors.name vs case.name) becuase they have different term frequency, document lengths and idf.
    - because they don't line up, 2 could be a terrible score or director.name but .2 a great one for cast.name but director.name will win out of the box
@@ -544,6 +550,36 @@ mostSearch = {
   }
 }
 ```
+
+###### Using tie_breaker to let other fields chime in 
+So imagine a scenario where you would like to be able so support someone searching like `Star Trek Patrick Stewart` or
+
+To handle this you would use the `tie_breaker` so that when the score is calculated it lets other fields have some influence in best fields outside of the best one.
+
+score = title + tie_breaker * (overview + cast.name + director.name)
+
+ - if tie_breaker were 1 it would essentially be a summation.
+ 
+
+##### most_fields
+
+If you have a multifacet search like `Star Trek Patrick Steward Wiliam Shatner`.  most_fields is basically saying
+ - it SHOULD mention the title
+ - it SHOULD mention the text in the movies overview
+ - it SHOULD mention the cast members
+ - it SHOULD mention the director name
+ 
+The ideal document hits all 4.  
+
+ - *REMEMBER* scores for fields aren't `really` comparable.  Despite bias towards multiple matches using a coord, you still need to boost to balance idf/term freq.
+ - So you will almost certainly need to boost in order to make sure the results are not lopsided. 
+
+It does have a huge pitfall, in many cases two strong signals shouldn't magnify a documents relevance, for example, a cast.name and director.name of Shatner will boost a score more than 2 cast members.  You probably want your shoulds to be more like
+ - it SHOULD mention the title
+ - it SHOULD match any person assocation with the film
+ 
+Instaed of having specific ones with director/cast
+ 
  
 ### Chapter 8 - Providing Relevant Feedback
 
