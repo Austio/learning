@@ -222,9 +222,17 @@ docker container inspect foo
 #### CLI
  - up (start and get going)
  - down (stop stuff)
+ - build
  
- 
- 
+#### Build
+
+You can build a docker image if it is not in cache using the `build` key.  This will first check cache and then build it using the dockerfile if it is not present
+
+*NOTE* - SHARP EDGES
+if you use this and need to rebuild use
+ docker-compose up --build
+ or
+ docker-compose build
 
 ## Assignments
  
