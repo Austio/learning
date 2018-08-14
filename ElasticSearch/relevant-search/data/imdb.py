@@ -49,6 +49,17 @@ def reindex(analysisSettings={}, mappingSettings={}, movieDict=extract(), index=
     print "Bulk Index Response: {resp}".format(resp=resp)
     return resp
 
+def plainReindex(movieDict=extract(), index="imdb", type="movie"):
+  index_path_url = "http://localhost:9200/{index}".format(index=index)
+  bulkMovies = ""
+  for id, movie in movieDict.iteritems():
+      addCmd = {"index": {"_index": index,
+                          "_type": type,
+                          "_id": movie["id"]}}
+      bulkMovies += json.dumps(addCmd) + "\n" + json.dumps(movie) + "\n"
+  print "indexing..."
+  resp = requests.post("http://localhost:9200/_bulk", data=bulkMovies, headers=headers)
+
 
 userSearch = 'basketball with cartoon aliens'
 query = {
