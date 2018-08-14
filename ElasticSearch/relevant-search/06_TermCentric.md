@@ -2,7 +2,7 @@
 
 Terms are the search phrase the user searches.  Sometimes its better to balance the impaces of terms rather than fields. 
 
-##### Field Centric Approach Problems
+#### Field Centric Approach Problems
  - Cannot Account for cases in which multiple search terms match
  - 
 
@@ -60,6 +60,40 @@ def: Signal Discordance
 - Failure of signal modeling to express signals that mearsure ways users expect to search
  
 Shows itself when field scores don't map to the users generalized expectations
+
+#### Term Centric Approach
+
+Takes users POV and vocuses on signals tied more closesly to query.  Signals can answer broader top-down questions
+
+"basketball with cartoon aliens"
+ - 1. Tokens: basketball cartoon aliens
+ - 2. Search: for each term
+ - 3. Combine Score: Per term combine the scores
+ - 4. Combine all into overall
  
- 
- 
+Uses `dismax` (DisunctionMaximumQuery) -> best_fields search where you pick the highest field score.  Here we will do that per search term.
+
+When searching `star trek patrick stewart`  and overview having patrick stewart and title of star trek
+field based dismax: albino elephant chooses overview field as result, and drops star trek match
+(overview:star overview:trek *overview:patrick overview:stewart*) | (title:star title:trek title:patric title:stewart) 
+term based dismax: each term given a chance
+(overview:star | *title:star*) (overview:trek | *title:trek*) (*overview:patrick* | title:patric) (*overview:stewart* | title:stewart)
+
+#### Running it into the ground
+
+```
+reindex data with bigrams from chapter 5
+
+usersSearch = "start trek patrick stewart william statner"
+
+query = {
+  "query": {
+    "query_string": {
+      "query": usersSearch,
+      "fields": ["title", "overview", "cast.name.bigrammed", "directors.name.bigrammed"]
+    }
+  },
+  "size": 5,
+  "explain": True
+}
+```

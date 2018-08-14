@@ -218,7 +218,7 @@ curl -X put localhost:9200/imdb -H 'Content-Type:application/json' -d '
         "bigram_filter": {
           "type": "shingle",
           "max_shingle_size": 2,
-          "min_shingle_size": 3, 
+          "min_shingle_size": 2, 
           "output_unigrams": "false"
         }
       }
@@ -226,14 +226,52 @@ curl -X put localhost:9200/imdb -H 'Content-Type:application/json' -d '
   }     
 }
 '
+
+// set bigrams on the settings
+mappingSettings = {
+  "movie": {
+    "properties": {
+      "cast": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "analyzer": "english",
+            "fields": {
+              "bigrammed": {
+                "type": "string",
+                "analyzer": "english_bigrams"
+              }
+            }
+          }  
+        }
+      },
+      "director": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "analyzer": "english",
+            "fields": {
+              "bigrammed": {
+                "type": "string",
+                "analyzer": "english_bigrams"
+              }
+            }
+          }  
+        }
+      }
+    }
+  }
+}
+
+reindex(anlysisSettings, mappingSettings, movieDict)
 ```
- 
+
 ```
 mostSearch = {
   "query": {
     "multi_match": {
       "query": "Patrick Stewart",
-      "fields": ["title", "overview", "cast.name.;lk", "directors.name^0.1"],
+      "fields": ["title", "overview", "cast.name", "directors.name^0.1"],
       "type": "best_fields"
     }
   }
