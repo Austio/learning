@@ -2,6 +2,22 @@
 
 [Good Seed Data](https://www.elastic.co/guide/en/kibana/current/tutorial-load-dataset.html)
 
+### Definitions
+
+|Word|Definition|---|
+|---|---|---|
+|Precisions|Percentage of documents in a result that are relevant (returned relevancy to what you were looking for)|4|
+|Recall|Percentage of relevant documents returned in the result set (global correct vs returned correct)|4|
+|Boosting|Increases the relevance score of a subset of results|7|
+|Filtering|Removes a subset of corpus of documents from consideration of a given search|7|
+|Signals||?|
+
+#### Precision and Recall
+For fruit example: say you want an apple and search for "red medium fruit"
+ - Precision: if you return 4 fruit of 2 apples, a tomato and a bell pepper, your precision is 50%
+ - Recall: If you have 5 apples total, and only 2 were returned in previous example, recall is 40%
+
+
 ### URLS
 
 Can add jq on mac to make look less bad
@@ -12,6 +28,10 @@ Can add jq on mac to make look less bad
 |Update Mapping|PUT /twitter/_mapping/type|
 
 ### Troubleshooting
+
+#### Kibana: Login is Currently Disabled
+https://discuss.elastic.co/t/kibana-6-login-is-currently-disabled/107675
+
 
 ### Steps:
 

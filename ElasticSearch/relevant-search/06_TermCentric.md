@@ -79,12 +79,14 @@ field based dismax: albino elephant chooses overview field as result, and drops 
 term based dismax: each term given a chance
 (overview:star | *title:star*) (overview:trek | *title:trek*) (*overview:patrick* | title:patric) (*overview:stewart* | title:stewart)
 
+
+
 #### Running it into the ground
 
 ```
 reindex data with bigrams from chapter 5
 
-usersSearch = "start trek patrick stewart william statner"
+usersSearch = "star trek patrick stewart william statner"
 
 query = {
   "query": {
@@ -97,3 +99,25 @@ query = {
   "explain": True
 }
 ```
+// Analyze is this
+(title:start | overview:star) (title:trek | overview:trek).... no bigrammed fields
+// You would maybe expect this
+(title:william | overview:william | director.name.bigrammed:william shatner)
+
+This is due to `field synchonicity` which is the capability to query multiple fields with identical search terms.  Or restriction that they be searched in the same way.  
+
+In this case the bigrams were dropped b/c they william shatner is different than william so it is not congruent.  
+
+Page 154. Some exceptional analysis of the lucene and explain of a query to find a signal discordance issue.  Identifies a rare term in a field causing high scores
+
+#### Tuning Term Centric Search
+
+`usersSearch = "star trek patrick stewart william statner"`
+Term specific search for this looks like
+ - coord * (Sstar + Strek + Spatric + Sstewart + Swilliam + Sshatner)
+ 
+In each term's signal there is a dismax over every field search.  You can configure
+ - to include the score of nonwinning fields in the dismax equation
+ - weight/rebalance fields boostings
+
+

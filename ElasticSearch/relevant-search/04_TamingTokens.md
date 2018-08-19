@@ -5,13 +5,7 @@ It is up to the relevance engineer to tokenize the search in such a way that mea
 
 `Should NOT map words to tokens, it should map meaning to user intent to tokens`
 
-These two are normally at odds
- - Precision: Percentage of documents in a result that are relevant (returned relevancy to what you were looking for)
- - Recall - Percentage of relevant documents returned in the result set (global correct vs returned correct)
- 
-For fruit example: say you want an apple and search for "red medium fruit"
- - Precision: if you return 4 fruit, 2 apples, a tomato and a bell pepper, your precision is 50%
- - Recall: If you have 5 apples total, and only 2 were returned in previous example, recall is 40%
+See Precision and Recall Def in /relevant-search.md
 
 To understand how ES receives a query, you must look at the way that it is tokenizing your string.  Put this for the example
 

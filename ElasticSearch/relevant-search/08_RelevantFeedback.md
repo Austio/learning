@@ -1,5 +1,3 @@
-
- 
 ### Chapter 8 - Providing Relevant Feedback
 
 #### 8.1 Relevant Feedback at search box
