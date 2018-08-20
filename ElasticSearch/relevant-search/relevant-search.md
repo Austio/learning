@@ -17,6 +17,14 @@ For fruit example: say you want an apple and search for "red medium fruit"
  - Precision: if you return 4 fruit of 2 apples, a tomato and a bell pepper, your precision is 50%
  - Recall: If you have 5 apples total, and only 2 were returned in previous example, recall is 40%
 
+#### Term Frequency and Inverse Document Frequency
+Used to score words based on their occurnce in the corpus and their length.  It is assumed that more unique words are better results when they are searched.
+
+### Options
+|name|context|definition|
+|---|---|---|
+|coord|boolean query|Adds bias towards documents that match all clauses|
+|disable_coord|boolean query with coord|Removes bias towards matching all clauses.  Good when boost/bool is extra credit vs required|
 
 ### URLS
 
@@ -31,7 +39,6 @@ Can add jq on mac to make look less bad
 
 #### Kibana: Login is Currently Disabled
 https://discuss.elastic.co/t/kibana-6-login-is-currently-disabled/107675
-
 
 ### Steps:
 

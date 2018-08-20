@@ -7,6 +7,23 @@
    
 - Ranking Function: Filtering and boosting directly adjust this.? TODO
 
+
+```
+multiMatch = {
+    "multi_match": {
+      "query": "William Statner Patrick Stewart",
+      "fields": ["title", "overview", "cast.name", "directors.name"],
+      "type": "cross_fields"
+    }
+  }
+
+mostSearch = {
+  "query": multiMatch
+}
+
+search(query=mostSearch)
+```
+
 ##### Non Boost Score Shaping
  - Sort Criteria: base on date/popularity/computed value/distance
  - Negative Boosting: 
@@ -29,18 +46,34 @@ Method of Boost:
  - multiplicative or additive
  
  
-   
-  
-  
-
-```
-mostSearch = {
+#### Boolean Boost
+ 
+```  
+boolBoostSearch = {
   "query": {
-    "multi_match": {
-      "query": "William Statner Patrick Stewart",
-      "fields": ["title", "overview", "cast.name", "directors.name"],
-      "type": "cross_fields"
-    }
+    "bool": {
+      "should": [
+        multiMatch,
+        { 
+          "match_phrase": {
+            "title": {
+              "query": "star trek"
+            }
+          } 
+        }  
+      ]
+    }    
   }
 }
+
+search(query=boolBoostSearch)
 ```
+
+Measures 2 signals, 
+ - (boost) is this a star trek film, 
+ - (base) are the query terms featured in the searched fields
+
+You can get wonky resutls here due to the bias towards strong words with boost.  To get around that you can set a static boost on the query.
+Another option is to move to more of yes/no scoring instead of IDF*TF for the star trek.  That is really more of a yes/no anyway.
+
+7.2.4
