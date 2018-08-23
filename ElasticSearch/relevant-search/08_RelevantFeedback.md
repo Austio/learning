@@ -32,7 +32,8 @@ Search Suggestions Query
  
 ##### Search Completion
 Unsure Rich Results, Timely Completions and Suggestions with results
- 
+
+As a general rule, don't replace the users query with a `did you mean` query UNLESS it is a 0 results query 
 
 Goal to usher user to better search queries.  Users intuitively type, reformulate and occasionally select the result
  - Users expect fast feedback, without speed the user will continue without aid
@@ -170,7 +171,63 @@ GET /tmdb/_suggest
     {'score': 0.0016883487, 'text': 'star trip'},
     {'score': 0.0016621534, 'text': 'star they'},
     {'score': 0.0016162122, 'text': 'star tree'}],
-  'text': u'star trec'}]}                
+  'text': u'star trec'}]}     
+  
+# Improve on query
+# collate gives alternate query to each suggestion that has results
+# match_phrase more tightly constrains suggestions than a straight `query`
+{ 
+  "fields": ["title"],
+  "query": {
+    "match": {"star trec"}
+  },
+  "suggest": {
+    "title_suggestion": {
+      "text": "star trec",
+      "phrase": {
+        "field": "suggestion",
+        "collate": {
+          "query": {
+           "inline": {
+             "match_phrase: {
+               "title": "{{suggestion}}"
+             }
+           }
+          }
+        }
+      }
+    }
+  }
+}               
+{ 'title_completion': [{'length': 9, 'offset': 0, 'options': [
+  {'score': 0.0019600056, 'text': 'star trek'},
+  {'score': 0.0016621534, 'text': 'star they'}]}]}
 ```
 
-# 8.1.3 Collate
+# 8.2 Browsing Feedback
+
+### Faceted browsing
+
+Returning things like genres, gender, etc that the user can filter on
+ - don't split on whitespace here, you want `science fiction` to not be `science` and `fiction`
+```
+GET tmdb/_search
+{ "aggregations": {
+    "genres": {
+      "terms": {
+        "field": "genres.name"}}}}
+
+
+# User clicks Science Fiction
+GET tmdb/_search
+{"query": {
+   "bool": {
+     "filter": [{
+       "term": {
+         "genres.name": "Science Fiction"}}]}},
+"aggs": {
+  "genres": {
+     "terms": {"field": "genres.name"}}}}
+```
+
+### Breadcrumb Navigation 8.2.3
