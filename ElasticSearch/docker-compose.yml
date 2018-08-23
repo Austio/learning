@@ -13,7 +13,7 @@ services:
       - elk
 
   kibana63:
-    image: docker.elastic.co/kibana/kibana:6.3.0
+    image: docker.elastic.co/kibana/kibana:6.3.1
     ports:
       - "5601:5601"
     networks:

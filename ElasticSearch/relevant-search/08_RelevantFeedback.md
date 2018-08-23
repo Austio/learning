@@ -50,4 +50,127 @@ There are 3 methods to build search completions
  - Ensure no 0 length results
  
 ###### Current Input:
- -  
+ - Uses a field that you analyze
+ 
+Example using aggregations.  You want to use that because aggregations take the search context into account.
+ - alternative to use aggs with `path_hierarchy` (star trek the motion picture, trek the motion picture, the motion picture, motion picture, picture)
+ - aggs tax in distributed search.  Best in small corpus with text fields and relatively small set of unique terms
+ - can also use completion type of type `completion` which is provided by elasticsearch
+ 
+
+```
+"settings": {
+  "analysis": {
+    "filter": {
+      # 2 word bigrams (star trek, trek the, the next, next generation)
+      "shingle_2": {
+        "type": "shingle",
+        "output_unigrams": "false"
+      }
+    },
+    "analyzer": {
+      "completion_analyzer": {
+        "tokenizer": "standard",
+        
+        "filter": ["standard", "lowercase", "shingle_2"]
+      }
+    }
+  }
+}
+
+# Mappings
+"mappings": {
+  "movie": {
+    "properties": {
+      "title": {
+        "type": "string",
+        "analyzer": "english",
+        "copy_to":["completion"]
+      },
+      "completion": {
+        "type": "string",
+        "analyzer": "completion_analyzer"
+      }
+    }
+  }
+}
+
+# Usage
+{
+  "query": {
+    "match_phrase_prefix": {
+      "title": {
+        "query": user_input
+      }
+    }
+  },
+  "aggregations": {
+    "completion": {
+      "terms": {
+        "fileds": "completion",
+        "include": completion_prefix + ".*"
+        # limits suggestions to those that begin with completion prefix
+      }
+    }
+  }
+}
+```
+
+Can also use completion analyzer, this allows you to enrich results returned
+
+```
+{ 
+  "mappings": {
+    "properties": {
+      "title": {
+        "type": string", "analyzer": "english"
+      },
+      "completion": {
+        "type": "completion"
+      }
+    }
+  }
+}
+
+doc = { "title": "star trek into darkness", "popularity": 32.15, ... }
+doc["completion"] = {
+  "input": [doc["title"]],
+  "weight": int(doc["popularity"])
+}
+```
+
+Post Search Suggestions
+
+```
+"mappings": {
+  "movie": {
+    "properties": {
+      "genres": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "index": "not_analyzed"}}},
+      "title": {
+        "type": "string",
+        "analyzer": "english",
+        "copy_to":["suggestion"]},
+      "suggestion": {
+        "type": "string"}}}}
+        
+GET /tmdb/_suggest
+{ "title_suggestion": {
+    "text": "star trec",
+    "phrase": {
+        "field": "suggestion"}}}
+
+{'title_completion': [{'length': 9, 'offset': 0,
+  'options': [
+    {'score': 0.0020846569, 'text': 'star three'},
+    {'score': 0.0019600056, 'text': 'star trek'},
+    {'score': 0.0016883487, 'text': 'star trip'},
+    {'score': 0.0016621534, 'text': 'star they'},
+    {'score': 0.0016162122, 'text': 'star tree'}],
+  'text': u'star trec'}]}                
+```
+
+# 8.1.3 Collate
