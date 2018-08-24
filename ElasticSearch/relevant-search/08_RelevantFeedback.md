@@ -230,4 +230,44 @@ GET tmdb/_search
      "terms": {"field": "genres.name"}}}}
 ```
 
-### Breadcrumb Navigation 8.2.3
+### Grouping Similar Documents 8.3.3
+
+Sometimes it is nice to be able to split results into buckets.  This can be accomplished using aggregations
+
+```
+GET /tmdb/_search
+{ "query":{
+        "match":{
+            "title": "star trek"}},
+    "aggs": {
+        "statuses": {
+            "terms": {"field":"status"},
+            "aggs": {
+                "hits": {
+                    "top_hits": {}}}}}}
+
+{ 'buckets': [
+  { 'doc_count': 82,
+    'key':  'released',
+      'hits': { 'hits': { 'hits': [
+        { '_id':  '13475',
+          '_index':  'tmdb',
+          '_score': 6.032624,
+          '_source': {
+            'name':  'Star Trek: Alternate Reality Collection',
+            'popularity': 2.73003887701698, ... },
+                   /* more documents */ },
+  { 'doc_count': 4,
+    'key':  'in production',
+      'hits': { 'hits': { 'hits': [
+        { '_id':  '13475',
+          '_index':  'tmdb',
+          '_score': 6.032624,
+          '_source': {
+            'name':  'Star Trek: Axanar',
+            'popularity': 3.794237016983887, ... },
+                /* more documents */ },
+         /* more groups */],
+  'doc_count_error_upper_bound': 0,
+  'sum_other_doc_count': 0}                    
+```
