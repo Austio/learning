@@ -10,7 +10,7 @@
 |Recall|Percentage of relevant documents returned in the result set (global correct vs returned correct)|4|
 |Boosting|Increases the relevance score of a subset of results|7|
 |Filtering|Removes a subset of corpus of documents from consideration of a given search|7|
-|Signals||?|
+|Signals|Any component of the relevance scoring calculation that maps to meaningful, measurable user/business information (movies sell well, movie text about users query)|5|
 
 #### Precision and Recall
 For fruit example: say you want an apple and search for "red medium fruit"
