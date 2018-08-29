@@ -77,6 +77,56 @@ Takes good search of inferring users intent and providing documents that carry i
 
  - Understand meaning of users query.  Search for things, not strings
  - Augments queries and documents to take advantage of new relevance signals to increase recall
- - 
+
+Synonyms and Signals are complementary approaches.  
+ - Document tagging, have users only apply the most specific tag then hierarchically strucutre synonyms can be automatically augmented on the documents with less specific tags
+
+##### Signals
+
+1. Easy implemention is adding a `phrase_tag` field so that content curators can tag articles with things like `heart_attack`
+ - requires rigorous consistency and deep domain expertise
+ - for example is acute heart attack different than heart attack
+
+2. Crowd sourcing is another way to do this with end user tagging
+
+3. Thrashing based search.  When a user searches for multiple things then lands on the document, can tag document with the thrashed terms
+ - search for myocardial infarction, then cardiac arrest then heart attack and lands on page.  Those are probably related
+
+##### Synonyms
+Synonyms can be useful to increase recall when combining related terms
+TV, T.V., television
+
+And are also useful when combining hierarchy
+marigold => yellow, bright_color
+canary => yellow, bright_color
+yellow => bright_color
+
+TF*IDF works with us here because a term like marigold will most likely occur less often than yellow or bright_color so they will have a higher score
+
+#### Machine Learning
+
+Uses similar co-occurrence model as Collaborative filtering
+ - Other options are latent semantic analysis, latent Direichlet allocation and Word2vec algorithm
+
+#### Phrases
+
+Before content augmentation, identify statistically significant phrases in the text and add them to the columns that are co-occuranced.
+ - for example land developer and software developer
+ - allows for suggestions of `phrases` which is better than words
  
-11.3.2
+Collocation Extraction is a common technique for identifying these.  Text of document is split into n-grams then counted for most occurences.
+
+#### Search as recommendation engine
+
+If we remove the search box and filters, we can still make recommendations to the users.
+
+Recommendations are like a consultant.
+
+Recommendations provide users with the best item available based on best information at hand.
+ - User Information: Engagement, demographic
+ - Item Information: Metadata/filtering
+ - Recommendation context: Where is request coming from
+
+
+
+
