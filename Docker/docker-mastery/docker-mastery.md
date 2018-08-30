@@ -1,3 +1,5 @@
+[Course Repo] (https://github.com/BretFisher/udemy-docker-mastery)
+
 ### Definitions
 
  - Image: application we want to run
@@ -233,6 +235,8 @@ if you use this and need to rebuild use
  docker-compose up --build
  or
  docker-compose build
+ 
+ 
 
 ## Assignments
  
@@ -277,3 +281,10 @@ $ docker container run --network testing alpine nslookup search
 MULTIPLE TIMES RUN
 $ docker container run --network testing centos curl -s search:9200
 ``` 
+
+### Compose Files
+- build compose file for drupal/postgres
+   - up:   `docker-compose -f 54_drupal_compose.yml up`
+   - down: `docker-compose -f 54_drupal_compose.yml down -v -rmi` (remove volumes, remove images)
+
+- build custom yml file
