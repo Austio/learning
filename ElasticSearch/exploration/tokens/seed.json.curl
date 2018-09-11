@@ -1,0 +1,18 @@
+curl -X put "http://localhost:9200/people" -H "Content-Type:application/json" -d '
+{
+  "mappings": {
+
+  }
+}
+'
+
+curl -X POST "http://localhost:9200/_bulk" -H 'Content-Type: application/json' -d '
+{"index":{"_index":"people","_type":"people"}}
+{"name":"jane","current_city":"Austin","university_city":"Houston","worked_city":"Kansas City","trained_city":"Chicago"}
+{"index":{"_index":"people","_type":"people"}}
+{"name":"joe","current_city":"New York","university_city":"Raleigh","worked_city":"Miami","trained_city":"Phoenix"}
+{"index":{"_index":"people", "_type": "people"}}
+{"name":"jim","current_city":"San Franscisco","university_city":"San Mateo","worked_city":"San Fernando","trained_city":"Santa Anna"}
+'
+
+
