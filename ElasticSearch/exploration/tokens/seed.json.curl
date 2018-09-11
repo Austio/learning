@@ -1,7 +1,20 @@
-curl -X put "http://localhost:9200/people" -H "Content-Type:application/json" -d '
-{
-  "mappings": {
+curl -X put "localhost:9200/people" -H "Content-Type:application/json" -d'{ "settings" : { "index" : { } }}'
 
+curl -X PUT "http://localhost:9200/people/_mapping/people" -H "Content-Type:application/json" -d '
+{
+  "properties": {
+    "current_city": {
+      "type": "text"
+    },
+    "university_city": {
+      "type": "text"
+    },
+    "worked_city": {
+      "type": "text"
+    },
+    "trained_city": {
+      "type": "text"
+    }
   }
 }
 '
