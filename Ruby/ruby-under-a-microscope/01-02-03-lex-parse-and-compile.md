@@ -175,4 +175,78 @@ So stepping through the AST that is generated more generially
 
 Internally, this compile is in [compile.c](https://github.com/ruby/ruby/blob/9580586b63459318664e5309b8d19a626fff46f2/compile.c#L5838) in ruby and handles all the switches on what to push to yarv based on each possible path.  See page 42 of book to get more idea on this. 
  
+ #### Local Table
  
+ *CONCEPT*
+ This is the thing that holds the parameters that are passed in.  Each scope has its own local table, which is why scopes don't have access to local variables that are external to their scope.
+ 
+ so when compiling something like
+ 
+|Code|LocalTable|
+|---|---|
+| def add_two(a,b)<br>  sum = a+b<br>end|sum, b<Arg>, c<Arg>|  
+
+ - `<Arg>` Method/Block Argument
+ - `<Rest>` Array of unnamed args using splat (*)
+ - `<Post>` Standard argument after splt array
+ - `<Block>` Proc object passed using the & operator
+ - `<Opt=i>` Parameter with default value, i is an index into a new storage table saved along side the YARV snippet, not the actual local table
+ 
+##### Local Table REST example 
+Notice in the example below that we end up with a rest, post and 2 args due to the way that we compile the Ruby method.  
+  
+```
+code = <<CODE 
+def complex_formula(a, b, *args, c)
+  a + b + args.size + c
+end
+CODE
+  
+puts RubyVM::InstructionSequence.compile(code).disasm
+
+ == disasm: #<ISeq:complex_formula@<compiled>:1 (1,0)-(3,3)>=============
+ local table (size: 4, argc: 2 [opts: 0, rest: 2, post: 1, block: -1, kw: -1@-1, kwrest: -1])
+ [ 4] a<Arg>     [ 3] b<Arg>     [ 2] args<Rest> [ 1] c<Post>
+ 
+ ```
+
+##### Local Table OPT
+
+With this one it is more complicated b/c there are two paths and ruby has to save the default value of the variable as it is compiled and then override if it receives a parameter.
+
+```
+code = <<CODE 
+def complex_formula(a, b=5)
+  a + b
+end
+CODE
+
+puts RubyVM::InstructionSequence.compile(code).disasm
+
+0000 putobject        5                                               (   1)
+0002 setlocal_OP__WC__0 b
+...
+== disasm: #<ISeq:complex_formula@<compiled>:1 (1,0)-(3,3)>=============
+local table (size: 2, argc: 1 [opts: 1, rest: -1, post: 0, block: -1, kw: -1@-1, kwrest: -1])
+[ 2] a<Arg>     [ 1] b<Opt=0>
+``` 
+
+##### Local Table Keyword Args
+
+To support keyword arguments there are a TON of extra instructions that have to execute in YARV
+
+```
+code = <<CODE 
+def complex_formula(a, b: 5)
+  a + b
+end
+CODE
+
+puts RubyVM::InstructionSequence.compile(code).disasm
+
+...
+== disasm: #<ISeq:complex_formula@<compiled>:1 (1,0)-(3,3)>=============
+local table (size: 3, argc: 1 [opts: 0, rest: -1, post: 0, block: -1, kw: 1@0, kwrest: -1])
+[ 3] a<Arg>     [ 2] b          [ 1] ?          
+
+``` 
