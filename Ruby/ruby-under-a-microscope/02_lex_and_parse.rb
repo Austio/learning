@@ -20,12 +20,19 @@ puts "*"*50
 puts "ParseTree Code"
 puts "*"*50
 pp system("ruby", "--dump", "parsetree", file)
-# pp system("ruby", "--dump", "parsetree_with_comment", file)
+pp system("ruby", "--dump", "parsetree_with_comment", file)
 
 puts "*"*50
 puts "Compiled Code"
 puts "*"*50
 pp system("ruby", "--dump", "insns", file)
+
+puts "*"*50
+puts "Compiled Code YARV"
+puts "*"*50
+puts RubyVM::InstructionSequence.compile(code).disasm
+
+
 
 # puts "*"*50
 # puts "Full Parsing Output"

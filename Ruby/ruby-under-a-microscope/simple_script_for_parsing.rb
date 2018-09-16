@@ -1,1 +1,3 @@
-puts 2 + 2
+10.times do |n|
+  puts n
+end
