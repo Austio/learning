@@ -72,3 +72,16 @@ Or to display the c generate AST `ruby --dump parsetree simple.rb`
 ### Chapter 2 Compiling
 
 ##### Compiling
+
+Ruby 1.9+ compile the AST generated from above in the same fashion that C/Java do but it happens automatically. 
+
+They introduced YARV (Yet another Ruby VM) to execute the compiled code.  It's primary differences from jvm are.
+ -Ruby doesn't expose the compiler as a separate tool
+ -Ruby doesn't compile all the way down to bytecode
+ - It is a `stack oriented vm` so it maintains a stack of values that it can work on
+  
+You can see full output from Ruby Seq for parse/lex/compile example 02_lex_and_parse.rb
+ 
+|AST|Does|YARV|
+|NODE_SCOPE|creates the new scope of access, keeps table w/ values|Empty Box|
+|NODE_FCALL|a function call|Push receiver, push arguments, call method/func|
