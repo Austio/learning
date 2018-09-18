@@ -248,5 +248,35 @@ puts RubyVM::InstructionSequence.compile(code).disasm
 == disasm: #<ISeq:complex_formula@<compiled>:1 (1,0)-(3,3)>=============
 local table (size: 3, argc: 1 [opts: 0, rest: -1, post: 0, block: -1, kw: 1@0, kwrest: -1])
 [ 3] a<Arg>     [ 2] b          [ 1] ?          
-
 ``` 
+
+### Chapter 3 - How Ruby Executes Your Code
+
+YARV is a double stack implementations. 
+ - tracks arguments for own internal instructions
+ - tracks arguments for your ruby program
+ 
+1. `rb_control_frame_t` is the control structure that manages this and it has
+ - sp: stack pointer to the YARV stack
+ - pc: program counter, location of current YARV instruction
+ - self
+ - type [METHOD, BLOCK, others]
+2. A stack of `rb_control_frame_t`.  result of caller. The path YARV has taken through ruby program.
+
+As YARV goes through the instructions of a program, it pushes
+
+Default self is main, which has `to_s` to return main `ruby -e 'puts self'` => main
+
+yarv steps for `puts 2 + 2`
+
+Each step in the list increments the PC (program counter) to the next instruction and the SP is pointing to the last element in the array of stack
+
+|yarv|stack|
+|---|---|
+|trace|[] - `set_trace_func`, there so that you can provide function for tracing all executions|
+|putself|[self] - Pushes the main self on the top|
+|putobject 2|[self, 2]|
+|putobject 2|[self, 2, 2]|
+|opt_plus|[self, 4] - opt_plus is optimized instruction|
+|opt_send_simple <callinfo mid puts|[nil] - executes, calls put from c and then leaves nil on stack|
+|leave||
