@@ -256,6 +256,8 @@ YARV is a double stack implementations.
  - tracks arguments for own internal instructions
  - tracks arguments for your ruby program
  
+Implementation of yarv in ruby source is [insns.def](https://github.com/ruby/ruby/blob/08af3f1b3980c3392ee3a8701d2eee08dba9e6a4/insns.def) that file is compiled into vm.inc when ruby is built and that is handed to the compiler to handler
+ 
 1. `rb_control_frame_t` is the control structure that manages this and it has
  - sp: stack pointer to the YARV stack
  - pc: program counter, location of current YARV instruction
