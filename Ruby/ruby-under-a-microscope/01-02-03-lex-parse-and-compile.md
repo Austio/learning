@@ -282,3 +282,41 @@ Each step in the list increments the PC (program counter) to the next instructio
 |opt_plus|[self, 4] - opt_plus is optimized instruction|
 |opt_send_simple <callinfo mid puts|[nil] - executes, calls put from c and then leaves nil on stack|
 |leave||
+
+#### Variable Handling in YARV
+
+Relies on `getlocal` and `setlocal` in [insns.def file](https://github.com/ruby/ruby/blob/08af3f1b3980c3392ee3a8701d2eee08dba9e6a4/insns.def#L68).  Pretty cute name but is simply
+ - get all the environment pointers, loop over all of them in closess order until we find a variable matching
+ - `val = *(vm_get_ep(GET_EP(), level) - idx);` return the value of the ep minux this index
+ 
+getlocal_OP__WC__0 => getlocal operand wildcard 0 OR `getlocal *, 0`
+setlocal_OP__WC__0 => setlocal operand wildcard 0 OR `setlocal *, 0`
+
+When you pass a scope gate, YARV stack gets some space for local variables declared in your scope.  It knows how many due to the `local table` during compilation.
+
+In a simple case like the below. The stack would be
+
+```
+def display_string
+  str = "Local Access"
+  puts str
+end
+```
+
+|Initial Stack||
+|---|---|
+|empty|<- *SP* Stack Pointer|
+|special|<- *EP* Environment Pointer, Block Access|
+|svar/cref|Pointer to special variables in current method ($!, $&) or to current Lexical Scope|
+|str||
+
+|yarv||
+|---|---|
+|putstring "Local Access"|Puts on top of stack (empty) increments SP|
+|setlocal_OP__WC__0 2|Get value at top of stack, and save it in str local variable where str location = EP - 2|
+|putself||
+|getlocal_OP__WC__0 2
+|opt_send_simple <callinfo!mid:puts argc:1>
+
+
+
