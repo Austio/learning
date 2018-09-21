@@ -312,11 +312,66 @@ end
 
 |yarv||
 |---|---|
-|putstring "Local Access"|Puts on top of stack (empty) increments SP|
-|setlocal_OP__WC__0 2|Get value at top of stack, and save it in str local variable where str location = EP - 2|
-|putself||
-|getlocal_OP__WC__0 2
-|opt_send_simple <callinfo!mid:puts argc:1>
+|putstring "Local Access"|Puts on top of stack "Local Access" at current value (empty) increments SP|
+|setlocal_OP__WC__0 2|Get value at top of stack, and save it in str local variable where str location = EP - 2.  Remove "Local Access" from stack|
+|putself| pushes self onto the stack |
+|getlocal_OP__WC__0 2|Get value from variable and put at top of stack|
+|opt_send_simple <callinfo!mid:puts argc:1>||
 
+#### Method Handling
+ 
+ - Method arguments work the same way as local.  
+ - The only difference is that method argument values are pushed *before* the method call occurs. 
 
+#### Dynamic Variable Access (Outside Scope)
+ 
+ - When accessing variables in a parent scope
+ - Special on stack: each frame on stack corresponding to a method call tracks if a block argument exists using this variable (rb_block_t chapter 8)
+ - EPs point to the values of special on each frame
+ - When we need the value of str from EP, it iterates through each EP starting with closest to find the variable [Ruby C Code](https://github.com/ruby/ruby/blob/08af3f1b3980c3392ee3a8701d2eee08dba9e6a4/insns.def#L75)
+ 
+```
+def display_string
+  str = "Dynamic Access"
+  10.times do 
+    puts str
+  end
+end
+```
 
+|Initial Stack||
+|---|---|
+||<- *SP*|
+|special|<- *EP*|
+|svar/cref|<- *SP* Stack Pointer|
+|special| |
+|svar/cref||
+|10||
+|special|<- *EP* Previsous Environment Pointer, Block Access|
+|svar/cref||
+|str||
+
+#### "Special" Variables (svar/cref)
+
+ [Special Variables Matching](https://github.com/ruby/ruby/blob/d325d74174c3ffffa0d75e248897cbb1aae93407/parse.y#L7350)
+ Full script moved to 03_svar_handling.rb
+ All begin with ($) $* to the ARGV array, $! to last exception, $& to regex
+ 
+Demonstration Script where $ is scoped
+```
+str = "Quick fox, Lazy dog"
+/fox/.match(str)
+
+def search(str)
+  /dog/.match(str)
+  puts "Inside match is #{$&}"
+end
+
+search("dog")
+puts "Outside is #{$&}"
+``` 
+
+svar at each scope holds their own set of the special variables ($*)
+cref keeps track of lexical scope of block
+ - lexical: where it was written.  Section of code within syntactical structure to lookup constants (CH 6)
+ - helps a lot with metaprogramming (eval, instance eval) 
