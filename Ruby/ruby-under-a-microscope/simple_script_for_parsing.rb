@@ -1,3 +1,4 @@
-10.times do |n|
-  puts n
+def display_string
+  str = "Local"
+  puts str
 end
