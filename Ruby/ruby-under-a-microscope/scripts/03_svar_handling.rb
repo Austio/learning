@@ -1,3 +1,5 @@
+puts "Demonstrating that $* varaibles are scoped"
+
 str = "Quick fox, Lazy dog"
 /fox/.match(str)
 
