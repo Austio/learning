@@ -20,7 +20,31 @@ YARV handles control with three primary instructions `branchunless`, `branchif` 
 ![Break Statement](./img/04_break_statement.png) 
 ![Iterating through stacks to find catch table](./img/04_handling_throw_iteration.png)
 To handle the throw YARV uses the concept of a `catch table` in each scope.  They contain a single pointer to where execution should continue after an exeception.  When ruby runs into the thow it
--Iteratres through all of the `rb_control_frame_t` in the stack 
+-Iteratres through all of the `rb_control_frame_t` in the stack
+-if it finds a catch table pointer, it resets call stack (CFP pointer) and internal YARV to reflect the next execution point.
+ - then resets internal PC and SP pointers as needed
+-when you use any other throw, it implements catch table with pointer of given name (rescue gets rescue pointer, etc)
+ 
+Things that leave a scope and use break are: 
+ - break (throw 2) 
+ - return (throw 1)
+ - rescue, ensure, retry, redo, next
 
+#### Loops
+
+Ruby implements for loops using each, which is cool to think about.
+
+![For Loop Compiled](./img/04_for_loop_becomes_each.png)
+
+```
+code = <<END
+for i in 0..5
+  puts i
+end
+END
+puts RubyVM::InstructionSequence.compile(code).disasm
+```
+ 
+#### Send  
 
 
