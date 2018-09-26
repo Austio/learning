@@ -97,6 +97,19 @@ END
 RubyVM::InstructionSequence.compile(c).disasm
 ```
 
+Keyword Arguments (4-2) use a hash for implementation.
+
+```
+a = <<END
+def add_two(a: 5000, b: 929)
+  a + b
+end
+
+puts add_two(a:2, b:1)  
+END
+pp RubyVM::InstructionSequence.compile(a).disasm
+```
+
 ##### CFUNC: Calling built in ruby methods
 
  - Many build in methods are implement as CFUNC (VM_METHOD_TYPE_CFUNC in source)
