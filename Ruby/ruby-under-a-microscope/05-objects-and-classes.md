@@ -150,4 +150,3 @@ p a.singleton_class.methods
 ```
 
 When we create a new class, we actually get multiple classes.  One is the meta class that holds the class methods.
-
