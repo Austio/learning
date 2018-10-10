@@ -11,12 +11,64 @@ A ruby module
 - has a constants table
 
 Different from classes in that
-- can't instantiat from them, new doesn't exist on Module
+- can't instantiate from them, new doesn't exist on Module
 - can't specify superclass
 - includable into classes
+
+So really you don't need 
+ - `iv_index_tbl` -> no new, so no instances
+ - `refined_class` or `allocator`
 
 Implemented using RClass/rb_classext_struct but can't use refined_class, allocator or super
 ![Modules RClass/rb_classext_struct](img/06_Modules_RClass_structure.png)
 
+Under the hood when you `include` a module (ruby refers to this as the included class).  
+ - The super pointer of your RClass module is pointed to what the RClass class is pointed to
+ - The super pointer of your RClass class is pointed to the RClass module 
+ 
+The module that is put in the tree is a COPY of the original module, which is why `super` pointers point correctly when you include the same module in multiple classes 
+ 
+This is why when you include multiple modules, the last included one is the first one looked for, the super pointes are pushed onto the class they are included. 
+ 
+`extend` is implemented in the exact same way only on the RClass of the class's class 
+ 
+#### Method Lookup 
+ 
+This simple in inheritance model using RClass with a super pointer allows the method lookup to be simple.
+ 1. Set current class to receiver
+ 2. Look through method table in current class
+ 3a. If found call 
+ 3b. else, set current class to what `super` points to and goto 2
+ 
+```
+module Professor
+  def lectures; end
+end
 
+class Person
+  attr_accessor :first
+  attr_accessor :last
+end
+
+class Mathematician < Person
+  include Professor
+end
+
+ram = Mathematician.new
+ram.first = "Ram"
+```
+
+Ruby has to find `first=` method
+ - ram is an `RObject` whose `klass` pointer is pointing to the `RClass` of Mathematician
+ - Look in `m_tbl` of Mathematician `RClass` for `first=`
+ - Not found, follow super of Mathematician `RClass`, which is pointing to Professor
+ - Look in `m_tbl` of Professor `RClass` for `first=`
+ - Not found, follow super of Professor `RClass`, which is pointing to Person
+ - Look in `m_tbl` of Person `RClass` for `first=`, *BINGO*
+ 
+#### Multiple Inheritance
+
+Because Modules are really Classes, ruby supports multiple inheritance using Modules and also keeps it more sane in that you know exactly how things are going to be found because of the single list of ancestors.
+
+#### Global Method Cache 
  
