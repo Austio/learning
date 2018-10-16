@@ -70,5 +70,49 @@ Ruby has to find `first=` method
 
 Because Modules are really Classes, ruby supports multiple inheritance using Modules and also keeps it more sane in that you know exactly how things are going to be found because of the single list of ancestors.
 
-#### Global Method Cache 
+Here is a more complex example.  
+
+```
+module Professor
+  # RClass of Professor points to Employee
+  include Employee 
+end
+
+class Mathematician < Person
+  # RCLASS Mathematician super points to professor, which is a copy of above module
+  include Professor
+  
+  # RClass of copied Professor points to Employee, which is a copy of Employee module
+  include Employee
+end
+```
+
+[Multiple Inheritance Example](./img/06_Multiple_Includes_Inheritance.png)
+
+#### Prepend
+
+Refresh: `prepend Module` vs `include Module` causes method lookup to start at prepended module first instead of the RClass which is defined, then after that lookup things progress normally. 
+
+
+###Caching
  
+#### Global Method Cache  
+- In large linked lists method lookup can be expensive
+- so ruby keeps a cache when it looks things up
+ 
+|klass|defined_class|
+|---|---|
+|Fixnum#times|Integer#times|
+
+#### Inline Method Cache
+[Inline Method Cache](./img/06_inline_method_cache.png)
+- Saves info in YARV instructions
+- Saves mapping between the `times` method and the Integer#times lookup directly
+
+#### Cache Busting
+- ruby must clear the cache to make sure lookups are correct when, this happens frequently
+- when `define` or `undefine` a method
+- include a module in a class
+- use refinements
+- perform a similar action
+
