@@ -93,7 +93,6 @@ end
 
 Refresh: `prepend Module` vs `include Module` causes method lookup to start at prepended module first instead of the RClass which is defined, then after that lookup things progress normally. 
 
-
 ###Caching
  
 #### Global Method Cache  
