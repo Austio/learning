@@ -8,16 +8,14 @@
 4. What rule determines which verses should be sung next
 
 Dry Should save you money
-- Names are important in DRY, i.e. using generic beverage instead of beer (could change to kool-aid as beverage)
-
-- Name over what they represent not what they do
+- Names are important in DRY, name what they represent not what they do
+ - using generic beverage instead of beer (could change to kool-aid as beverage)
 
 Aim to reduce future cost - distressing to see good intentions fail so spectacularly
 - Problem is not bad intention, it’s insufficient patience
 
-
 ### 2 Test Driving Shameless Green
-Getting to green requickly in red/green/refactor is often at oddws with writing perfectly changable code
+Getting to green quickly in red/green/refactor is often at odds with writing perfectly changable code
 
 Don't fret on first test to write, just do it, ow you will slow yourself down unneededly
   Setup - Create env for test
