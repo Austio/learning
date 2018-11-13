@@ -48,8 +48,63 @@ measure { data.map!(&:upcase!) }
  
 CSV requires 13 times memory of file size.  Speed improvement will be between 20 and 35% faster
 
+##### Anonymous Memory Leaks
+
+```
+module Logger
+  extend self
+  attr_accessor :output, :log_actions
+  
+  def log(&event)
+    log_actions ||= []
+    log_actions << event
+  end
+  
+  def play
+    output = []
+    log_actions.each { |e| e.call(output) }
+    puts output.join("\n")
+  end
+end
+```
+
+The above allows you to batch writing error messages to a log independent of when the message was recorded.
+
+However, the `event` block is converted into a proc object and stored in the execution context.  So even an explicit `GC.start` will not clean it
+
+All anonymous blocks are *not* dangerous
+ - They do not store execution context unless converted to Proc object
+ - When calling a func that stores anonymous block, ruby stores a ref to callers stack frame
+ - Callee is guaranteed to exit befre callers stack is popped
+ - When calling with `named` block, RUby assumes it makes sense to keep and clones execution context
+ 
+Prefer anonymous blocks
+
+```
+# named block, converts to Proc
+def take_block(&block)
+  block.call(args)
+end
+take_block { |args| do_something(args) }
+
+# anonymous, does not convert, does not copy execution context
+def take_block
+  yield(args)
+end
+take_block { |args| do_something(args) }
 
 
+# example, where 
+class LargeObject; end;
+def do_something
+  obj = LargeObject.new
+  trap("TERM") { puts obj.inspect }
+end
 
+# C CODE UNDER THE HOOD causes block to proc
+# http://ruby-doc.org/core-2.1.2/Signal.html#method-c-trap
+cmd = rb_block_proc
+``` 
+ 
 
 
