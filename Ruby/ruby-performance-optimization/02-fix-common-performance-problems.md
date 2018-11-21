@@ -105,6 +105,14 @@ end
 # http://ruby-doc.org/core-2.1.2/Signal.html#method-c-trap
 cmd = rb_block_proc
 ``` 
- 
+
+##### Optimize Iterators
+- Ruby will not GC the current object you are iterating before it is finished.  So large list in memory will stay even if you don't need it.
+- Iterators are functions and can (will) create temp objects behind the scenes.  Adding work and huring performance.
+
+```
+
+```
+
 
 
