@@ -1,6 +1,9 @@
 ### Chapter 2 Common Performance Problems
 See [Benchmark](./benchmark.rb) for a really great memory calculator for ruby
- - Common slowness: extra malloc, data structure copying, Execution Context Copy, Memory Heavy Iterator, slow type conversions
+- Common slowness: extra malloc, data structure copying, Execution Context Copy, Memory Heavy Iterator, slow type conversions
+- Optimize memory by avoiding allocations and memory leaks
+- Write faster iterators that take less time/memory
+- Use C when needed
  
 #### Save Memory
 
@@ -48,8 +51,7 @@ measure { data.map!(&:upcase!) }
  
 CSV requires 13 times memory of file size.  Speed improvement will be between 20 and 35% faster
 
-##### Anonymous Memory Leaks
-
+##### Anonymous Memory Leaks (Blocks/Procs)
 ```
 module Logger
   extend self
@@ -105,6 +107,14 @@ end
 # http://ruby-doc.org/core-2.1.2/Signal.html#method-c-trap
 cmd = rb_block_proc
 ``` 
- 
 
+##### Optimize Iterators
+- Ruby will not GC the current object you are iterating before it is finished.  So large list in memory will stay even if you don't need it.
+- Iterators are functions and can (will) create temp objects behind the scenes.  Adding work and hurting performance.
+- Watch for iterator-unsafe ruby standard library functions (each_with_index creates an additional node variable which makes n additional objects)
 
+![Iterators and their Memory Affects](./img/02_ruby_objects_table_iterators.png)
+
+##### Other unsafish areas
+- Date.parse in old ruby versions
+- Object#(class?|is_a?|kind_of?)
