@@ -107,6 +107,7 @@ end
 # http://ruby-doc.org/core-2.1.2/Signal.html#method-c-trap
 cmd = rb_block_proc
 ``` 
+<<<<<<< Updated upstream
 
 ##### Optimize Iterators
 - Ruby will not GC the current object you are iterating before it is finished.  So large list in memory will stay even if you don't need it.
@@ -114,6 +115,21 @@ cmd = rb_block_proc
 - Watch for iterator-unsafe ruby standard library functions (each_with_index creates an additional node variable which makes n additional objects)
 
 ![Iterators and their Memory Affects](./img/02_ruby_objects_table_iterators.png)
+
+
+```
+class Thing; end
+list = Array.new(100) { Thing.new }
+def count
+  puts ObjectSpace.each_object(Thing).count
+end
+
+count # 100
+list.each { GC.start; count; #100 }
+list = nil
+GC.start
+count # 0
+```
 
 ##### Other unsafish areas
 - Date.parse in old ruby versions
