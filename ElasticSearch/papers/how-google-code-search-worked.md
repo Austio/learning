@@ -41,3 +41,36 @@ Goo AND oog AND ogl AND gle AND Sea AND ear AND arc AND rch
 ```
 
 Once the candidate documents are identified we can really search them once loaded in order to find the regex.
+
+
+The full rules for converting Rexexp into search are as follows
+
+
+|Type|emptyable|exact|prefix|suffix|match|
+|---|---|---|---|---|---|
+|'' (empty string)|true|{‘’}|{‘’}|{‘’}|ANY (special query: match all documents)|
+|c (single character)|false|{c}|{c}|{c}|ANY|
+|e? (zero or one)|true|exact(e) ∪ {‘’}|{‘’}|{‘’}|ANY|
+|e* (zero or more)|true|unknown|{‘’}|{‘’}|ANY|
+|e+ (one or more)|emptyable(e)|unknown|prefix(e)|suffix(e)|match(e)|
+
+Alterations
+
+e1 or e2 (alternation)
+- emptyable(e1 or e2) = emptyable(e1) or emptyable(e2)
+- exact(e1 or e2) = exact(e1) ∪ exact(e2)
+- prefix(e1 or e2) = prefix(e1) ∪ prefix(e2)
+- suffix(e1 or e2) = suffix(e1) ∪ suffix(e2)
+- match(e1 or e2) = match(e1) OR match(e2)
+
+e1 e2 (concatenation)
+-emptyable(e1e2) = emptyable(e1) and emptyable(e2)
+-exact(e1e2) = exact(e1) × exact(e2), if both are known or unknown, otherwise 
+-prefix(e1e2) = exact(e1) × prefix(e2), if exact(e1) is known 
+ -or prefix(e1) ∪ prefix(e2), if emptyable(e1)
+ -or prefix(e1), otherwise
+-suffix(e1e2) = suffix(e1) × exact(e2), if exact(e2) is known
+ -or suffix(e2) ∪ suffix(e1), if emptyable(e2)
+ -or suffix(e2), otherwise
+-match(e1e2) = match(e1) AND match(e2)
+
