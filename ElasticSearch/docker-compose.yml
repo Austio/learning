@@ -2,33 +2,41 @@ version: '2'
 
 services:
 
-  elasticsearch63:
-    image: docker.elastic.co/elasticsearch/elasticsearch:6.3.0
-    ports:
-      - "9200:9200"
-      - "9300:9300"
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.5.2
+    container_name: elasticsearch
     environment:
-      ES_JAVA_OPTS: "-Xmx256m -Xms256m"
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
     networks:
       - elk
 
-  kibana63:
-    image: docker.elastic.co/kibana/kibana:6.3.1
+  kibana65:
+    image: docker.elastic.co/kibana/kibana:6.5.2
     ports:
       - "5601:5601"
     networks:
       - elk
     depends_on:
-      - elasticsearch63
+      - elasticsearch
 
-  redis63:
+  redis65:
     image: redis:4.0.5-alpine
     command: ["redis-server", "--appendonly", "yes"]
     hostname: redis
     networks:
       - elk
 
-networks:
+volumes:
+  esdata:
+    driver: local
 
+networks:
   elk:
     driver: bridge
