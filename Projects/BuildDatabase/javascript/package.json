@@ -1,0 +1,10 @@
+{
+  "name": BuildDatabase,
+  "version": "0.0.1",
+  "description": "A simple database",
+  "main": "database",
+  "keywords": [
+    "database",
+    "btree"
+  }
+}
