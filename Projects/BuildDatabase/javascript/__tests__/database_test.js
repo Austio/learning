@@ -46,24 +46,49 @@ describe("Table", () => {
   });
 
   describe("indexes", () => {
+    it(".hasIndexFor", () => {
+      table.createIndex('name');
+      expect(table.hasIndexFor('name')).toEqual(true);
+      expect(table.hasIndexFor('not_name')).not.toEqual(true);
+    });
+
+
     it(".createIndex()", () => {
       table.createIndex('name');
 
-      expect(table.indices.name).toEqual({})
+      expect(table.indices.name).toEqual([])
     });
+
+    it("findByIndex()", () => {
+      table.createIndex('name');
+
+      const jim1 = table.insert({ name: 'jim' });
+      const jim2 = table.insert({ name: 'jim' });
+
+      expect(table.findByIndex('name', 'jim')).toEqual([jim1, jim2])
+    });
+
+
+    it("findByIndex()", () => {
+      table.createIndex('name');
+
+      expect(table.findByIndex('name', 'jim')).toEqual([])
+
+    })
 
     it(".indexObject()", () => {
       table.createIndex('name');
 
       table.indexObject('name', { name: 'jim', id: 5 });
-      expect(table.indices.name.jim).toEqual(5);
+      table.indexObject('name', { name: 'jim', id: 7 });
+      expect(table.indices.name.jim).toEqual([5, 7]);
     });
 
     it('pushes to the index when inserting a record attribute', () => {
       table.createIndex('name');
 
       const obj = table.insert({ name: "jim" });
-      expect(table.indices.name["jim"]).toEqual(obj.id)
-    })
+      expect(table.indices.name["jim"]).toEqual([obj.id])
+    });
   });
 });

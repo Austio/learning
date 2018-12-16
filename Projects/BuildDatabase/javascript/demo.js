@@ -3,7 +3,7 @@ const Table = require('./database').Table;
 const t = new Table();
 t.createIndex('indexedName');
 
-for(let i = 0; i < 100000; i++) {
+for(let i = 0; i < 1000000; i++) {
   t.insert({ name: i, indexedName: i })
 }
 
