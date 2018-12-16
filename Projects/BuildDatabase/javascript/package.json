@@ -1,10 +1,13 @@
 {
-  "name": BuildDatabase,
+  "name": "BuildDatabase",
   "version": "0.0.1",
   "description": "A simple database",
   "main": "database",
-  "keywords": [
-    "database",
-    "btree"
+  "devDependencies": {
+    "jest": "^23.6.0",
+    "nodemon": "^1.18.9"
+  },
+  "scripts": {
+    "test": "jest"
   }
 }
