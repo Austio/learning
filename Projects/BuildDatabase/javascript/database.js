@@ -1,34 +1,54 @@
 
 class Table {
   constructor() {
-    this.lastId = 0;
-    this.store = {}
+    this.store = [];
+    this.indices = {};
+  }
+
+  get indexedKeys() {
+    return Object.keys(this.indices);
+  }
+
+  get storeKeys() {
+    return Object.keys(this.store);
   }
 
   insert(obj) {
-    this.lastId += 1;
-    obj.id = this.lastId;
-    this.store[this.lastId] = obj;
+    obj.id = this.length + 1;
+    this.store.push(obj);
+
+    this.indexedKeys.forEach((index) => {
+      this.indexObject(index, obj);
+    });
 
     return obj;
   }
 
   findById(id) {
-    return this.store[id];
+    console.log(this.store);
+    return this.store[id - 1];
   }
 
   findBy(attr, value) {
-    const keys = Object.keys(this.store);
+    return this.store.filter(elm => {
+      return elm[attr] === value
+    });
+  }
 
-    for(let i = 1; i <= keys.length; i++) {
-      if (this.store[i][attr] === value) {
-        return this.store[i];
-      }
-    }
+  createIndex(attr) {
+    this.indices[attr] = this.indices[attr] || {};
+  }
+
+  indexObject(maybeIndex, obj) {
+    if (!this.indices[maybeIndex]) return;
+
+    const key = obj[maybeIndex];
+
+    this.indices[maybeIndex][key] = obj.id;
   }
 
   get length() {
-    return this.lastId
+    return this.store.length;
   }
 }
 
