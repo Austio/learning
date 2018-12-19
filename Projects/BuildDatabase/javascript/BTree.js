@@ -1,13 +1,38 @@
 
 class Node {
   constructor(options = {}) {
+    this.max = Object.keys(options).includes('max') ? options.max : 100;
     this.keys = [];
     this.childNodes = null;
     this.isLeaf = options.isLeaf || true;
   }
 
-  insertKey(indexKey, id) {
-    this.keys.push({ key: indexKey, value: id });
+  get isFull() {
+    return this.keys.length >= this.max;
+  }
+
+  addIndex(newIndex, newValue) {
+    if (this.isFull) return false;
+
+    const newIndexItem = { index: newIndex, value: newValue };
+    if (this.keys.length === 0) {
+      this.keys.unshift(newIndexItem);
+      return true;
+    }
+
+    let newIndexItemIndex = null;
+    for (let i = 0; i < this.keys.length; i++) {
+      if (this.keys[i].index >= newIndex) {
+        newIndexItemIndex = i;
+        break;
+      }
+    };
+
+    (newIndexItemIndex === null)
+      ? this.keys.push(newIndexItem)
+      : this.keys.splice(newIndexItemIndex, 0, newIndexItem);
+
+    return true;
   }
 
   get numKeys() {
@@ -30,8 +55,8 @@ class BTree {
   n[x]: Number of nodes at a tree
   cn[x]: Pointer to leave
    */
-  treeInsert({ key, value }) {
-    this.root.insert({ key, value })
+  treeInsert(index, value) {
+    this.root.insert(index, value)
   }
 }
 
