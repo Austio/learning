@@ -67,7 +67,7 @@ describe("BTree", () => {
      expect(b.root.isLeaf).toEqual(true);
   });
 
-  describe("treeInsert", () => {
+  describe("treeInsertNonFull", () => {
     beforeEach(() => b.treeCreate());
 
     it("inserts a node", () => {

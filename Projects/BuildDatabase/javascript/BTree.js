@@ -46,17 +46,23 @@ class BTree {
   }
 
   treeCreate() {
-    this.root = new Node();
+    this.root = new Node({ isLeaf: false });
   }
 
   /*
   r:
   x: node
-  n[x]: Number of nodes at a tree
-  cn[x]: Pointer to leave
+  n[x]: Number of nodes at a tree, also key(i)[x]
+  cn[x]: Pointer to leaf
+  key(i)[x]: i is subscript.  In a node, the value
+
    */
   treeInsert(index, value) {
-    this.root.insert(index, value)
+    // this.root.insert(index, value)
+  }
+
+  treeInsertNonFull(index, value) {
+
   }
 }
 
