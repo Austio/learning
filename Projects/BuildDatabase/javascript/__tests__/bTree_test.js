@@ -17,41 +17,44 @@ describe("Node", () => {
     expect(n.isLeaf).toEqual(true)
   });
 
-  describe(".addIndex()", () => {
+  describe(".addKey()", () => {
     it("returns false if it is full", () => {
       const small = new Node({ max: 0 });
 
-      const result = small.addIndex("index", 'v');
+      const result = small.addKey("index", 'v');
       expect(result).toEqual(false);
       expect(small.isFull).toEqual(true)
     });
 
     it("adds to keys/value to node", () => {
-      n.addIndex("james", 5)
+      n.addKey("james", 5)
 
       expect(n.keys).toEqual([{
-        index: "james",
+        key: "james",
         value: 5,
       }]);
     });
 
     it("adds to keys/value to node when it is less that  the current value", () => {
-      const getKeys = () => n.keys.map(o => o.index)
+      const getKeys = () => n.keys.map(o => o.key)
+      const getVals = () => n.keys.map(o => o.value)
 
-      n.addIndex(1, "v");
+      n.addKey(1, "b");
       expect(getKeys()).toEqual([1]);
 
-      n.addIndex(3, "v");
+      n.addKey(3, "d");
       expect(getKeys()).toEqual([1, 3]);
 
-      n.addIndex(2, "v");
+      n.addKey(2, "c");
       expect(getKeys()).toEqual([1, 2, 3]);
 
-      n.addIndex(4, "v");
+      n.addKey(4, "e");
       expect(getKeys()).toEqual([1, 2, 3, 4]);
 
-      n.addIndex(0, "v");
+      n.addKey(0, "a");
       expect(getKeys()).toEqual([0, 1, 2, 3, 4]);
+
+      expect(getVals()).toEqual(['a', 'b', 'c', 'd', 'e']);
     });
   });
 });

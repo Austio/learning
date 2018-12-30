@@ -11,26 +11,21 @@ class Node {
     return this.keys.length >= this.max;
   }
 
-  addIndex(newIndex, newValue) {
+  addKey(key, value) {
     if (this.isFull) return false;
 
-    const newIndexItem = { index: newIndex, value: newValue };
-    if (this.keys.length === 0) {
-      this.keys.unshift(newIndexItem);
-      return true;
-    }
-
-    let newIndexItemIndex = null;
+    let keyIndex = null;
     for (let i = 0; i < this.keys.length; i++) {
-      if (this.keys[i].index >= newIndex) {
-        newIndexItemIndex = i;
+      if (this.keys[i].key >= key) {
+        keyIndex = i;
         break;
       }
-    };
+    }
 
-    (newIndexItemIndex === null)
-      ? this.keys.push(newIndexItem)
-      : this.keys.splice(newIndexItemIndex, 0, newIndexItem);
+    const newKey = { key, value };
+    (keyIndex === null)
+      ? this.keys.push(newKey)
+      : this.keys.splice(keyIndex, 0, newKey);
 
     return true;
   }
@@ -46,7 +41,7 @@ class BTree {
   }
 
   treeCreate() {
-    this.root = new Node({ isLeaf: false });
+    this.root = new Node({ isLeaf: true });
   }
 
   /*
