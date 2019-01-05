@@ -4,15 +4,24 @@ class Node {
   constructor(options = {}) {
     this.max = Object.keys(options).includes('max') ? options.max : 100;
     this.keys = [];
-    this.childNodes = null;
     this.isLeaf = options.isLeaf || true;
+  }
+
+  inspect() {
+    const i = this.keys;
+
+    if (this.childNodes) {
+
+    }
+
+    return i;
   }
 
   get isFull() {
     return this.keys.length >= this.max;
   }
 
-  addKey(key, value) {
+  insert(key, value) {
     if (this.isFull) return false;
 
     let keyIndex = null;
@@ -23,7 +32,7 @@ class Node {
       }
     }
 
-    const newKey = { key, value };
+    const newKey = { key, value, child: null };
     (keyIndex === null)
       ? this.keys.push(newKey)
       : this.keys.splice(keyIndex, 0, newKey);
@@ -59,14 +68,20 @@ class BTree {
 
    */
   treeInsert(index, value) {
-    // this.root.insert(index, value)
+    if (!this.root) {
+      this.treeCreate();
+    }
+
+    this.root.insert(index, value)
   }
 
   treeInsertNonFull(index, value) {
 
   }
 
-  treeSplit()
+  treeInspect() {
+    return this.root && this.root.inspect();
+  }
 }
 
 module.exports = {
