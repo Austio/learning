@@ -1,4 +1,5 @@
 
+
 class Node {
   constructor(options = {}) {
     this.max = Object.keys(options).includes('max') ? options.max : 100;
@@ -45,6 +46,11 @@ class BTree {
   }
 
   /*
+  https://webdocs.cs.ualberta.ca/~holte/T26/ins-b-tree.html
+  t: numebr of keys on a node, t is minimum per node
+  lowerBound: every node besides root must have t -1 keys and t children
+  upperBound: every node has at most 2t -1 keys, internal node has at most 2t children
+
   r:
   x: node
   n[x]: Number of nodes at a tree, also key(i)[x]
@@ -59,6 +65,8 @@ class BTree {
   treeInsertNonFull(index, value) {
 
   }
+
+  treeSplit()
 }
 
 module.exports = {

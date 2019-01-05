@@ -36,5 +36,7 @@ So if we had values 2 and 4, you could arrange the pointers in an array like so
  - 2 - c[n+1] (ptr to between key[n] and key[n+1])
  - 3 -  key[n+1] (4)
  - 4 - c[n+2] (ptr to greater than key[n+1]
- 
 
+// https://webdocs.cs.ualberta.ca/~holte/T26/b-trees.html
+- They are perfectly balances (leafs at same depth)
+- Every node except the root is at least half full (m/2 values) and cannot contain more than (m-1) values.  The root may have any number of values 1 to m-1
