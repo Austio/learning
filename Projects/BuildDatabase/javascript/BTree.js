@@ -2,85 +2,108 @@
 
 class Node {
   constructor(options = {}) {
-    this.max = Object.keys(options).includes('max') ? options.max : 100;
+    this.degrees = options.degrees || 2;
+    this.children = [];
+    this.values = [];
     this.keys = [];
-    this.isLeaf = options.isLeaf || true;
   }
 
   inspect() {
-    const i = this.keys;
+    return {
+      keys: this.keys,
+      children: this.children.map(c => c.inspect())
+    };
+  }
 
-    if (this.childNodes) {
+  isFull() {
+    const maxKeys = (this.degrees * 2) - 1;
 
+    return this.keys.length >= maxKeys;
+  }
+
+  isLeaf() {
+    return this.children.length === 0;
+  }
+
+  insert(i, key, value, smallerChild, largerChild) {
+    if (i == null) {
+      i = 0;
+      while (key > this.keys[i]) i++;
     }
 
-    return i;
-  }
+    this.keys.splice(i, 0, key);
+    this.values.splice(i, 0, value);
 
-  get isFull() {
-    return this.keys.length >= this.max;
-  }
-
-  insert(key, value) {
-    if (this.isFull) return false;
-
-    let keyIndex = null;
-    for (let i = 0; i < this.keys.length; i++) {
-      if (this.keys[i].key >= key) {
-        keyIndex = i;
-        break;
-      }
+    if (smallerChild) {
+      this.children.splice(i, 0, smallerChild)
     }
 
-    const newKey = { key, value, child: null };
-    (keyIndex === null)
-      ? this.keys.push(newKey)
-      : this.keys.splice(keyIndex, 0, newKey);
 
-    return true;
-  }
-
-  get numKeys() {
-    return this.keys.length;
+    if (largerChild) {
+      this.children.splice(i + 1, 0, largerChild)
+    }
   }
 }
 
 class BTree {
   constructor() {
-    this.root = null;
+    this.root = this.allocateNode();
+    this.degrees = 2;
   }
 
-  treeCreate() {
-    this.root = new Node({ isLeaf: true });
+  inspect() {
+    return this.root.inspect();
   }
 
-  /*
-  https://webdocs.cs.ualberta.ca/~holte/T26/ins-b-tree.html
-  t: numebr of keys on a node, t is minimum per node
-  lowerBound: every node besides root must have t -1 keys and t children
-  upperBound: every node has at most 2t -1 keys, internal node has at most 2t children
+  insert(key, value, node = this.root) {
+    if (this.root.isFull()) {
+      const oldRoot = this.root;
+      this.root = this.allocateNode();
 
-  r:
-  x: node
-  n[x]: Number of nodes at a tree, also key(i)[x]
-  cn[x]: Pointer to leaf
-  key(i)[x]: i is subscript.  In a node, the value
-
-   */
-  treeInsert(index, value) {
-    if (!this.root) {
-      this.treeCreate();
+      this.split(this.root, this.degrees - 1, oldRoot);
+      node = this.root;
     }
 
-    this.root.insert(index, value)
+    let i = 0;
+    while (key > node.keys[i]) i++;
+
+    if (node.isLeaf()) {
+      node.insert(i, key, value)
+    } else {
+      this.insert(key, value, node.children[i]);
+    }
   }
 
-  treeInsertNonFull(index, value) {
-
+  allocateNode() {
+    return new Node({ degrees: this.degrees });
   }
 
-  treeInspect() {
-    return this.root && this.root.inspect();
+  search(key, node = this.root) {
+    let i = 0;
+    while (key > node.keys[i]) i++;
+
+    if (key == node.keys[i]) {
+      return {
+        key: node.keys[i],
+        value: node.values[i]
+      }
+    }
+
+    if (node.isLeaf()) return null;
+    return this.search(key, node.children[i])
+  }
+
+  // x non-full parent
+  // i is index to split at
+  // y full child of x
+  split(x, i, y) {
+    const z = this.allocateNode();
+
+    z.keys = y.keys.splice(i + 1);
+    z.values = y.values.splice(i + 1);
+    z.children = y.children.splice(i + 1);
+
+    x.insert(null, y.keys.pop(), y.values.pop(), y, z);
   }
 }
 
