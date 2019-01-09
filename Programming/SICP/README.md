@@ -16,4 +16,20 @@ Conventional Interfaces
  - How do i structure that addition in a way so that the next thing that comes along will be able to be plugged in
 Metalinguistic Abstraction 
  
-[27:39](https://ocw.mit.edu/courses/electrical-engineering-and-computer-science/6-001-structure-and-interpretation-of-computer-programs-spring-2005/video-lectures/1a-overview-and-introduction-to-lisp/)
+##### Language Parts
+ - Primitive Elements
+ - Means of Combination
+ - Method of Abstraction
+ 
+Lisp in Particuar
+ - Uses Prefix Notation and fully parenthesized
+ - Combination ()
+  - (+ 1 2) 
+   - () is a combinator
+   - + is an operator
+   - 1 and 2 are opperands
+ - Abstraction - Define
+ - (DEFINE A (* 5 5))
+ - (* A A)
+ 
+[43:00](https://ocw.mit.edu/courses/electrical-engineering-and-computer-science/6-001-structure-and-interpretation-of-computer-programs-spring-2005/video-lectures/1a-overview-and-introduction-to-lisp/)
