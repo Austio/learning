@@ -1,6 +1,10 @@
 ### [The Little Schemer](https://repl.it/@AustinStory/LittleSchemer)
 
-CH1
+### Commandments
+ 1. Always ask `null?` as the first question in expressing any function
+ 
+
+### Definitions
   - atom is a string that does not begin with ()
   - list is collection of 0 or more S-Expressions enclosed by ()
     - null list is an empty list ()
@@ -25,6 +29,11 @@ CH1
     - takes two non-numeric atoms
     - atoms: (eq? (quote henry) (quote henry)) => #t
     - atoms: (eq? (quote henry) (quote hudson)) => #f
+  - `lat?`
+    - takes a list, true if all s-expressiosn are atoms
+  - `rember`
+    - remove a member
+      
 
 ```
 (define atom?
@@ -38,4 +47,60 @@ CH1
 (define a (quote peanut))
 (cons a l)
 // (peanut butter and jelly)
+```
+
+#### Define lat
+
+```
+// create lat
+(define lat?
+  (lambda(l) (
+    and
+      (list? l) 
+      (or 
+        (null? l) 
+        (and 
+          (atom? (car l)) 
+          (lat? (cdr l)))))))
+
+
+(lat? (quote(a)) 
+(lat? (cons (quote(a)) (quote(a b c))))
+(lat? (quote a)) 
+
+// Book defintion
+(define lat?
+  (lambda (l)
+    (cond
+      ((not (list? l)) #f)
+      ((null? l) #t)
+      ((atom? (car l)) (lat? (cdr l)))
+      (else #f)
+```
+
+#### Define member?
+```
+(define member?
+  (lambda (x y)
+    (cond
+      ((not (atom? x)) #f)
+      ((not (list? y)) #f)
+      ((null? y) #f)
+      ((eq? x (car y)) #t)
+      ((member? x (cdr y)))
+      (else #f)
+    )  
+  )
+)      
+
+(define arr (cons "a" ()))
+(member? "b" arr)
+
+// Book defined
+(define member?
+  (lambda(a lat)
+    (cond
+      ((null? lat) #f)
+      (else (or (eq? (car lat) a)
+              (member? a (cdr lat)))))))
 ```
