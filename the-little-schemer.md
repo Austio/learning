@@ -1,16 +1,20 @@
 ### [The Little Schemer](https://repl.it/@AustinStory/LittleSchemer)
 
 ### Commandments
- 1. Always ask `null?` as the first question in expressing any function
+ 1. Always ask `null?` as the first question in expressing any function for `lat` and `zero?` for numbers
  2. Use `cons` to build lists
  3. When building a list, describe first typical element then cons it into the natural recursion
- 4. Always change at least 1 arg when recurring that is closer to termination.  When using cdr test termination with #1
+ 4. Always change at least 1 arg when recurring that is closer to termination.  Use `cdr` for `lat` and `sub1` for `numbers`
+ 5. Additions terminates with 0 (+ n 0), multiplication with 1 (x n 1) and cons with () (cons list ())
+ 
+ 
  
 ### Definitions
-  - atom is a string that does not begin with ()
+  - atom is a string/number 
   - list is collection of 0 or more S-Expressions enclosed by ()
     - null list is an empty list ()
     - (null? ()) is true
+  - tuple (tup) list of numbers or an empty list 
   - S-Expression atoms, lists
   - `car` - first s-expression of a non empty list
     - takes non empty list
@@ -241,3 +245,109 @@ insert to the left/right of first occurance of atom
 
 (multisubst "bear" "steak" multiarr) # (bear bear lobster biscuits)
 ```
+
+### Fun with numbers
+```
+(define add1 (lambda (atom) (+ atom 1)))
+(add1 50)
+(define sub1 (lambda (atom) (- atom 1)))
+(sub1 49)
+(define zero? (lambda (atom) (eq? 0 atom)))
+(zero? 1)
+
+#TODO Revisit this PG 61
+(define - 
+  (lambda (a b)
+    (cond
+      ((zero? b) (a))
+      (else (sub1 (- a (sub1 b))))))
+      
+
+(define tuple `(1 2 3 4 5))
+(define addtuple
+  (lambda (t)
+    (cond
+    ((null? t) 0)
+    (else (+ (car t) (addtuple(cdr t)))))))
+(addtuple tuple)      
+
+(define x
+  (lambda (m n)
+    (cond
+      ((zero? n) 0)
+      (else (+ m (x m (sub1 n)))))))
+(x 13 15)
+
+# adds 2 tuples (1 2) (3 4) => (4 6) and (1 2) (1) => (2 2)
+(define tup+
+  (lambda (t1 t2)
+    (cond
+      ((null? t1) t2)
+      ((null? t2) t1)
+      (else 
+        (cons 
+          (+ (car t1) (car t2))
+          (tup+ (cdr t1)(cdr t2)))))))
+(tup+ tuple tuple)
+
+# here order matters, if we check n first it fails for a same m/n like (> 7 7)
+(define >
+  (lambda (m n)
+    (cond
+      ((zero? m) #f)
+      ((zero? n) #t)
+      (else (> (sub1 m) (sub1 n))))))
+(> 100 50)
+
+(define < 
+  (lambda (m n) 
+  (cond
+    ((zero? n) #f)
+    ((zero? m) #t)
+    (else (< (sub1 m) (sub1 n))))))
+(< 100 100)
+
+
+(define = 
+  (lambda (m n)
+  (cond
+    ((and (zero? m) (zero? n)) #t)
+    ((or (zero? m) (zero? n)) #f)
+    (else (= (sub1 m) (sub1 n))))))
+    (= 0 1)
+    
+# Book definition
+
+(define = 
+  (lambda (m n)
+  (cond
+    ((> m n) #f)
+    ((< m n) #f)
+    (else #t)    
+    (= 0 1)
+    
+# up is to the power of    
+
+(define up
+  (lambda (m n)
+  (cond
+    ((zero? n) 1)
+    (else (x m (up m (sub1 n)))))))
+(up 10 3)
+
+(define length
+  (lambda (lat)
+  (cond
+    ((null? lat) 0)
+    (else (add1 (length (cdr lat)))))))
+(length arr)
+
+(define pick
+  (lambda (n lat)
+  (cond 
+    ((zero? n) (car lat))
+    (else (pick (sub1 n) (cdr lat))))))
+(pick 2 arr)
+```
+
+
