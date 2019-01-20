@@ -1,11 +1,14 @@
 ### [The Little Schemer](https://repl.it/@AustinStory/LittleSchemer)
 
 ### Commandments
- 1. Always ask `null?` as the first question in expressing any function for `lat` and `zero?` for numbers
+ 1. Always ask `null?` as the first question in expressing any function for `lat` and `zero?` for numbers.
+  - When recurring on a list of s-expressions, ask if it is null?, atom or else
  2. Use `cons` to build lists
  3. When building a list, describe first typical element then cons it into the natural recursion
  4. Always change at least 1 arg when recurring that is closer to termination.  Use `cdr` for `lat` and `sub1` for `numbers`
+  - When recurring on list of s-expressions, l, user car/cdr if either null? or atom(car l) are true
  5. Additions terminates with 0 (+ n 0), multiplication with 1 (x n 1) and cons with () (cons list ())
+ 6. Simplify only after the function is correct
  
  
  
@@ -41,6 +44,7 @@
     - remove a member
   - typical element - the item when constructing a list that fulfils the definition of what we are looking for  
   - natural recursion - natural recurring of function, normally `fun (cdr lat)`
+  - func* - convention for a function that will recur into a list
 ```
 (define atom?
   (lambda (x)
@@ -348,6 +352,140 @@ insert to the left/right of first occurance of atom
     ((zero? n) (car lat))
     (else (pick (sub1 n) (cdr lat))))))
 (pick 2 arr)
+
+(define mixed-array `(1 bar 3 baz))
+(define no-nums
+  (lambda (lat) 
+  (cond 
+    ((null? lat) ())
+    ((number? (car lat)) (no-nums (cdr lat)))
+    (else (cons (car lat) (no-nums (cdr lat)))))))
+(no-nums mixed-array)
+
+# Type independent equal
+(define eqan? 
+  (lambda (a b)
+    (cond
+      ((and (number? a)(number? b)) (= a b))
+      ((or (number? a)(number? b)) #f)
+      (else (eq? a b)))))
+      (eqan? `foo `foo)
+      
+# Remove occurences of atom      
+(define occur
+  (lambda (a lat)
+  (cond 
+    ((null? lat) ())
+    ((eqan? a (car lat)) (occur a (cdr lat)))
+    (else (cons (car lat) (occur a (cdr lat)))))))
+(occur 1 mixed-array)   
+
+(define one? (lambda (n) (eqan? n 1)))
+(one? `f)
+
+(define rempick-one
+  (lambda (n lat)
+    (cond 
+      ((one? n) (cons (car lat) (cdr (cdr lat))))
+      (else 
+        (cons (car lat) 
+              (rempick-one (sub1 n) (cdr lat)))))))
+(rempick-one 2 mixed-array)    
+
+
+(define llists (cons `lobster lists))
+(define rember*
+  (lambda (a lat)
+    (cond
+      ((null? lat) ())
+      ((atom? (car lat))
+        (cond
+          ((eq? (car lat) a) (rember* a (cdr lat)))
+          (else (cons (car lat)(rember* a (cdr lat))))))
+      (else (cons (rember* a (car lat) (rember* a (cdr lat)))))    
+      )))
+
+(rember `lobster llists)
+
+llists
+# Goes through all lists and insertR
+(define insertR*
+  (lambda (new old l)
+    (cond 
+      ((null? l) l)
+      ((atom? (car l))
+        (cond
+          ((eq? old (car l)) 
+            (cons old (cons new (insertR* new old (cdr l)))))
+          (else (cons (car l)(insertR* new old (cdr l))))))
+      (else (cons
+        (insertR* new old (car l))
+        (insertR* new old (cdr l))
+      )))))
+(insertR* `bis `lobster llists)      
+
+(define occur*
+  (lambda (a l)
+    (cond 
+      ((null? l) 0)
+      ((atom? (car l))
+        (cond
+          ((eq? a (car l)) (add1 (occur* a (cdr l))))
+          (else (occur* a (cdr l)))))
+      (else (
+        + (occur* a (car l)) (occur* a (cdr l))
+      )))))
+(occur* `lobster llists) 
+
+ # TODO Revisit
+(define subst*
+  (lambda (new old l)
+    (cond
+      ((null? l) ())
+      ((atom? (car l))
+        (cond
+          ((eq? (car l) old) 
+            (cons new (subst* new old (cdr l))))
+          (else (cons (car l) (subst* new old (cdr l))))))
+      (else cons (subst* new old (car l))
+        (subst* new old (cdr l))))))
+(subst* `lob `lobster llists)         
+
+
+(define leftmost
+  (lambda (l)
+    (cond 
+      ((atom? (car l)) (car l))
+      (else (leftmost (car l))))))
+(leftmost llists)
+
+(define eqlist?
+  (lambda (a, b) 
+  (cond (
+    ((and (null? a) (null? b)) #t)
+    ((and (atom? (car a)) (atom? (car b)))
+      (and (eq? (car a) (car b)) (eqlist? (cdr a) (cdr b))))
+    ((and (list? (car a)) (list? (car b)))
+      (and (eqlist? (car a) (car b)) (eqlist? (cdr a) (cdr b))))
+    (else #f)
+  ))))
+(eqlist `foo `foo)
+
+
+# for an s expression
+(define equal?
+  (lambda (s1 s2)
+    (cond
+      (and (null? s1) (null? s2) #t)
+      ((and (atom? s1)(atom? s2)) 
+        (eq? s1 s2))
+      ((and (atom? s1)(atom? s2)) #f)
+      (else (and 
+        (equal? (car s1)(car s2))
+        (equal? (cdr s1)(cdr s2)))
+    ))))
+
+
 ```
 
 
