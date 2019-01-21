@@ -9,8 +9,8 @@
   - When recurring on list of s-expressions, l, user car/cdr if either null? or atom(car l) are true
  5. Additions terminates with 0 (+ n 0), multiplication with 1 (x n 1) and cons with () (cons list ())
  6. Simplify only after the function is correct
- 
- 
+ 7. Recur on subparts that are of the same nature (sublists of a list, subexpressions of an arithmetic expression)
+ 8. Use helper functions to abstract from representation
  
 ### Definitions
   - atom is a string/number 
@@ -19,6 +19,7 @@
     - (null? ()) is true
   - tuple (tup) list of numbers or an empty list 
   - S-Expression atoms, lists
+  - arithmetic expression is an atom or two arithmetic expressions combined by (+, x or up)
   - `car` - first s-expression of a non empty list
     - takes non empty list
     - (car l) ~ the car of list l
@@ -484,8 +485,30 @@ llists
         (equal? (car s1)(car s2))
         (equal? (cdr s1)(cdr s2)))
     ))))
-
-
+        
 ```
 
+### Shadows
 
+Create a value function for this ds
+ - underscores wrap expressions for specificity _ 1 + 2
+ - we support +, -, x and ^
+ - specificity is left most first
+ 
+```
+TODO this would be fun to revisit
+(define plus `+)
+(define left_quote `l)
+(define right_quote `r)
+
+(define value
+  (lambda (aexp)
+    (cond
+      (and (atom? aexp) (number? aexp) aexp)
+      ((eq? (car (cdr aexp)) plus) 
+        (+ (value (car aexp)) (value (car (cdr (cdr aexp))))))
+      (and (atom? (car aexp)) (number? (car aexp)) (car aexp))
+    )))
+
+(define aexp `(1 + 5))
+``` 
