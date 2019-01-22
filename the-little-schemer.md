@@ -512,3 +512,64 @@ TODO this would be fun to revisit
 
 (define aexp `(1 + 5))
 ``` 
+
+### Friends and Relations
+
+```
+(define countVals
+  (lambda (val lat) 
+    (cond
+      ((null? lat) 0)
+      ((eq? (car lat) val) (add1 (countVals val (cdr lat))))
+      (else (countVals val (cdr lat))))))
+
+(define set?
+  (lambda (lat)
+    (cond
+      ((null? lat) #t)
+      ((eq? 0 (countVals (car lat) (cdr lat))) (set? (cdr lat)))
+      (else #f))))
+(set? `(1 2 3 3))        
+
+
+(define fruit `(apple peach pear peach plum apple lemon peach))              
+
+(define makeset
+  (lambda (lat)
+    (cond
+      ((null? lat) ())
+      (else (cons (car lat) (rember (car lat) (cdr lat)))))))
+
+(makeset fruit)
+
+(define subset?
+  (lambda (s1 s2)
+    (cond 
+      ((null? s1) #t)
+      (else 
+        (and 
+          (member? (car s1) s2)
+          (subset? (cdr s1) s2))))))
+
+(subset? `(apple plum) frui)
+
+
+(define remberone
+  (lambda (a lat)
+    (cond 
+      ((null? lat) lat)
+      ((eq? a (car lat)) (cdr lat))
+      (else (cons (car lat) (remberone a (cdr lat)))))))
+
+(define eqset? 
+  (lambda (s1 s2)
+    (cond 
+      ((and (null? s1) (null? s2)) #t)
+      ((or (null? s1) (null? s2)) #f)
+      (else 
+        (and
+          (member? (car s1) s2)
+          (eqset? (cdr s1) (rember (car s1) s2)))))))
+
+(eqset? `(plum apple plum) `(plum plum apple))
+```
