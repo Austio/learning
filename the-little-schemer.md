@@ -11,6 +11,8 @@
  6. Simplify only after the function is correct
  7. Recur on subparts that are of the same nature (sublists of a list, subexpressions of an arithmetic expression)
  8. Use helper functions to abstract from representation
+ 9. Abstract common patters with new functions
+ 10. Build functions to collect more than 1 value at a time
  
 ### Definitions
   - atom is a string/number 
@@ -20,6 +22,9 @@
   - tuple (tup) list of numbers or an empty list 
   - S-Expression atoms, lists
   - arithmetic expression is an atom or two arithmetic expressions combined by (+, x or up)
+  - pair a list of exactly 2 s-expressions (1 2) (() (1, 2)) (foo (bar))
+  - rel a list of pairs with unique first values
+  - fun is a function
   - `car` - first s-expression of a non empty list
     - takes non empty list
     - (car l) ~ the car of list l
@@ -39,10 +44,9 @@
     - takes two non-numeric atoms
     - atoms: (eq? (quote henry) (quote henry)) => #t
     - atoms: (eq? (quote henry) (quote hudson)) => #f
-  - `lat?`
-    - takes a list, true if all s-expressiosn are atoms
-  - `rember`
-    - remove a member
+  - `lat?` takes a list, true if all s-expressiosn are atoms
+  - `rember` remove a member
+  - `col` collector, used to aggregate s-expressions into lists
   - typical element - the item when constructing a list that fulfils the definition of what we are looking for  
   - natural recursion - natural recurring of function, normally `fun (cdr lat)`
   - func* - convention for a function that will recur into a list
@@ -488,7 +492,7 @@ llists
         
 ```
 
-### Shadows
+### CH 6. Shadows
 
 Create a value function for this ds
  - underscores wrap expressions for specificity _ 1 + 2
@@ -513,7 +517,7 @@ TODO this would be fun to revisit
 (define aexp `(1 + 5))
 ``` 
 
-### Friends and Relations
+### CH 7. Friends and Relations
 
 ```
 (define countVals
@@ -572,4 +576,171 @@ TODO this would be fun to revisit
           (eqset? (cdr s1) (rember (car s1) s2)))))))
 
 (eqset? `(plum apple plum) `(plum plum apple))
+
+(define intersect?
+  (lambda (s1 s2)
+    (cond
+      ((null? s1) #f)
+      (else 
+        (or (member? (car s1) s2)
+            (intersect? (cdr s1) s2))))))
+
+(define intersect?
+  (lambda (s1 s2)
+    (cond
+      ((null? s1) #f)
+      ((member? (car s1) s2))
+      ((intersect? (cdr s1) s2)))))
+      
+(intersect? `(peach pear plum) `(plum plum apple))
+
+(define intersect
+  (lambda (s1 s2)
+    (cond
+      ((null? s1) ())
+      ((member? (car s1) s2) 
+        (cons (car s1) (intersect (cdr s1) s2)))
+      ((intersect (cdr s1) s2)))))
+
+(intersect `(peach pear plum) `(plum plum apple))
+
+(define union
+  (lambda (s1 s2)
+    (cond
+      ((null? s1) s2)
+      ((member? (car s1) s2) 
+        (union (cdr s1) s2))
+      (else
+        (cons (car s1) (union (cdr s1) s2))))))
+
+(union `(peach pear plum) `(plum plum apple))
+
+(define difference
+  (lambda (s1 s2)
+    (cond 
+      ((null? s1) ())
+      ((member (car s1) s2) 
+        (difference (cdr s1) s2))
+      (else (cons (car s1) (difference (cdr s1) s2))))))
+
+(difference `(peach pear plum) `(plum plum apple))
+
+(define intersectall
+  (lambda (set) 
+    (cond
+      ((null? (cdr set)) (car set))
+      (else 
+        (intersect 
+          (car set) 
+          (intersectall (cdr set)))))))
+
+(intersectall `((peach pear plum) (plum plum apple pear) (pear plum)))
+
+(define a-pair? 
+  (lambda (pair)
+    (and (list? pair) (eq? 2 (length pair)))))
+(a-pair? `(1 2))
+
+(define pairs `((1 2)(3 4)))
+
+(define revrel
+  (lambda (pairs)
+    (cond
+      ((null? pairs) ())
+      (else 
+        (cons 
+          (cons (car(cdr(car pairs)))(car(car pairs)))
+          (revrel(cdr pairs)))))))
+
+(revrel pairs)
+```
+
+### CH8. Lambda the Ultimate
+
+Functions with currying and partial application
+
+```
+(define rember-f
+  (lambda (test?)
+    (lambda (a lat)
+      (cond
+        ((null? lat) ())
+        ((test? (car lat) a) (cdr lat))
+        (else (cons (car lat)
+          ((rember-f test? a (cdr lat)))))))))
+
+(define rember-eq? (rember-f eq?))
+(rember-eq? steak multiarr)
+
+
+(define insertL-f
+  (lambda (test?)
+    (lambda (insert pivot l)
+      (cond
+        ((null? l) ())
+        ((test? pivot (car l)) (cons insert (cons pivot l)))
+        (else (cons (car a)
+          ((insertL-f test?) insert pivot (cdr l))))))))
+(define insertLF (insertL-f eq?))
+(insertLF `icecream steak multiarr)
+
+(define insertR-f
+  (lambda (test?)
+    (lambda (insert pivot l)
+      (cond
+        ((null? l) ())
+        ((test? pivot (car l)) (cons pivot (cons insert l)))
+        (else (cons (car a)
+          ((insertR-f test?) insert pivot (cdr l))))))))
+(define insertRF (insertR-f eq?))
+(insertRF `icecream steak multiarr)
+
+;dynamically add either to the left or right
+(define insertG-f
+  (lambda (l_or_r)
+    (cond
+      ((eq? `l l_or_r) insertL-f)
+      (else insertR-f))))
+
+(define insertRGF ((insertG-f `r) eq?))
+(insertRGF `icecream steak multiarr)
+
+(define putleft 
+  (lambda (insert pivot l)
+    (cons insert (cons pivot l))))
+
+(define putright 
+  (lambda (insert pivot l)
+    (cons pivot (cons insert l))))
+
+(define insertGSeq-f
+  (lambda (test? sequence)
+    (lambda (insert pivot l)
+      (cond
+        ((null? l) ())
+        ((test? pivot (car l)) (sequence insert pivot l))
+        (else (cons (car a)
+          ((insertR-f test?) insert pivot (cdr l))))))))
+(define insertLFSeq (insertGSeq-f eq? putleft))
+(insertLFSeq `icecream steak multiarr)
+
+(define insertRFSeq (insertGSeq-f eq? putright))
+(insertRFSeq `icecream steak multiarr)
+
+(define atom-to-function
+  (lambda (a)
+    (cond 
+      ((eq? a quote(x)) x)
+      ((eq? a quote(+)) +)
+      (else up))))
+
+(define value 
+  (lambda (nexp) 
+    (cond
+      ((atom? nexp) nexp)
+      (else 
+        ((atom-to-function (operator nexp)) 
+          (value (first-sub-exp nexp))
+          (value (second-sub-exp nexp))))))
+
 ```
