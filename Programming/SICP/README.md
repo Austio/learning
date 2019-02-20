@@ -1,6 +1,9 @@
 ### SICP: Structured Interpretation of Computer Programs
 
-#### Lecture 1
+[Video Lectures](https://ocw.mit.edu/courses/electrical-engineering-and-computer-science/6-001-structure-and-interpretation-of-computer-programs-spring-2005/video-lectures/1a-overview-and-introduction-to-lisp/)
+[Interactive Book](http://sarabander.github.io/sicp/html/index.xhtml#SEC_Contents)
+
+#### Chapter 1 Building Abstractions with Procedures
 Computer Science is really about controlling complexity in large programs.  
 It is different than physical systems b/c it is an imagined system, not real.  Electrical engineers have physical constraints when building (tolerance, noise).  Constraints in CS are only the limitations of our own minds.
 
@@ -17,11 +20,11 @@ Conventional Interfaces
 Metalinguistic Abstraction 
  
 ##### Language Parts
- - Primitive Elements
- - Means of Combination
- - Method of Abstraction
+ - Primitive Elements/Expressions
+ - Means of Combination - compound elements from simpler ones
+ - Method of Abstraction - compound elements named and manipulated as units
  
-Lisp in Particuar
+Lisp in Particular
  - Uses Prefix Notation and fully parenthesized
  - Combination ()
   - (+ 1 2) 
@@ -31,5 +34,7 @@ Lisp in Particuar
  - Abstraction - Define
  - (DEFINE A (* 5 5))
  - (* A A)
- 
-[43:00](https://ocw.mit.edu/courses/electrical-engineering-and-computer-science/6-001-structure-and-interpretation-of-computer-programs-spring-2005/video-lectures/1a-overview-and-introduction-to-lisp/)
+ - (DEFINE (SQUARE x) (* x x))
+ - (DEFINE SQUARE (LAMBDA x) (* x x))
+ - Can't tell the difference between primatives and built in (+ vs SQUARE)
+
