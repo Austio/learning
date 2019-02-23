@@ -71,7 +71,6 @@ PrepareResult prepare_statement(InputBuffer* input_buffer, Statement* statement)
   return PREPARE_UNRECOGNIZED_STATEMENT;
 }
 
-// Currently stubs until we implement them
 void execute_statement(Statement* statement) {
     switch(statement->type) {
         case (STATEMENT_INSERT):
