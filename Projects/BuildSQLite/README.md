@@ -15,3 +15,8 @@ Any query on the database goes through several steps
    - B-tree - Nodes, 1 page in length.  Retrieve or save to disk
    - pager - Read/Write pages of data at offsets in db file.  Caches recently accessed and determines when to write back to memory
    - os interface - Interface for pager to various OS
+   
+### Part 5
+
+Once we have some items complete, our diagram maps to our c functions in the following way
+![Current Architecture](./assets/arch-part5.gif)   

@@ -1,11 +1,13 @@
+require 'securerandom'
+
 describe 'database' do
   before(:all) do
     %x( gcc -o db ./db.c )
   end
 
-  def run_script(commands)
+  def run_script(commands, db_name = "#{Time.now.to_i}_#{SecureRandom.hex}")
     raw_output = nil
-    IO.popen("./db", "r+") do |pipe|
+    IO.popen("./db #{db_name}", "r+") do |pipe|
       commands.each do |command|
         pipe.puts command
       end
@@ -17,6 +19,10 @@ describe 'database' do
     end
     raw_output.split("\n")
   end
+  #
+  # before(:each) {
+  #   run_script([".clear"]);
+  # }
 
   it 'inserts and retreives a row' do
     result = run_script([
@@ -88,5 +94,38 @@ describe 'database' do
       "db > Executed.",
       "db > "
     ])
+  end
+
+  it "persist data after closing connection" do
+    db_name = Time.now.to_i
+
+    username = "me"
+    email = "a@me.com"
+    script = [
+        "insert 1 #{username} #{email}",
+        "select",
+        ".exit"
+    ]
+    returns = [
+        "db > Executed.",
+        "db > (1, #{username}, #{email})",
+        "Executed.",
+        "db > ",
+    ]
+    result = run_script(script, db_name)
+    expect(result).to match_array(returns)
+
+    script1 = [
+        "select",
+        ".exit"
+    ]
+
+    returns1 = [
+        "db > (1, #{username}, #{email})",
+        "db > ",
+        "Executed."
+    ]
+    result1 = run_script(script1, db_name)
+    expect(result1).to match_array(returns1)
   end
 end
