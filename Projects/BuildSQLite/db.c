@@ -23,7 +23,7 @@ typedef struct InputBuffer_t InputBuffer;
 // Constraint: adding row, only allowing id/username/email
 
 const uint32_t COLUMN_USERNAME_SIZE = 32;
-const uint32_t COLUMN_EMAIL_SIZE = 32;
+const uint32_t COLUMN_EMAIL_SIZE = 255;
 struct Row_t {
   uint32_t id;
   char username[COLUMN_EMAIL_SIZE];
