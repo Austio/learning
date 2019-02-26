@@ -4,6 +4,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 #ifndef LEARNING_REPL_H
 #define LEARNING_REPL_H
@@ -17,7 +18,6 @@ struct InputBuffer_t {
     size_t buffer_length; // size object in bytes
     ssize_t input_length; // size in bytes, but can be negative for error code
 };
-
 
 const uint32_t COLUMN_USERNAME_SIZE = 32;
 const uint32_t COLUMN_EMAIL_SIZE = 255;
@@ -33,8 +33,6 @@ typedef struct InputBuffer_t InputBuffer;
 
 enum ExecuteResult_t { EXECUTE_SUCCESS, EXECUTE_TABLE_FULL };
 typedef enum ExecuteResult_t ExecuteResult;
-
-
 
 enum MetaCommandResult_t {
     META_COMMAND_SUCCESS,
@@ -101,11 +99,18 @@ struct Pager_t {
 };
 typedef struct Pager_t Pager;
 
-
 struct Table_t {
     Pager* pager;
     uint32_t num_rows;
 };
 typedef struct Table_t Table;
+
+struct Cursor_t {
+  Table* table;
+  uint32_t row_num;
+  bool end_of_table; // represents 1 past where we have data
+};
+typedef struct Cursor_t Cursor;
+
 
 #endif //LEARNING_REPL_H
