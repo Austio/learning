@@ -19,4 +19,10 @@ Any query on the database goes through several steps
 ### Part 5
 
 Once we have some items complete, our diagram maps to our c functions in the following way
-![Current Architecture](./assets/arch-part5.gif)   
+![Current Architecture](./assets/arch-part5.gif)
+
+With any of these persisted items you can open a hex editor with
+```
+vim mydb.db
+:%!xxd
+```   

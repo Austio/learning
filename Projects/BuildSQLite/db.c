@@ -171,6 +171,7 @@ const uint32_t TABLE_MAX_ROWS = ROWS_PER_PAGE * TABLE_MAX_PAGES;
 
 // Create a pager to handle persisting/loading/caching the db tables
 struct Pager_t {
+  // file descriptors index into a per-process file descriptor table maintained by the kernel
   int file_descriptor;
   uint32_t file_length;
   void* pages[TABLE_MAX_PAGES];
