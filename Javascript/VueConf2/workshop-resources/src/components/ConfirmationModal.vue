@@ -2,7 +2,7 @@
   <!-- TASK BEGINS HERE -->
   <AppModal>
     <h3 class="confirmation-message">
-      So you really did it?
+      {{ message }}
     </h3>
     <div class="buttons">
       <AppButton @click="$emit('confirm')">

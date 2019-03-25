@@ -11,51 +11,6 @@
     </ol>
 
     <div class="feeds">
-      <!-- TASK BEGINS HERE -->
-      <div class="feed">
-        <div v-for="news of newsFeed" :key="news.id">
-          <div class="card">
-            <template v-if="news.type === 'ad'">
-              <span class="sponsored">SPONSORED</span>
-              <small>{{ news.author }}</small>
-            </template>
-            <template v-else>
-              <small>{{ news.author }}</small>
-            </template>
-
-            <h3 class="title">{{ news.title }}</h3>
-            <small>{{ news.date }}</small>
-
-            <template v-if="news.type === 'post'">
-              <blockquote class="quote">
-                {{ news.content }}
-              </blockquote>
-            </template>
-            <template v-if="news.type === 'ad'">
-              <img class="banner" :src="news.image"/>
-            </template>
-            <template v-if="news.type === 'event'">
-              <div class="event">
-                <small>Location:</small>
-                <p>{{ news.location }}</p>
-
-                <small>Attendees:</small>
-                <p>{{ news.attendees }}</p>
-
-                <AppButton :type="news.attending ? 'primary' : 'secondary'">
-                  <AppIcon
-                    :icon="news.attending ? 'check' : 'plus'"
-                    class="mr-1"
-                  />
-                  {{ news.attending ? 'You’re attending' : 'Join!' }}
-                </AppButton>
-              </div>
-            </template>
-          </div>
-        </div>
-      </div>
-
-      <!-- DESIRED USE PATTERN -->
       <div class="feed">
         <Component
           v-for="news of newsFeed"
@@ -64,8 +19,6 @@
           :news="news"
         />
       </div>
-
-      <!-- TASK ENDS HERE -->
     </div>
   </div>
 </template>
