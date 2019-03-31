@@ -55,6 +55,17 @@ const SCHEMA = {
       type: 'email'
     }
   },
+  select: {
+    component: 'FormSelect',
+    label: 'Select Stuff',
+    config: {
+      options: [
+        { value: '1', display: 1 },
+        { value: '2', display: 2 },
+        { value: '3', display: 3 },
+      ]
+    },
+  },
   isVueFan: {
     component: 'FormCheckbox',
     label: 'Are you a Vue fan?'
