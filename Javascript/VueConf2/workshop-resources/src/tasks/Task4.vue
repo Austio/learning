@@ -22,7 +22,7 @@
         <input v-model="breed" class="input" type="text">
         <FetchData :url="url">
           <template #loading>
-            <PulseLoader/>
+            LOADING
           </template>
           <template #error="{ error, refresh }">
             <div>
@@ -30,7 +30,7 @@
               <AppButton @click="refresh">Refresh!</AppButton>
             </div>
           </template>
-          <template #default="{ data, isPending, error, refresh }">
+          <template #default="{ data, refresh }">
             <div>
               <img :src="data.message" class="result-image">
               <AppButton @click="refresh">Refresh!</AppButton>
