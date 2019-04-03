@@ -1,5 +1,6 @@
 <template>
   <div>
+    <div>Value is {{ date }}</div>
     <Pickdate v-model="date" />
   </div>
 </template>

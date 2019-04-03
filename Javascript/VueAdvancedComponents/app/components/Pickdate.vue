@@ -31,8 +31,17 @@ export default {
   mounted() {
     this.pikaday = new Pikaday({
       format: this.format,
-      field: this.$refs.pickdate
+      field: this.$refs.pickdate,
+      onSelect: this.handleSelected
     });
+  },
+  beforeDestroy() {
+    this.pikaday.destroy();
+  },
+  methods: {
+    handleSelected(v) {
+      this.$emit("input", v.toString());
+    }
   }
 };
 </script>
