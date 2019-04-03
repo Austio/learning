@@ -1,12 +1,15 @@
 <template>
   <div>
     <label>Select a Date</label>
-    <input ref="pickdate" :value="data" />
+    <input ref="pickdate" :value="value" />
   </div>
 </template>
 
 <script>
-// import Pikaday from "~/plugins/pikaday.client";
+let Pikaday;
+if (process.client) {
+  Pikaday = require("pikaday");
+}
 
 export default {
   name: "PickdateVue",
@@ -26,10 +29,10 @@ export default {
     };
   },
   mounted() {
-    // this.pikaday = new Pikaday({
-    //   format: this.format,
-    //   field: this.$refs.pickdate
-    // });
+    this.pikaday = new Pikaday({
+      format: this.format,
+      field: this.$refs.pickdate
+    });
   }
 };
 </script>

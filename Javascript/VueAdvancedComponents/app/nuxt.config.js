@@ -29,10 +29,7 @@ module.exports = {
   /*
    ** Plugins to load before mounting the App
    */
-  plugins: [
-    { src: "~/plugins/pikaday.client", ssr: false },
-    { src: "~/plugins/moment.client", ssr: false }
-  ],
+  plugins: [],
 
   /*
    ** Nuxt.js modules
