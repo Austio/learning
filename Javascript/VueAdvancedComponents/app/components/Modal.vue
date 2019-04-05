@@ -11,7 +11,19 @@
 
 <script>
 export default {
-  name: "Modal"
+  name: "Modal",
+  data() {
+    return {
+      overflowOriginal: null,
+    };
+  },
+  beforeMount() {
+    this.overflowOriginal = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+  },
+  beforeDestroy() {
+    document.body.style.overflow = this.overflowOriginal;
+  }
 };
 </script>
 
@@ -47,5 +59,4 @@ h1{font-size:2em;margin:0.67em 0;}
 h1{margin:0;}
 *,:after,:before{border:0 solid #dae1e7;}
 .text-center{text-align:center;}
-
 </style>
