@@ -500,7 +500,7 @@ nav ul li a:visited:hover {
   }
 }
 
-@media screen and (min-width: 800px) {
+@media screen and (min-width: 600px) {
   .nav-list {
     display: block !important;
   }
@@ -557,4 +557,72 @@ article {
   max-width: 1000px;
   margin: 0 auto;
   padding: 10px;
+}
+
+/*https://www.taniarascia.com/styling-ui-components-from-scratch-buttons-forms/*/
+form {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+
+[type=text],
+[type=email],
+[type=url],
+select,
+textarea {
+  display: block;
+  padding: .5rem;
+  background: transparent;
+  vertical-align: middle;
+  width: 100%;
+  max-width: 100%;
+  border: 1px solid #cdcdcd;
+  border-radius: 4px;
+  font-size: .95rem;
+}
+
+[type=text]:focus,
+[type=email]:focus,
+[type=url]:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border: 1px solid #1E6BD6;
+}
+
+select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAAJCAYAAAA/33wPAAAAvklEQVQoFY2QMQqEMBBFv7ERa/EMXkGw11K8QbDXzuN4BHv7QO6ifUgj7v4UAdlVM8Uwf+b9YZJISnlqrfEUZVlinucnBGKaJgghbiHOyLyFKIoCbdvecpyReYvo/Ma2bajrGtbaC58kCdZ1RZ7nl/4/4d5EsO/7nzl7IUtodBexMMagaRrs+06JLMvcNWmaOv2W/C/TMAyD58dxROgSmvxFFMdxoOs6lliWBXEcuzokXRbRoJRyvqqqQvye+QDMDz1D6yuj9wAAAABJRU5ErkJggg==) 100% no-repeat;
+  line-height: 1
+}
+
+label {
+  font-weight: 600;
+  font-size: 0.9rem;
+  display: block;
+  margin: 0.5rem 0;
+}
+
+.button,
+a.button,
+button,
+[type='button'],
+[type='submit']  {
+  display: inline-block;
+  vertical-align: middle;
+  white-space: nowrap;
+  cursor: pointer;
+  margin: .25rem 0;
+  padding: .5rem 1rem;
+  border: 1px solid #1E6BD6;
+  border-radius: 18px;
+  background: #1E6BD6;
+  color: white;
+  font-weight: 600;
+  text-decoration: none;
+  font-family: sans-serif;
+  font-size: .95rem;
 }

@@ -4,7 +4,7 @@
       <ul>
         <li>
           <nuxt-link class="navbar-link" to="/controlled_component">
-            Controlled Component - 3rd Party
+            Controlled Component
           </nuxt-link>
         </li>
         <li>
