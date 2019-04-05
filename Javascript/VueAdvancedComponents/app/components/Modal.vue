@@ -21,6 +21,18 @@ export default {
     this.overflowOriginal = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
   },
+  mounted() {
+    this.escapeHandler = (e) => {
+      if (e.key === "Escape") {
+        this.$emit('close');
+      }
+    };
+
+    document.addEventListener('keydown', this.escapeHandler);
+    this.$once('hook:destroyed', () => {
+      document.removeEventListener('keydown', this.escapeHandler);
+    })
+  },
   beforeDestroy() {
     document.body.style.overflow = this.overflowOriginal;
   }
