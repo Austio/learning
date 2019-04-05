@@ -1,8 +1,9 @@
 <template>
   <div class="modal-backdrop">
     <div class="modal">
-      This is a modal
-      <button>Close</button>
+      <h1 class="text-center">This is a modal</h1>
+      <p class="text-center">This is the content!</p>
+      <button @click="() => this.$emit('close')" class="float-right">Close</button>
       <button>Confirm</button>
     </div>
   </div>
@@ -15,6 +16,9 @@ export default {
 </script>
 
 <style scoped>
+.float-right {
+  float: right;
+}
 .modal-backdrop {
   position: fixed;
   top: 0;
@@ -30,5 +34,18 @@ export default {
   margin-right: auto;
   max-width: 30rem;
   margin-top: 2rem;
+  background-color: #fff;
+  border-radius: 0.25rem;
+  padding: 2rem;
+  -webkit-box-shadow: 0 15px 30px 0 rgba(0, 0, 0, 0.11),
+    0 5px 15px 0 rgba(0, 0, 0, 0.08);
+  box-shadow: 0 15px 30px 0 rgba(0, 0, 0, 0.11),
+    0 5px 15px 0 rgba(0, 0, 0, 0.08);
 }
+h1{font-size:2em;margin:0.67em 0;}
+*,:after,:before{-webkit-box-sizing:inherit;box-sizing:inherit;}
+h1{margin:0;}
+*,:after,:before{border:0 solid #dae1e7;}
+.text-center{text-align:center;}
+
 </style>

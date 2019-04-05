@@ -40,7 +40,7 @@ export default {
   },
   methods: {
     handleSelected(v) {
-      this.$emit("input", v.toString());
+      this.$emit("input", v.toLocalString());
     }
   }
 };

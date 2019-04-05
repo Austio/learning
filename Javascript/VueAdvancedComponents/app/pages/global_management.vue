@@ -1,7 +1,7 @@
 <template>
   <div>
-    <button @click="() => (showModal = !showModal)">Show Modal?</button>
-    <Modal v-if="showModal" />
+    <button @click="() => (showModal = true)">Show Modal?</button>
+    <Modal v-if="showModal" @close="() => (showModal = false)" />
     <div v-for="i in textLoop" :key="i">
       <br />
       <br />

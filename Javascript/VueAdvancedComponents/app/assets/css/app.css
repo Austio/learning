@@ -570,6 +570,7 @@ form {
 [type=text],
 [type=email],
 [type=url],
+[type=select],
 select,
 textarea {
   display: block;
@@ -586,6 +587,7 @@ textarea {
 [type=text]:focus,
 [type=email]:focus,
 [type=url]:focus,
+[type=select]:focus,
 select:focus,
 textarea:focus {
   outline: none;
