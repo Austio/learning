@@ -7382,6 +7382,11 @@ pngjs@^3.0.0, pngjs@^3.3.3:
   resolved "https://registry.yarnpkg.com/pngjs/-/pngjs-3.4.0.tgz#99ca7d725965fb655814eaf65f38f12bbdbf555f"
   integrity sha512-NCrCHhWmnQklfH4MtJMRjZ2a8c80qXeMlQMv2uVp9ISJMTt562SbGd6n2oq0PaPgKm7Z6pL9E2UlLIhC+SHL3w==
 
+portal-vue@^1.5.1:
+  version "1.5.1"
+  resolved "https://registry.yarnpkg.com/portal-vue/-/portal-vue-1.5.1.tgz#6bed79ef168d9676bb79f41d43c5cd4cedf54dbc"
+  integrity sha512-7T0K+qyY8bnjnEpQTiLbGsUaGlFcemK9gLurVSr6x1/qzr2HkHDNCOz5i+xhuTD1CrXckf/AGeCnLzvmAHMOHw==
+
 posix-character-classes@^0.1.0:
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/posix-character-classes/-/posix-character-classes-0.1.1.tgz#01eac0fe3b5af71a2a6c02feabb8c1fef7e00eab"

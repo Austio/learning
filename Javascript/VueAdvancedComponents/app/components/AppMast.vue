@@ -4,12 +4,17 @@
       <ul>
         <li>
           <nuxt-link class="navbar-link" to="/controlled_component">
-            Controlled Component
+            01 ControlledComponent
           </nuxt-link>
         </li>
         <li>
           <nuxt-link to="/global_management">
-            Modal Global Events
+            02 Modal Global Events
+          </nuxt-link>
+        </li>
+        <li>
+          <nuxt-link to="/portal_modal">
+            03 Portal Modal
           </nuxt-link>
         </li>
       </ul>

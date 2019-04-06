@@ -1,10 +1,12 @@
 <template>
   <div class="modal-backdrop">
     <div class="modal">
-      <h1 class="text-center">This is a modal</h1>
-      <p class="text-center">This is the content!</p>
+      <slot>
+        <h1 class="text-center">This is a modal</h1>
+        <p class="text-center">This is the content!</p>
+      </slot>
       <button @click="() => this.$emit('close')" class="float-right">Close</button>
-      <button>Confirm</button>
+      <button @click="() => this.$emit('confirm')">Confirm</button>
     </div>
   </div>
 </template>
