@@ -12,29 +12,24 @@
   <input id="newsletter" v-model="receiveNewsletter" type="checkbox" />
 
   <Pickdate v-model="date" />
-  <button @click="() => this.showCancelConfirmModal = true">Close Account</button>
+  <AccountSettingsDeleteConfirmationButton />
   <button @click="handleSave">Save</button>
   <button @click="() => this.$emit('close')">Close</button>
-
-  <portal to="modals">
-    <Modal v-if="showCancelConfirmModal" @close="() => this.showCancelConfirmModal = false" />
-  </portal>
 </div>
 </template>
 
 <script>
+  import AccountSettingsDeleteConfirmationButton from '~/components/AccountSettingsDeleteConfirmationButton';
   import Pickdate from '~/components/Pickdate.vue';
-  import Modal from '~/components/Modal.vue';
 
   export default {
     name: "AccountSettings",
-    components: { Pickdate, Modal },
+    components: { AccountSettingsDeleteConfirmationButton, Pickdate },
     data() {
       return {
         email: '',
         receiveNewsletter: false,
         date: '',
-        showCancelConfirmModal: false,
       };
     },
     methods: {
