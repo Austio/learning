@@ -28,3 +28,7 @@
 
 ![With Watcher](./images/05_global_style_cleanup_in_watcher.png)
 
+6. Encapsulating Global Rendering Behavior: Portals
+ - We need a delete account button to display a modal in a different part of our dom tree
+ - Portals give us a way to target some part of our dom anywhere in our app
+ - so the when is decoupled from the how

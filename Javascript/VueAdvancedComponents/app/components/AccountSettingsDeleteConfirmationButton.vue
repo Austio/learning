@@ -1,11 +1,10 @@
 <template>
-<div>
-  <button @click="() => this.showCancelConfirmModal = true">Close Account</button>
+  <button @click="() => this.showCancelConfirmModal = true">Close Account
 
-  <portal to="modals" v-if="showCancelConfirmModal">
-    <Modal @close="() => this.showCancelConfirmModal = false" />
-  </portal>
-</div>
+    <portal to="modals" v-if="showCancelConfirmModal">
+      <Modal @close="() => this.showCancelConfirmModal = false" />
+    </portal>
+  </button>
 </template>
 
 <script>
