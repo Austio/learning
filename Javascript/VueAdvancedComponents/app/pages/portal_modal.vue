@@ -12,7 +12,7 @@
 
 <script>
   import Modal from '~/components/Modal.vue';
-  import AccountSettings from "../components/AccountSettings";
+  import AccountSettings from "~/components/AccountSettings";
 
   export default {
     name: "portal_modal.vue",

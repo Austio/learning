@@ -16,8 +16,9 @@
   <button @click="handleSave">Save</button>
   <button @click="() => this.$emit('close')">Close</button>
 
-
-  <Modal v-if="showCancelConfirmModal" @close="() => this.showCancelConfirmModal = false" />
+  <portal to="modals">
+    <Modal v-if="showCancelConfirmModal" @close="() => this.showCancelConfirmModal = false" />
+  </portal>
 </div>
 </template>
 
