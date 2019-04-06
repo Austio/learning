@@ -1,25 +1,22 @@
 <template>
   <div style="opacity: .5;">
-    <button @click="showModal = true">Show Modal</button>
+    <button @click="showModal = true">Show Account Form Modal</button>
 
     {{ date }}
 
-    <Modal
-      v-if="showModal"
-      @close="showModal = false"
-      @confirm="showModal = false">
-      <Pickdate v-model="date"></Pickdate>
+    <Modal v-if="showModal">
+      <AccountSettings @close="showModal = false"/>
     </Modal>
   </div>
 </template>
 
 <script>
   import Modal from '~/components/Modal.vue';
-  import Pickdate from '~/components/Pickdate.vue';
+  import AccountSettings from "../components/AccountSettings";
 
   export default {
     name: "portal_modal.vue",
-    components: { Pickdate, Modal },
+    components: { AccountSettings, Modal },
     data() {
       return {
         showModal: false,

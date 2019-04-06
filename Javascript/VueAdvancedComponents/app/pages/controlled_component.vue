@@ -1,6 +1,7 @@
 <template>
   <form class="card" @submit.prevent="submit">
     <h4>Controlled Components</h4>
+
     <label for="email">Email</label>
     <input
       id="email"

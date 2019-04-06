@@ -1,9 +1,12 @@
 <template>
-  <div class="continer">
+  <div class="container">
     <AppMast />
     <article class="row">
       <nuxt />
     </article>
+
+    <portal-target name="modals" />
+
   </div>
 </template>
 

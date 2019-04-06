@@ -4,9 +4,9 @@
       <slot>
         <h1 class="text-center">This is a modal</h1>
         <p class="text-center">This is the content!</p>
+        <button @click="() => this.$emit('close')" class="float-right">Close</button>
+        <button @click="() => this.$emit('close')">Confirm</button>
       </slot>
-      <button @click="() => this.$emit('close')" class="float-right">Close</button>
-      <button @click="() => this.$emit('confirm')">Confirm</button>
     </div>
   </div>
 </template>
