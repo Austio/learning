@@ -32,3 +32,15 @@
  - We need a delete account button to display a modal in a different part of our dom tree
  - Portals give us a way to target some part of our dom anywhere in our app
  - so the when is decoupled from the how
+
+7. Reusing multiple Portals
+ - Portal targets can only hold the content for item at a time.  If you reference 2 times it will fail
+ - Don't do multiple portal targets, it does not scale well.
+ - To handle multiple, use v-if on the portal target
+ - Always conditionally render the portal target, 1 target for various things that are Singleton (modals, tooltips, etc)
+
+8.9
+ - Vue merges class attributes passed down to a component with those on the parent element
+
+10
+ - Slots are a great way to compose

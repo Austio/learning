@@ -17,6 +17,12 @@
             03 Portal Modal
           </nuxt-link>
         </li>
+
+        <li>
+          <nuxt-link to="/slots_1">
+            04 Slots
+          </nuxt-link>
+        </li>
       </ul>
     </nav>
   </div>
