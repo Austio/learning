@@ -42,5 +42,73 @@
 8.9
  - Vue merges class attributes passed down to a component with those on the parent element
 
-10
+10-11
  - Slots are a great way to compose
+ - Think of regular slots a regular props
+ - This of scoped slots as passing functions
+
+### [Psuedoslot (function) vs slot](https://codesandbox.io/s/72vq6w35w1)
+```
+<template>
+  <div>
+    <div v-for="contact in contacts">
+      {{ psuedoSlotFxn({ contact }) }}
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  name: "Card",
+  props: ['psudoSlotFxn'],
+  data() {
+    return {
+      contacts: [
+        { first: "jim", last: "jones" },
+        { first: "jane", last: "jones" },
+      ]
+    }
+  },
+}
+</script>
+
+// Used
+<templates>
+  <cards :psudoSlotFxn="({ contact }) => contact.first" />
+</template>
+```
+
+### With Slots
+```
+<template>
+  <div>
+    <div v-for="contact in contacts">
+      <slot :contact="contact" name="contact"/>
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  name: "Card",
+  data() {
+    return {
+      contacts: [
+        { first: "jim", last: "jones" },
+        { first: "jane", last: "jones" },
+      ]
+    }
+  },
+}
+</script>
+
+// Used
+<templates>
+  <cards>
+    <template slot="contact" slot-scope="{ first }">
+      {{ first }}
+    </template>
+  </cards>
+</template>
+```
+
