@@ -152,3 +152,13 @@ export default {
   }
 };
 ```
+
+27 - Really great example of drag and droppable component
+
+30 @2:01 - Great example of focusing searchinput on selection
+
+32 - Refs are not guaranteed to be ordered when they are placed on a v-for
+  - instead grab children of the wrapping v-for
+  - scrollIntoView({ block: 'nearest' }) gives really nice native feel for scrolling
+  
+34 - Setup non-reactive data attributes in order to prevent memory leaks (popper js example, new Popper every open vs reference)
