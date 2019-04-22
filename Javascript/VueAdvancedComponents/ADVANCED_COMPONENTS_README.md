@@ -112,3 +112,43 @@ export default {
 </template>
 ```
 
+16
+ - Data provider components act as containers and accept a slot
+ - They request the data and pass it to their slots
+ - Think Contacts.json request and Contacts Components, break apart data
+ 
+17-21
+ - Slot scopes access one of 3 prop types
+   - data (data.json data provider) some things that are needed to act on (render)
+   - action (functions that do things) want to define behavior but don't know how consumer will use it 
+   - binding props - some things that the
+     - for instance, instaed of passing scoped props for onInput, inputValue, handleBackspace and addTag
+     - instead pass a params that encapsulate the details and let the component add them where they would like
+       - inputValue becomes `inputProps` and it parent would v-bind="inputProps"
+       - eventListenrs of backspace, addtag, onInput become `inputEvents` and would v-on="inputEvents"
+     - if binding props ever need context (tag instead of mouse/key events) curry/partialApplication the `inputEvents` so that it returns a function
+
+22 - Using the renderless component above to create new list/button functionality
+
+25 - Use Data provider to encapsulate watching for the width/height of component and reacting to the width changing     
+
+26 Provide/Inject 
+  - Really nice provide/inject example.  Provide a reactive object in order to send down.
+  - When doing this keep in mind that you can have naming collisions, so namespace them
+ 
+```
+export default {
+  provide() { 
+    return {
+      sharedState: this.sharedState,
+    };  
+  },
+  data() {
+    return {
+      sharedState: {
+        this.activeItem: 1,
+      }
+    }
+  }
+};
+```
