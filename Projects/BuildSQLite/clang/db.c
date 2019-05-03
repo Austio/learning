@@ -325,6 +325,14 @@ Table* db_open(const char* filename) {
   return table;
 }
 
+uint32_t* leaf_node_num_cells(void* node) {
+  return (char *)node + LEAF_NODE_NUM_CELLS_OFFSET;
+}
+// TODO(here) https://cstack.github.io/db_tutorial/parts/part8.html#accessing-leaf-node-fields
+void* leaf_node_cell(void* node, uint32_t cell_num) {
+  return (char *)node + LEAF_NODE_HEADER_SIZE + cell_num * LEAF_NODE_CELL_SIZE;
+}
+
 int main(int argc, char* argv[]) {
     InputBuffer* input_buffer = new_input_buffer();
 
