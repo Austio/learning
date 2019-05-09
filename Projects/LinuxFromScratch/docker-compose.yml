@@ -1,0 +1,6 @@
+version: '3'
+services:
+  lfs:
+    build: "."
+    volumes:
+      - lfs:/var/lib/lfs
