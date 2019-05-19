@@ -26,3 +26,19 @@ With any of these persisted items you can open a hex editor with
 vim mydb.db
 :%!xxd
 ```   
+
+[Exceptional B-Tree Structure explaination](https://cstack.github.io/db_tutorial/parts/part7.html)
+
+Tree vs Array Performance
+
+|---|Unsorted Array of rows|Sorted Array of rows|Tree of nodes|
+|---|---|---|---|
+|Pages contain|only data|only data|metadata, primary keys, and data|
+|Rows per page|more|more|fewer|
+|Insertion|O(1)|O(n)|O(log(n))|
+|Deletion|O(n)|O(n)|O(log(n))|
+|Lookup by id|O(n)|O(log(n))|O(log(n))|
+
+![Leaf Node Size for Clang](./assets/leaf-node-format.png)
+
+https://cstack.github.io/db_tutorial/parts/part8.html
