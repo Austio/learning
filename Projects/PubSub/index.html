@@ -22,14 +22,40 @@
 <div id="app"></div>
 
 <script>
-  const conn = new window.WebSocket('ws://127.0.0.1:1337',);
-  conn.addEventListener('onopen', () => { console.log('opened') });
-  conn.addEventListener('onerror', () => { console.log('ah shit') });
+  const PENDING = 'pending';
+  const CONNECTED = 'connected';
+  const ERROR = 'error';
+
   new Vue({
     el: '#app',
+    data() {
+      return {
+        connection: PENDING,
+        conn: null,
+        messages: [],
+      };
+    },
+    mounted() {
+      this.conn = new window.WebSocket('ws://127.0.0.1:1337',);
+      this.conn.addEventListener('open', () => this.connection = CONNECTED);
+      this.conn.addEventListener('error', () => this.connection = ERROR);
+      this.conn.addEventListener('message', (e) => {
+        this.messages.push(e);
+        console.log(this.messages);
+      });
+    },
     template: `
   <div>
-    <span id="status">Connecting...</span>
+    <span id="status">
+      Connection Status: {{ connection }}
+    </span>
+
+    <div id="content">
+      <div v-for="i in messages">
+        {{ i.data }}
+      </div>
+    </div>
+
     <input type="text" id="input" disabled="disabled" />
   </div>
   `

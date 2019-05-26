@@ -2,8 +2,6 @@ const http = require('http');
 const WEB_SOCK_PORT = 1337;
 const WEB_PORT = 8080;
 const fs = require('fs');
-const crypto = require('crypto');
-
 var server = http.createServer(function (req, res) {
   const file = fs.readFile(__dirname + '/index.html', function (err, f){
     if (err) {
@@ -22,3 +20,12 @@ const WebSocket = require('ws');
 const wss = new WebSocket.Server({
   port: WEB_SOCK_PORT
 })
+
+
+wss.on('connection', function connection(ws) {
+  ws.on('message', function incoming(message) {
+    console.log('received: %s', message);
+  });
+
+  ws.send('something');
+});
