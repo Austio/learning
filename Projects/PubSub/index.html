@@ -31,15 +31,16 @@
     data() {
       return {
         connection: PENDING,
-        conn: null,
+        ws: null,
         messages: [],
+        chatText: ''
       };
     },
     mounted() {
-      this.conn = new window.WebSocket('ws://127.0.0.1:1337',);
-      this.conn.addEventListener('open', () => this.connection = CONNECTED);
-      this.conn.addEventListener('error', () => this.connection = ERROR);
-      this.conn.addEventListener('message', (e) => {
+      this.ws = new window.WebSocket('ws://127.0.0.1:1337',);
+      this.ws.addEventListener('open', () => this.connection = CONNECTED);
+      this.ws.addEventListener('error', () => this.connection = ERROR);
+      this.ws.addEventListener('message', (e) => {
         this.messages.push(e);
         console.log(this.messages);
       });
@@ -48,6 +49,13 @@
       connected() {
         return this.connection === CONNECTED;
       },
+    },
+    methods: {
+      handleChat(e) {
+        e.preventDefault();
+
+        this.ws.send(this.chatText);
+      }
     },
     template: `
   <div>
@@ -61,7 +69,14 @@
       </div>
     </div>
 
-    <input type="text" id="input" :disabled="!connected" />
+    <form @submit="handleChat">
+      <input
+        type="text"
+        id="input"
+        v-model="chatText"
+        :disabled="!connected" />
+      <button>Chat!</button>
+    </form>
   </div>
   `
   });

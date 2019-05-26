@@ -4,6 +4,7 @@
   "description": "",
   "main": "frontend.js",
   "dependencies": {
+    "uuid": "^3.3.2",
     "ws": "^7.0.0"
   },
   "devDependencies": {},
