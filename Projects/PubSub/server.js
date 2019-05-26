@@ -21,11 +21,29 @@ const wss = new WebSocket.Server({
   port: WEB_SOCK_PORT
 })
 
+function shuffle(a) {
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+var i = 0;
+var clients = [];
+
+setInterval(() => {
+  i = i + 1;
+  clients.forEach(client => {
+    if (Date.now() % 2) {
+      client.send(`${i} selected!`);
+    }
+  })}, 1000);
+
 
 wss.on('connection', function connection(ws) {
   ws.on('message', function incoming(message) {
     console.log('received: %s', message);
   });
-
-  ws.send('something');
+  clients.push(ws);
 });
