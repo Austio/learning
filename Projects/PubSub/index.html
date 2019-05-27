@@ -26,15 +26,13 @@
   const CONNECTED = 'connected';
   const ERROR = 'error';
 
-  const Chat = Vue.component('Chat', {
-    el: '#app',
+  const websocketMixin = {
     data() {
       return {
         connection: PENDING,
         ws: null,
         messages: [],
-        chatText: ''
-      };
+      }
     },
     mounted() {
       this.ws = new window.WebSocket('ws://127.0.0.1:1337',);
@@ -49,6 +47,16 @@
       connected() {
         return this.connection === CONNECTED;
       },
+    },
+  };
+
+  const Chat = Vue.component('Chat', {
+    name: "Chat",
+    mixins: [websocketMixin],
+    data() {
+      return {
+        chatText: ''
+      };
     },
     methods: {
       handleChat(e) {
@@ -81,16 +89,26 @@
   `
   });
 
+  const Publish = Vue.component({
+    name: "Publish",
+    mixins: [websocketMixin],
+    template: `
+    <div>
+    </div>
+    `,
+  });
 
   new Vue({
     el: '#app',
     components: {
       Chat,
+      Publish,
     },
     template: `
     <div>
       <Chat></Chat>
       <Chat></Chat>
+      <Publish />
     </div>
     `
   })

@@ -4,16 +4,6 @@ const WEB_PORT = 8080;
 const SYSTEM = 'system';
 const fs = require('fs');
 
-var server = http.createServer(function (req, res) {
-  fs.readFile(__dirname + '/index.html', function (err, f){
-    if (err) { return res.writeHead(404) && res.end() }
-    res.writeHead(200, { 'Content-Type': 'text/html' });
-    res.write(f);
-    res.end();
-  });
-});
-server.listen(WEB_PORT);
-
 const WebSocket = require('ws');
 const wss = new WebSocket.Server({
   port: WEB_SOCK_PORT
@@ -40,11 +30,26 @@ wss.on('connection', function connection(ws) {
   chat.add(client);
 
   ws.on('message', function incoming(message) {
-    const serializedMessage = chat.serialize({
+    $redis.pub.publish("public", chat.serialize({
       message ,
       sender_id: client.id
-    });
-
-    $redis.pub.publish("public", serializedMessage)
+    }))
   });
 });
+
+var server = http.createServer(function (req, res) {
+  if (req.url === '/pub') {
+    $redis.pub.publish("public", chat.serialize({
+      id: 'RedisPub',
+      message: "I r message"
+    }))
+  }
+
+  fs.readFile(__dirname + '/index.html', function (err, f){
+    if (err) { return res.writeHead(404) && res.end() }
+    res.writeHead(200, { 'Content-Type': 'text/html' });
+    res.write(f);
+    res.end();
+  });
+});
+server.listen(WEB_PORT);

@@ -8,13 +8,15 @@ class Chat {
   }
 
   message(serializedMessage) {
-    const { sender_id, message } = this.deserialize(serializedMessage);
+    const { sender_id, message, id } = this.deserialize(serializedMessage);
+
+    console.log('message', id);
 
     this.clients.forEach(client => {
-      const id = client.id === sender_id
-        ? 'me:'
-        : 'them:';
-      client.send(`${id} ${message}`);
+      const from = id || (client.id === sender_id ? 'me:' : 'them:');
+      console.log('message', from);
+
+      client.send(`${from} ${message}`);
     });
   }
 
