@@ -23,14 +23,14 @@ $redis.sub.on("message", (channel, serializedMessage) => {
   chat.message(serializedMessage)
 });
 
-$redis.sub.subscribe("public");
+$redis.sub.subscribe("chat");
 
 wss.on('connection', function connection(ws) {
   const client = new Client(ws);
   chat.add(client);
 
   ws.on('message', function incoming(message) {
-    $redis.pub.publish("public", chat.serialize({
+    $redis.pub.publish("chat", chat.serialize({
       message ,
       sender_id: client.id
     }))
@@ -38,13 +38,6 @@ wss.on('connection', function connection(ws) {
 });
 
 var server = http.createServer(function (req, res) {
-  if (req.url === '/pub') {
-    $redis.pub.publish("public", chat.serialize({
-      id: 'RedisPub',
-      message: "I r message"
-    }))
-  }
-
   fs.readFile(__dirname + '/index.html', function (err, f){
     if (err) { return res.writeHead(404) && res.end() }
     res.writeHead(200, { 'Content-Type': 'text/html' });

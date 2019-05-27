@@ -6,11 +6,11 @@
   <style>
     * { font-family:tahoma; font-size:12px; padding:0px;margin:0px;}
     p { line-height:18px; }
-    div { width:500px; margin-left:auto; margin-right:auto;}
+    div { width:500px; margin-left:auto; margin-right:auto; margin-top:15px; }
     #content { padding:5px; background:#ddd; border-radius:5px;
       overflow-y: scroll; border:1px solid #CCC;
       margin-top:10px; height: 160px; }
-    #input { border-radius:2px; border:1px solid #ccc;
+    input { border-radius:2px; border:1px solid #ccc;
       margin-top:10px; padding:5px; width:400px;
     }
     #status { width:88px;display:block;float:left;margin-top:15px; }
@@ -89,11 +89,33 @@
   `
   });
 
-  const Publish = Vue.component({
+  const Publish = Vue.component('Publish', {
     name: "Publish",
     mixins: [websocketMixin],
+    data() {
+      return {
+        publishText: '',
+      };
+    },
+    methods: {
+      handlePublish() {
+
+      }
+    },
     template: `
     <div>
+      <span id="status">
+        Connection Status: {{ connection }}
+      </span>
+      <form @submit="handlePublish">
+        <input
+          type="text"
+          v-model="publishText"
+          :disabled="!connected"
+        />
+
+        <button>Publish Message</button>
+      </form>
     </div>
     `,
   });
@@ -108,7 +130,7 @@
     <div>
       <Chat></Chat>
       <Chat></Chat>
-      <Publish />
+      <Publish></Publish>
     </div>
     `
   })
