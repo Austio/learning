@@ -4,6 +4,7 @@
   "description": "",
   "main": "frontend.js",
   "dependencies": {
+    "redis": "^2.8.0",
     "uuid": "^3.3.2",
     "ws": "^7.0.0"
   },

@@ -1,7 +1,4 @@
-# docker-compose.yml
-# Add this top-level entry
 redis:
-  image: redis
-  container_name: cache
-  expose:
-    - 6379
+  image: "redis:alpine"
+  ports:
+    - "6379:6379"

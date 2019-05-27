@@ -1,11 +1,3 @@
-// const redis = require("redis");
-//
-// const redisPubSub = {
-//   sub: redis.createClient(),
-//   pub: redis.createClient(),
-// }
-
-
 class Chat {
   constructor() {
     this.clients = new Set();
@@ -15,27 +7,31 @@ class Chat {
     this.clients.add(client);
   }
 
-  onServerMessage({ from, message }) {
-  }
+  message(serializedMessage) {
+    const { sender_id, message } = this.deserialize(serializedMessage);
 
-  onClientMessage({ from, message }) {
     this.clients.forEach(client => {
-      const id = client.id === from.id
+      const id = client.id === sender_id
         ? 'me:'
         : 'them:';
       client.send(`${id} ${message}`);
     });
   }
 
-  sendRandom() {
-    setInterval(() => {
-      i = i + 1;
-      clients.forEach(client => {
-        if (Date.now() % 2) {
-          client.send(`${i} selected!`);
-        }
-      })}, 1000);
+  serialize(obj) {
+    if (typeof obj === 'string') {
+      return obj;
+    }
 
+    return JSON.stringify(obj);
+  }
+
+  deserialize(obj) {
+    if (typeof obj === 'string') {
+      return JSON.parse(obj);
+    }
+
+    return obj;
   }
 }
 
