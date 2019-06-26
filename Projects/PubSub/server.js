@@ -30,8 +30,11 @@ wss.on('connection', function connection(ws) {
   chat.add(client);
 
   ws.on('message', function incoming(message) {
+    const msg = chat.deserialize(message);
+
+    console.log(message);
     $redis.pub.publish("chat", chat.serialize({
-      message ,
+      ...msg,
       sender_id: client.id
     }))
   });

@@ -55,7 +55,8 @@
     mixins: [websocketMixin],
     data() {
       return {
-        chatText: ''
+        chatText: '',
+        pubSource: ''
       };
     },
     methods: {
@@ -66,7 +67,7 @@
       }
     },
     template: `
-  <div>
+    <div>
     <span id="status">
       Connection Status: {{ connection }}
     </span>
@@ -80,14 +81,15 @@
     <form @submit="handleChat">
       <input
         type="text"
-        id="input"
         v-model="chatText"
         :disabled="!connected" />
       <button>Chat!</button>
     </form>
   </div>
-  `
+    `
   });
+
+  const pubSourceOptions = ['redis'];
 
   const Publish = Vue.component('Publish', {
     name: "Publish",
@@ -95,18 +97,35 @@
     data() {
       return {
         publishText: '',
+        pubSourceOptions,
+        pubSource: pubSourceOptions[0]
       };
     },
     methods: {
-      handlePublish() {
+      handlePublish(e) {
+        e.preventDefault();
 
+        const message = JSON.stringify({
+          pubSource: this.pubSource,
+          message: this.publishText,
+        });
+
+        this.ws.send()
       }
     },
     template: `
     <div>
-      <span id="status">
-        Connection Status: {{ connection }}
-      </span>
+      <div>
+        Select a Channel to Broadcast
+        <span>Picked: {{ pubSource }}</span>
+        </br>
+        <template v-for="pubSourceOption in pubSourceOptions">
+          <input type="radio" :id="pubSourceOption" :value="pubSourceOption" v-model="pubSource">
+          <label :for="pubSourceOption">{{ pubSourceOption }}</label>
+          </br>
+        </template>
+      </div>
+
       <form @submit="handlePublish">
         <input
           type="text"
@@ -116,6 +135,10 @@
 
         <button>Publish Message</button>
       </form>
+
+      <span id="status">
+        Connection Status: {{ connection }}
+      </span>
     </div>
     `,
   });
