@@ -8,8 +8,12 @@ babel-plugin-module-alias =>
 
 ## What is an AST Resources
 
-resources.jointjs.com/demos/rappid/apps/Ast/index.html
-astexploerer.net
+ - [View Parsed AST](resources.jointjs.com/demos/rappid/apps/Ast/index.html])
+ - [View Generated AST Super Awesome****](astexplorer.net)
+
+In astexplorer you can write patterns straight in the browser.
+ - select espree as parser
+ - eslint vX as your output
 
 ### Visitor Pattern
 
