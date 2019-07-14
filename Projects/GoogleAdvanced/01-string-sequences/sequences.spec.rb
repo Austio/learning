@@ -19,10 +19,11 @@ describe 'Compression/Decompression' do
 
       raw_output = pipe.gets(nil)
     end
+
     raw_output.split("\n")[0]
   end
 
-  it 'handles undecrompressed strings' do
+  it 'handles uncompressed strings' do
     r = run_script('abc')
 
     expect(r).to eql('abc')
