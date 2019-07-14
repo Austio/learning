@@ -34,4 +34,10 @@ describe 'Compression/Decompression' do
 
     expect(r).to eql('abcabcabc')
   end
+
+  it "handles sequences of 0" do
+    r = run_script('a3[]')
+
+    expect(r).to eql('a')
+  end
 end
