@@ -2,6 +2,7 @@
 #
 
 require 'pry'
+require './sequences.rb'
 
 describe 'Compression/Decompression' do
   before(:all) do
@@ -12,7 +13,7 @@ describe 'Compression/Decompression' do
   #   %x( rm sequences )
   # end
 
-  def run_script(commands)
+  def c_expect(commands, expected)
     raw_output = nil
     IO.popen("./sequences #{commands}", "r+") do |pipe|
       pipe.close_write
@@ -20,30 +21,36 @@ describe 'Compression/Decompression' do
       raw_output = pipe.gets(nil)
     end
 
-    raw_output.split("\n")[0]
+    r = raw_output.split("\n")[0]
+    expect(r).to eql(expected)
+  end
+
+  def ruby_expect(input, expected)
+    a = decompress(input)
+    expect(a).to eql(expected)
   end
 
   it 'handles uncompressed strings' do
-    r = run_script('abc')
-
-    expect(r).to eql('abc')
+    expected = ['abc', 'abc']
+    c_expect(*expected)
+    ruby_expect(*expected)
   end
 
   it 'decompresses single' do
-    r = run_script('3[abc]')
-
-    expect(r).to eql('abcabcabc')
+    expected = ['3[abc]', 'abcabcabc']
+    c_expect(*expected)
+    ruby_expect(*expected)
   end
 
-  it "handles sequences of 0" do
-    r = run_script('a3[]')
-
-    expect(r).to eql('a')
+  xit "handles sequences of 0" do
+    expected = ['a3[]', 'a']
+    c_expect(*expected)
+    ruby_expect(*expected)
   end
 
   xit "handles nested sequences" do
-    r = run_script('a3[b2[e]]')
-
-    expect(r).to eql('abeebeebee')
+    expected = ['a3[b2[e]]', 'abeebeebee']
+    c_expect(*expected)
+    ruby_expect(*expected)
   end
 end
