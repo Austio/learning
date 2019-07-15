@@ -25,20 +25,12 @@ int ctoi(char c) {
   return c - '0';
 }
 
-int main(int argc, char* argv[]) {
-  if (argc < 2) {
-    printf("Must supply a decompression string.\n");
-    exit(EXIT_FAILURE);
-  }
-  char* s = argv[1];
+char* decompressString(char* copyToBuffer, char* compressed, int i) {
+  int delim_iterations, seq_start, seq_end = 0;
 
-  // yep lets start with something stupidly static
-  char decompressed[100000];
-
-  int i, delim_iterations, seq_start, seq_end = 0;
-  while(s[i] != 0) {
-    if (isdigit(s[i])) {
-      delim_iterations = ctoi(s[i]);
+  while(compressed[i] != 0) {
+    if (isdigit(compressed[i])) {
+      delim_iterations = ctoi(compressed[i]);
 
       // 3[sequence], i is currently the number so we skip over that and the [
       i = i + 2;
@@ -49,18 +41,32 @@ int main(int argc, char* argv[]) {
 
 
        while (delim_iterations > 0) {
-         concatString(decompressed, s, seq_start, seq_end);
+         concatString(copyToBuffer, compressed, seq_start, seq_end);
          delim_iterations--;
        }
 
     } else {
-      concatString(decompressed, s, i, i);
+      concatString(copyToBuffer, compressed, i, i);
     }
 
     i++;
   }
 
-  printf("%s", decompressed);
+  return copyToBuffer;
+}
+
+
+int main(int argc, char* argv[]) {
+  if (argc < 2) {
+    printf("Must supply a decompression string.\n");
+    exit(EXIT_FAILURE);
+  }
+  char* s = argv[1];
+
+  // yep lets start with something stupidly static
+  char decompressed[100000];
+
+  printf("%s", decompressString(decompressed, s, 0));
 
   exit(0);
 }

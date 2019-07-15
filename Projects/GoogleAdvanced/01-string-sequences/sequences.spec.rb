@@ -40,4 +40,10 @@ describe 'Compression/Decompression' do
 
     expect(r).to eql('a')
   end
+
+  xit "handles nested sequences" do
+    r = run_script('a3[b2[e]]')
+
+    expect(r).to eql('abeebeebee')
+  end
 end
