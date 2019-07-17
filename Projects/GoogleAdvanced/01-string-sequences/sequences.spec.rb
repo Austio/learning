@@ -42,13 +42,13 @@ describe 'Compression/Decompression' do
     ruby_expect(*expected)
   end
 
-  xit "handles sequences of 0" do
+  it "handles sequences of 0" do
     expected = ['a3[]', 'a']
     c_expect(*expected)
     ruby_expect(*expected)
   end
 
-  xit "handles nested sequences" do
+  it "handles nested sequences" do
     expected = ['a3[b2[e]]', 'abeebeebee']
     c_expect(*expected)
     ruby_expect(*expected)
