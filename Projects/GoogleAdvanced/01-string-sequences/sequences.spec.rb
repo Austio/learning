@@ -48,9 +48,15 @@ describe 'Compression/Decompression' do
     ruby_expect(*expected)
   end
 
+  it 'handles sequences after first' do
+    expected = ['1[abc]bc', 'abcbc']
+    c_expect(*expected)
+    ruby_expect(*expected)
+  end
+
   it "handles nested sequences" do
     expected = ['a3[b2[e]]', 'abeebeebee']
-    c_expect(*expected)
+    # c_expect(*expected)
     ruby_expect(*expected)
   end
 end

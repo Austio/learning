@@ -1,14 +1,29 @@
-def decompress(string)
-  return "" if (string.length <= 0)
+def decompress(string = "", expansion = [])
+  car = string[0]
 
-  if (string[0] == "]")
-    return ""
+  return "" if !car || car.empty?
+  cdr = string[1..-1]
+
+  case car
+  when /\d/
+    expansion.push(car)
+  when "[" #continue
+  when "]"
+    last_expansion = expansion.pop
+    expanded = (last_expansion[1..-1] || "") * last_expansion[0].to_i
+
+    if expansion.length == 0
+      return expanded + decompress(cdr, expansion)
+    else
+      expansion.last.concat expanded
+    end
+  else #alphanumeric
+    if expansion.length == 0
+      return car + decompress(cdr)
+    else
+      expansion.last.concat(car)
+    end
   end
 
-  if (string[0].match(/\d/))
-    puts string[0]
-    return decompress(string[2..-1]) * string[0].to_i
-  end
-
-  string[0] + decompress(string[1..-1])
+  return decompress(cdr, expansion)
 end
