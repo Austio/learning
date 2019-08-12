@@ -97,10 +97,15 @@ t.join
 ``` 
 
 #### Chapter 4 - Concurrent vs Parallel
-Threads run code concurrently, they could do them in parallel
+Threads run code concurrently, they could do them in parallel.  Making concurrent code enables parallelization, but does not guarantee it will be executed in parallel, that is the job of the OS scheduler.
+
+ - [Rob Pike: Concurrency is not parralel](https://blog.golang.org/concurrency-is-not-parallelism)
+ - [Evan Phoenix Ruby Parallel](https://www.engineyard.com/blog/author/evan-phoenix)
 
 Imagine you have 2 1 day projects, A and B
  - Serially: Do project A then Project B
  - Concurrently: Project A half day, then Project B half day, repeat next day
  - Parallel: You do Project A, another programmer does Project B
  
+#### Chapter 5 - GIL and MRI
+MRI Global Interpreter Lock (GIL) does not allow parallel execution of ruby code.  It wraps each process in the GIL which prevents Parallelism in ruby MRI.
