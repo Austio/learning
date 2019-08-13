@@ -108,4 +108,73 @@ Imagine you have 2 1 day projects, A and B
  - Parallel: You do Project A, another programmer does Project B
  
 #### Chapter 5 - GIL and MRI
-MRI Global Interpreter Lock (GIL) does not allow parallel execution of ruby code.  It wraps each process in the GIL which prevents Parallelism in ruby MRI.
+MRI Global Interpreter Lock (GIL) does not allow parallel execution of ruby code.  It wraps each process in the GIL which prevents Parallel execution of ruby code in MRI.
+
+However, this does not affect blocking IO or anything written in native C.  
+
+```rb
+# Will lock GIL due to ruby lock in MRI
+3.times.map do 
+  Thread.new { Digest::MD5.hexdigest(rand) }
+end.each(&:value)
+ 
+# Will not block, uses ppoll(2) to be notified when ready
+3.times.map do 
+  Thread.new { open('zmodo.com') }
+end.each(&:value)
+```
+
+Reason given for GIL
+ 1. Protects MRI from race conditions
+ 2. Facilitate C Extensions: These both lock the gil
+```rb   
+# Ruby
+a = Array.new
+a.pop
+
+# C
+VALUE a = rb_ary_new()
+VALUE last_element = rb_ary_pop(a)
+```
+ 3. Protect your code from race conditions
+ 
+MYTH 1: GIL Guarantees Thread Safety
+ - wrong +=, this only keeps thread safety if you prevent parallelism
+ 
+```rb
+# Example demonstrating thread safety issue 
+@counter = 0
+
+5.times do 
+  Thread.new do 
+    temp = @counter
+    temp += 1
+    @counter = temp
+  end
+end.each(&:join)
+``` 
+
+MYTH 2: GIL Prevents Concurrency
+ - wrong, it prevents parallelism of ruby code
+ - concurrent execution of ruby code is fine
+ - parallel execution of blocking io is fine
+ 
+#### Chapter 6 Rubinius and JRuby and How Many Threads
+ 
+Rubinius and JRuby don't have a gil.  JRuby doesn't support C API (java).  Rubunius does but instead of enforcing GIL it opts to help/let authors fix.
+
+#### Chapter 7 How Many Threads are Too Many?
+
+ - OSx has something like a 2000 thread limit
+ - Linux is a beast, 
+```rb 
+1.upto(10_000) do |i| 
+  Thread.new { sleep }
+  puts i
+end
+``` 
+ 
+ 
+ 
+You have to balance the cost of switching threads vs 
+
