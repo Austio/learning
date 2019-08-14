@@ -6,6 +6,7 @@ Understand how ruby can take advantage of multiple CPU cores.
 
  - Process: Program in memory, has register,counter,stack, heap and code
  - Thread: Unit of execution in a process
+ - Critical Section: The code in execution path that is shared
  
 #### Thread Api (see chapter 1-3 for examples)
  - Thread.main
@@ -18,6 +19,12 @@ Understand how ruby can take advantage of multiple CPU cores.
  - Thread.pass - Signals to OS would prefer to stop, not guaranteed
  - Thread.raise - allows one thread to kill another, don't use this, it doesn't run ensure blocks and stack trace is from the parent
  - Thread.kill - stops a thread, same caveats as Thread.raise
+ 
+#### Mutex API (Chapter 9+)
+ - Mutex.lock  
+ - Mutex.unlock  
+ - Mutex.synchronize(&block) - runs block, lock/unlock around it
+ - Mutex.try_lock - will check if a mutex is already locked, acquiring if it is not locked and returning false otherwise
  
 #### Chapter 1 - Always in a thread
 By default there is always 1 thread, the main one.  In ruby when this exits all children threads exit.
@@ -159,11 +166,11 @@ MYTH 2: GIL Prevents Concurrency
  - concurrent execution of ruby code is fine
  - parallel execution of blocking io is fine
  
-#### Chapter 6 Rubinius and JRuby and How Many Threads
+#### Chapter 6 - Rubinius and JRuby and How Many Threads
  
 Rubinius and JRuby don't have a gil.  JRuby doesn't support C API (java).  Rubunius does but instead of enforcing GIL it opts to help/let authors fix.
 
-#### Chapter 7 How Many Threads are Too Many?
+#### Chapter 7 - How Many Threads are Too Many?
 
  - OSx has something like a 2000 thread limit
  - Linux is a beast, 
@@ -174,7 +181,110 @@ Rubinius and JRuby don't have a gil.  JRuby doesn't support C API (java).  Rubun
 end
 ``` 
  
- 
- 
-You have to balance the cost of switching threads vs 
+You have to balance the cost of switching threads and extra memory of thread vs cost of running in the same process.  For I/O Bound threads (network, disk writing, etc) it makes sense to have many threads b/c the bottleneck is the waiting.  For CPU bound (hashing md5) more threads will only give you better results up to the number of CPUs/cores you have.
 
+|IO Bound (hitting new york times)|CPU Bound (Complex Math)|
+|---|---|
+|![IO Bound](./img/working-with-threads-io-bound.png)|![CPU Bound](./img/working-with-threads-cpu-bound.png)|
+
+#### Chapter 8 - Thread Safety
+
+Thread safety means that you can mutate the shared process memory in a way that keeps your program's data safe, consistent and semantically correct.
+
+When you are not thread-safe, the underlying data can become incorrect.
+
+Any concurrent operations to the same data are not thread safe
+
+```rb 
+# classic check then set thread safety issue
+
+# below may (should?/could?) ouput
+# collected
+# collected
+
+Order = Struct.new(:amount, :status) do
+  def pending?
+    status == "pending"
+  end
+  
+  def collect_payment
+    puts "collecting"
+    self.status = "collected"
+  end
+end
+
+o = Order.new(100, "pending")
+
+5.times.map do 
+  Thread.new do
+    if order.pending?
+      # key operation here is multistep, which is what causes the issue
+      # this needs to be in a mutex or a single step in the thread
+      order.collect_payment
+    end
+  end
+end.each(&:join)
+```
+
+#### Chapter 9 - Protecting with Mutexes
+
+Mutexes allow safe concurrent access by only allowing one thing to change at a time.  Only the locking thread can unlock the mutex.  To be effective they must be shared among all the threads.  Code that 
+
+```rb
+order = Order.new(100, "pending")
+require 'thread'
+mutex = Mutex.new
+
+5.times.map do 
+  Thread.new do
+    mutex.lock
+      if order.pending?
+        order.collect_payment
+       end
+    mutex.unlock   
+  end
+end.each(&:join)
+```
+
+More commonly people will use `Mutex.synchronize(&block)`
+
+If you are setting a variable while holding a mutex, you should also wrap the getter in a mutex to ensure that they always have the most up to date value.
+
+Most programs like [go](https://golang.org/ref/mem) have memory models to help with understanding memory issues.  Ruby has no such model, which is why it can be difficult to grok sometimes in multi threaded situations.
+
+```rb
+# this line guarantees a "memory barrier" so that the status is synced to main memory before it is read.  ow could end up in l1/l2 cache weirdness 
+status = mutex.synchronize { order.status }
+if status == 'paid'
+end
+```
+
+Put as little code in your critical section as possible.  Just enough to keep data fine and dandy it inhibits parallelism while it is holding the lock.
+
+```rb
+# Overly mutex'ed
+mutex.synchronize do
+  response = Net::HTTP.get_response(...)
+  results << response
+end
+
+# Better
+response = Net::HTTP.get_response(...)
+mutex.synchronized do 
+  results << response
+end
+```
+
+Deadlocks occur when one thread blocks waiting for another resource that it can't acquire, resulting in the program not being able to continue.  
+
+ - Thread A locks Resource A
+ - Thread B locks Resource B
+ - Thread A needs Resource B to continue
+ - Thread B needs Resource A to continue
+
+Livelocks occur when two threads continuously try to lock 2 mutexes that they both acquire the first two then release.
+
+ - Thread A locks Resource A
+ - Thread B locks Resource B
+ - Thread A needs Resource B to continue, sees it is locks releases
+ - Thread B needs Resource A to continue, sees it is locks releases
