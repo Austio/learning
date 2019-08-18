@@ -7,7 +7,9 @@ Understand how ruby can take advantage of multiple CPU cores.
  - Process: Program in memory, has register,counter,stack, heap and code
  - Thread: Unit of execution in a process
  - Critical Section: The code in execution path that is shared
- 
+ - Mutex: Synchronizing access to an exclusive shared resource
+ - ConditionVariable: Signal 1 (or many) threads that some event has happened.  Like an event bus for threads.
+  
 #### Thread Api (see chapter 1-3 for examples)
  - Thread.main
  - Thread.current
@@ -26,6 +28,11 @@ Understand how ruby can take advantage of multiple CPU cores.
  - Mutex.synchronize(&block) - runs block, lock/unlock around it
  - Mutex.try_lock - will check if a mutex is already locked, acquiring if it is not locked and returning false otherwise
  
+#### ConditionVariable API (Chapter 10)
+ - ConditionVariable.wait(mutex) lets other threads run, used inside of a locked mutex
+ - ConditionVariable.signal - Tells mutex paused by condition variable  to run.  Essentially, wake up 1 thread that is waiting
+ - ConditionVariable.broadcast - Like signal but for all waiting threads
+  
 #### Chapter 1 - Always in a thread
 By default there is always 1 thread, the main one.  In ruby when this exits all children threads exit.
 
@@ -288,3 +295,50 @@ Livelocks occur when two threads continuously try to lock 2 mutexes that they bo
  - Thread B locks Resource B
  - Thread A needs Resource B to continue, sees it is locks releases
  - Thread B needs Resource A to continue, sees it is locks releases
+ 
+#### Chapter 10 - Conditional Variables
+
+Conditional variables are used to dispatch events to threads when something happens.
+
+I this example we have a thread that fetches urls and a thread that collects them.  The collector uses the ConditionVariable.wait(mutex) to allow the fetcher thread to work, meanwhile the ConditionVariable.signal is used in the fetcher thread to let the collector know there are results to process.
+```rb
+require 'thread'
+require 'net/http'
+
+mutex = Mutex.new
+condvar = ConditionVariable.new
+results = Array.new
+
+# Background Thread Fetches Comics
+Thread.new do
+  10.times do 
+    r = Net::HTTP.get_response('https://c.xkcd.com', '/random/comic')
+    url = r['Location']
+    mutex.synchronize do
+      puts "#{results.length} results push then signal before"
+      results << url
+      condvar.signal
+      puts "#{results.length} results push then signal before"
+    end
+  end
+end
+
+comics_received = 0
+
+# Main thread collects results
+until comics_received > 10
+  mutex.synchronize do 
+    while results.empty?
+      puts "#{results.length} condvar signal before"
+      condvar.wait(mutex)
+      puts "#{results.length} condvar signal after"
+    end
+    
+    url = results.shift
+    puts "you should checkout #{url}"
+  end
+  
+  # notice this is incremented outside of mutex, that is b/c it is only used in 1 spot
+  comics_received = comics_received + 1
+end
+```
