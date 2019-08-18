@@ -2,6 +2,8 @@
 
 Understand how ruby can take advantage of multiple CPU cores.
 
+Anything that mutates AST, Globals or Class Variables could potentially not be threadsafe.
+
 #### Definitions
 
  - Process: Program in memory, has register,counter,stack, heap and code
@@ -342,3 +344,87 @@ until comics_received > 10
   comics_received = comics_received + 1
 end
 ```
+```rb
+# ConditionVariable objects augment class Mutex. Using condition variables, it is possible to suspend while in the middle of a critical section until a resource becomes available.
+
+Example:
+
+  require 'thread'
+  mutex = Mutex.new
+  resource = ConditionVariable.new
+
+  a = Thread.new {
+    mutex.synchronize {
+      # Thread 'a' now needs the resource
+      resource.wait(mutex)
+      # 'a' can now have the resource
+    }
+  }
+
+  b = Thread.new {
+    mutex.synchronize {
+      # Thread 'b' has finished using the resource
+      resource.signal
+    }
+  }
+```
+
+#### Chapter 11 - ThreadSafe data structure
+
+Lets build a threadsafe blocking queue that abstracts away the mutex from people
+ - push
+ - pop: will waiting until something is there and then pop once available
+ 
+This is useful in a worker situation where you have one thread pushing to a queue and multiple threads poping off work and sleeping if there is no work.
+```rb
+require 'thread'
+
+class BlockingQueue
+  def initialize
+    @mutex = Mutex.new
+    @condvar = ConditionVariable.new
+    @queue = Array.new
+  end
+
+  def pop
+    @mutex.synchronize do
+       while @queue.empty?
+         @condvar.wait(@mutex)
+       end
+       
+       @queue.shift
+    end
+  end
+
+  def push(val)
+    @mutex.synchronize do  
+      @queue.push(val)
+      @condvar.signal
+    end
+  end
+end
+
+q = BlockingQueue.new 
+q.push('foo')
+q.pop
+q.pop
+q.push('bar')
+```
+
+#### Chapter 12 - Writing Thread Safe Code
+
+Avoid Mutating Globals (constants, ast, class variable/methods)
+
+Use Thread Local Variables (a global that is local to the current thread)
+ - enforces N:N relationship between threads and connections
+ - Does not work when N becomes too high
+```rb
+$redis = Redis.new
+Thread.current[:redis] = Redis.new
+```
+ 
+Use a [Connection Pool](https://github.com/mperham/connection_pool)
+ - Helps ensure n threads with m connections
+ 
+Avoid Lazy Loading when  you need thread safety 
+ 
