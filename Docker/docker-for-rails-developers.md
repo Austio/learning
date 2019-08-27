@@ -8,7 +8,14 @@ By Default, `docker run` only forwards the containers stdout to our client.
 
 By Default, commands run as root (user 1)
 
-Docker tags are really for naming repo/image and tagging.  `docker tag cID repo:tag` 
+Docker tags are really for naming repo/image and tagging.  `docker tag cID repo:tag`
+
+Lifecycle of a container
+ - created - at rest, ready to go
+ - running - when you `start` a container, `docker run` creates and then runs
+ - stopping - sends SIGTERM to main process in container, falls back to SIGKILL
+ - stopped - here after a stop or the main process terminates
+   
 
 ### Reference
 
@@ -32,6 +39,19 @@ Docker tags are really for naming repo/image and tagging.  `docker tag cID repo:
 |docker build [options] path |Build the Dockerimage|
 |docker run -p 3000 ID \ bin/rails s -b 0.0.0.0| run rails image, start server and bind it to all ports|
 |docker tag cID tag|tags a container with a friendly tag|
+
+|docker-compose|---|
+|docker-compose logs -f container|tails the logs of the container (don't confuse with stdout)|
+|docker-compose restart container|restarts the container|
+|docker-compose run --rm container ~CMD TO RUN~|Runs a command in a new container|
+|docker-compose exec container ~CMD TO RUN~|Runs a command in the existing container|
+|docker-compose build container|Rebuilds the container|
+|pruning|---|
+|docker system prune|removes every, damned thing|
+|docker image prune|---|
+|docker container prune|---|
+
+
 
 ### Gotchas
 
@@ -109,7 +129,7 @@ CMD ['bin/rails', 's', '-b', '0.0.0.0']
 # CMD bin/rails s -b 0.0.0.0
 ```
 
-### Rails Dockercompose file
+### Rails docker-compose file
 
 ```yaml
 version '3'
@@ -119,4 +139,6 @@ services:
     build: .
     ports: 
      - "3000:3000"
+    mount:
+     - .:/usr/src/app
 ```
