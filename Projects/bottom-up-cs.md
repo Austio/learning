@@ -100,5 +100,10 @@ Pipe's internals are pretty cool.  What it does is
  - data transfer is normal piping `ls | grep foo`
  - data signalling `long_process | ls` when ls tries to read the pipe it is empty, so that process will be put to sleep/hibernate until long_process fills up the buffer
  
-  
+ ### CP2 Numbers
+ 
+Ascii (american standard computer) is 8 bits to represent all the printable english characters.  Vendors agree that 00000001 means something and printers / video cards can handle printing those things.  Unicode is because there are more than just english, so we need many more bits, which allows for 32 (4 bytes) 
+
+Hexadecimal is because it is hard to convey binary (1000100100) and base 10 would be really unnatural due to the unaligned representation and need for mental conversion.  Hexadecimal is base 16, so can get 4 bits in a single one that uses (A-F0-9)
+
  
