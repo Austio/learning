@@ -106,4 +106,36 @@ Ascii (american standard computer) is 8 bits to represent all the printable engl
 
 Hexadecimal is because it is hard to convey binary (1000100100) and base 10 would be really unnatural due to the unaligned representation and need for mental conversion.  Hexadecimal is base 16, so can get 4 bits in a single one that uses (A-F0-9)
 
- 
+Ones compliment: Invert the numbers (001 becomes 110, 010 becomes 101)
+Twos compliment: Invert the numbers and add 1 (001 becomes 111, 010 becomes 110)
+
+Signed integers on computers are normally represented with twos compliment in order to make addition and subtraction easy.  When you have the twos compliment of a negative number, you can add it to a regular positive number and it will just work.
+
+Floating Points represent decimals using IEEE-754 so that something like 123.45 will be converted into 1.2345 * 10^2 which is represented in bits as Sign (1 bit) significant (1.2345) and exponent(2).  The more significance the higher number of numbers that you can represent. 
+
+```c
+{
+  float a = 0.45;
+  float b = 8.0;  
+  double ad = 0.45;
+  double bd = 8.0;
+  
+  printf("float+float, 6dp    : %f\n", a+b);
+  printf("double+double, 6dp  : %f\n", ad+bd);
+  printf("float+float, 20dp   : %10.20f\n", a+b);
+  printf("dobule+double, 20dp : %10.20f\n", ad+bd);
+}    
+$ ./float
+
+float+float, 6dp    : 8.450000
+double+double, 6dp  : 8.450000
+float+float, 20dp   : 8.44999998807907104492
+dobule+double, 20dp : 8.44999999999999928946
+```
+
+```python
+>>> 8.0 + 0.45
+    8.4499999999999993
+```
+
+###
