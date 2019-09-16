@@ -1,3 +1,25 @@
+### Q/A
+1. What is a file in unix?
+ - the base abstraction that most things (files, io devices) reduce to for reading/writing
+
+2. What is a file descriptor?
+ - Is when we `open` a file and the kernel puts an entry into a the file descriptor table so that the file is routed to appropriate driver for calls (read, write)
+ 
+3. What are the three files it starts with?
+ - stdin (0), stdout (1) and stderr (2)
+ 
+4. How do devs make a device a file?
+ - register the device with the kernel and provide a virtio_driver that implements the interface for files.
+ 
+5. Differentiate <, >, >> and |
+ - >, redirect,  writes to stdin on right
+ - >>, redirect append,  writes to stdin on right
+ - <, read, copy data into stdin in on left
+ - |, pipe, stdout of left into stdin of right
+ 
+6. How does subtraction occur in signed numbers on computers?
+ - twos compliment both numbers, add them and subtract 1
+
 ### CP1
 
 Concepts: Everything in unix is a file, from an abstraction pov it means that everything can either be read from or written to.   
@@ -138,4 +160,16 @@ dobule+double, 20dp : 8.44999999999999928946
     8.4499999999999993
 ```
 
-###
+### CP3 CPU
+
+At it's base level a computer really has a CPU and memory.  The CPU loads instructions from memory, performs operations on them (and, or, xor, sin, add, etc) then stores them back into memory.
+
+An `instruction pointer` keeps track of the nex thing that the CPU needs to do.  In things like loops it will point to the body until the condition is false and then point to the next statement.
+
+Executing a single clock cycle will let one perform a particular event: fetch the instruction, decode the instruction, execute the instruction or store the result.
+
+In order to be faster, the CPU can take multiple paths in a conditional and execute the values eagerly while it waits on another result.  This can possibly be wasted effort if the result changes something that was depended on.  The CPU allows you to provide `memory semantics` in order to declare how strict the instruction sets needs to be.  Those include 
+ - release - all instructions after must see result
+ - memory barrier/fence - all ops must be committed before continuing
+
+ 
