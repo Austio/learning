@@ -1,11 +1,18 @@
-### Webpack Contributing Blog Series
-[3rd](https://medium.com/webpack/the-contributors-guide-to-webpack-part-3-44cc149af02c)
+1. How does webpack collect dependencies?
+ - When it parses the module with acorn into an AST.  It collects require/import statements and marks those as dependenies.
+
+Webpack Plugins Workshop + [Webpack Contributing Blog Series 3rd](https://medium.com/webpack/the-contributors-guide-to-webpack-part-3-44cc149af02c)
 
 ### How the Dependency Graph Works
 1. Initialize: With a valid config (compiler options).  The compiler returns a *compilation* based on your config.
-2. 
+2. The entry and each file are loaded in a breadth first search of
+ - resolve the file (Tapable Resolver)
+ - load the file (Tapable NormalModuleFactory)
+ - parse and collect dependencies (Parser)
+ - repeat
+3. Once done we put the Module through a template to generate the files 
 
-// TODO go back through part 3 here
+![Module Compliation](./img/webpack-plugins-module-compilation.png)
 
 ### Tapable
 
@@ -13,14 +20,14 @@ Tapable is the core webpack primative and provide a class that subscribes to eve
 
 #### Tapable instance
 
- - Compiler - The compiler runtime. Contains all of the top level compiler hooks. Plugins can hook into events like run and emit.
- - Compilation - The product of the webpack Compiler class. The Compiler returns Compilation‘s with the *entire dependency graph* for your application.  Has hooks like `optimize-modules`, `seal` and `optimize-chunk-assets`. Any time optimizations and overall full program transforms and utilities will be performed on the Compilation.
- - Resolver(s) - webpack resolvers are created from `enhanced-resolve`. Plugins that tap into the webpack resolvers, are used to customize the module resolution strategy. Any property inside of the resolve object in your webpack configuration corresponds to specific resolver plugins that are applied.
- - NormalModuleFactory - The NormalModuleFactory is the glue that binds the resolver, loaders, and the creation of the NormalModule instances together. Lifecycle hooks that you would plugin to may include `before-resolve`, `after-resolve`, and `create-module`. In addition to this, loaders are run against every module and transforms them from their current file format into something that can be added into a webpack Chunk.
+ - Compiler - Central Dispatch.  The compiler runtime.  Starting webpack, emitting files.  Hooks are like `run` and `emit`.
+ - Compilation - The Brain.  The dependency graph and sealing/rendering.  The product of the webpack Compiler class. The Compiler returns Compilation with the *entire dependency graph* for your application.  Has hooks like `optimize-modules`, `seal` and `optimize-chunk-assets`. Any time optimizations and overall full program transforms and utilities will be performed on the Compilation.
+ - Resolver(s) - The Bloodhound. Going to make sure the thing you are requesting exists.  `enhanced-resolve`.
+ - NormalModuleFactory - Takes a resolved file and meta and loads the source code.  Lifecycle hooks that you would plugin to may include `before-resolve`, `after-resolve`, and `create-module`. In addition to this, loaders are run against every module and transforms them from their current file format into something that can be added into a webpack Chunk.
  - ContextModuleFactory - The purpose of the ContextModuleFactory is identical to the NormalModuleFactory except it is for ContextModules a special webpack module type that enables “dynamic” requires.
- - Template - Because webpack performs code generation when it bundles, the Template instance is responsible for binding module data (via multiple template subclasses) to generate the shape and structure of the output bundles produced.
+ - Parser - Tapable instance that uses acorn to turn the Modules (from NormalModuleFactory) into an AST.  Use the AST to collect dependencies (from require/import).  A reference to the parser lives on every NormalModule instance. Plugins that use the parser will utilize hooks for every lexical symbol type for the AST. Any of the plugins in our webpack core source code ending in ParserPlugin hooks into these events. 
+ - Template - Because webpack performs code generation when it bundles, the Template instance is responsible for binding module data (via multiple template subclasses) to generate the shape and structure of the output bundles produced.  This is what produces the iife's around files, brackets in array, imports to webpack_require, dynamic imports into webpack_require__.e, etc
  - Template Subclasses - There are many levels of templates: MainTemplate (the runtime bundle wrapper), andChunkTemplate (the template that controls features likes the shape and format of the Chunk wrapper itself). Each source abstraction will contain its own template as well ( ModuleTemplate , DependencyTemplate ). Because of this, every Template subclass can be tapped into with module, render, and package hooks.
- - Parser - The webpack Parser is one of the most unique tapable instances in the webpack source code. The parser instance is a tapable instance powered by acorn AST parser. A reference to the parser lives on every NormalModule instance. Plugins that use the parser will utilize hooks for every lexical symbol type for the AST. Any of the plugins in our webpack core source code ending in ParserPlugin hooks into these events.
 
 ### Plugins
 
