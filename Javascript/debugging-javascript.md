@@ -1,3 +1,6 @@
+### Resources
+- [sonarwhal.com](Microsoft public scanner)
+
 ### History
  - [Live Dom Viewer](https://software.hixie.ch/utilities/js/live-dom-viewer/)
  - Firebug
@@ -13,6 +16,7 @@
 (Slides)[https://slides.com/jkup/devtools/#/]
 
 (DemoSite)[masteringdevtools.com]
+(Github)[git@github.com:jkup/mastering-chrome-devtools.git]
 
 ### Chrome Debugger
 
@@ -26,3 +30,10 @@
 #### XHR Fetch/Breakpoints
  - Can do a break any time you hit a url that fits a pattern
  
+#### Network Tab
+ - Look at ttfb as the reason something is being slow.
+ - queueing means that you have hit the limit of simultaneous resources to download (6) and have to wait to get another one
+ 
+#### Node Inspector
+ - You can run this on webpack to profile! 
+  
