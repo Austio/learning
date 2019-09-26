@@ -4,6 +4,11 @@
 - Doing nothing is better than doing something
 - Doing something later is better than now
 
+### Threads
+ - UI Thread: Chrome Itself (ui bar)
+ - Renderer Thread (CPU Intensive): Main thread 1 per tab, does css, js 
+ - Compositor Thread (GPU Intensive): Draws bitmap to screen through GPU
+
 ### Render Pipeline - All MainThread
  - Javascript
  - Style Calculation
@@ -61,5 +66,35 @@ widths.forEach((width, i) => {
   boxes[i].style.width = `${width * 2}px`;
 })
 
- 
 ```
+
+*Solution* [Fast Dom](https://github.com/wilsonpage/fastdom/blob/master/fastdom.js#L172)
+
+Another option is to use requestanimationframe to handle thrashing so that you are only reading/writing 1 time per cycle (~16ms)
+
+```
+button.addEventListener('click', (event) => {
+  boxes.forEach((element, index) => {
+    fastdom.measure(() => {
+      const width = element.offsetWidth;
+      fastdom.mutate(() => {
+        element.style.width = `${width * 2}px`;
+      })
+    });
+  })
+});
+
+// fastdom.measure
+```
+
+### Painting
+Any time you change anything other than opacity or a CSS Transform, you get a repaint.  Avoid this when possible.
+
+Can view this active paints pressing CTL+Shift+P -> Rendering -> Checking Page Rendering box
+
+### Layers
+You *can* suggest to the browser to use layers for areas, which reduces repainting.  Using a layer pushes work to the GPU where it just needs to shift layers relative to each other.  It is better when it is used well but does have overhead via having to keep shared memory between the Rendering Thread (CPU) and Compositor Thread (GPU)
+
+The way you do that is with a css property `will-change: transform`
+
+Can view layers by pressing CTL+Shift+P -> Show Layers
