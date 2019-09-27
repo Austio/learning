@@ -92,9 +92,22 @@ Any time you change anything other than opacity or a CSS Transform, you get a re
 
 Can view this active paints pressing CTL+Shift+P -> Rendering -> Checking Page Rendering box
 
-### Layers
+### Layers (css will-change: transform)
 You *can* suggest to the browser to use layers for areas, which reduces repainting.  Using a layer pushes work to the GPU where it just needs to shift layers relative to each other.  It is better when it is used well but does have overhead via having to keep shared memory between the Rendering Thread (CPU) and Compositor Thread (GPU)
 
 The way you do that is with a css property `will-change: transform`
 
 Can view layers by pressing CTL+Shift+P -> Show Layers
+
+There is a non-zero cost with this, good rule of thumb
+- Set this with javascript if they will do it sometimes (onenter set element.style.willChange = `transform` then on animationEnd set back to `auto` after)
+- If it is constant interaction do it with css
+
+![CSS Side](./img/web-performance-css-transition-layers-css.png)
+![Using JS to toggle classes](./img/web-performance-css-transition-layers.png)
+
+### Network Side
+
+cloudping.info
+
+- Initial window size is 14kb, if you can get your file in that size it will be 1 request.
