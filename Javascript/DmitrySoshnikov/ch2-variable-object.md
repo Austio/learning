@@ -1,5 +1,14 @@
 ### **Summary 1**
 
+1. What are the stages of creating an execution context: 
+ - Entering Context (before code execution)
+ - Handle Parameters (if function context): VO property set to name, value set to passed in value or \*undefined\*
+ - Function Declaration (FD) - VO property set to name and value of FO, \*\*overwrite\*\* on duplicate
+ - Variable Declaration (var): VO property set to name, value of undefined. \*\*skip\*\* on duplicate
+ - Executing Code
+ - Go line by line and set/execute
+ - Exit at end unless global
+
 1.  EC need a way to know of variables and fxns it has access to
 2.  Variable Objects (VO) which store variables, function declarations and parameters
 
