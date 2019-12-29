@@ -20,3 +20,16 @@ In a script file you can put
 
 process.argv = ARGV
   
+### Stream
+[Great Resource](https://github.com/substack/stream-handbook)
+
+ - Readable Stream responds to pipe
+ - Writable Stream accepts a readable stream
+ - piping returns a readable stream 
+
+```
+readableStream;
+writableStream;
+
+anotherReadable = readableStream.pipe(writableStream);  
+```
