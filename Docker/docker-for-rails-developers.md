@@ -16,8 +16,9 @@ Lifecycle of a container
  - stopping - sends SIGTERM to main process in container, falls back to SIGKILL
  - stopped - here after a stop or the main process terminates
    
-
 ### Reference
+run vs exec
+ - run will start a new container, exec will run in the currently executing container
 
 |Flag||
 |---|---|
@@ -41,6 +42,7 @@ Lifecycle of a container
 |docker tag cID tag|tags a container with a friendly tag|
 
 |docker-compose|---|
+|docker-compose up --force-recreate SERVICE|starts docker container but forces to recreate|
 |docker-compose logs -f container|tails the logs of the container (don't confuse with stdout)|
 |docker-compose restart container|restarts the container|
 |docker-compose run --rm container ~CMD TO RUN~|Runs a command in a new container|
@@ -131,6 +133,9 @@ CMD ['bin/rails', 's', '-b', '0.0.0.0']
 
 ### Rails docker-compose file
 
+ENV_FILE_DB
+
+
 ```yaml
 version '3'
 
@@ -138,7 +143,23 @@ services:
   web:
     build: .
     ports: 
-     - "3000:3000"
-    mount:
-     - .:/usr/src/app
+      - "3000:3000"
+    volumes: 
+      - .:/usr/src/app
+    env_file:
+      - .env/dev/database
+      - .env/dev/web
+  redis:
+    image: redis
+  database:
+    image: postgres
+    env_file:
+      - .env/dev/database
+    volumes:
+      - db_data:/var/lib/postgresql/data
+  
+  # to get info from docker volume with location (should be like /var/lib..../myapp_db_data/_data)
+  # docker volume inspect --format '{{ .Mountpoint }}' myapp_db_data
+  volumes:
+    db_data:
 ```
