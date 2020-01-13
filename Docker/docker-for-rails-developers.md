@@ -42,6 +42,7 @@ run vs exec
 |docker tag cID tag|tags a container with a friendly tag|
 
 |docker-compose|---|
+|---|---|
 |docker-compose up --force-recreate SERVICE|starts docker container but forces to recreate|
 |docker-compose logs -f container|tails the logs of the container (don't confuse with stdout)|
 |docker-compose restart container|restarts the container|
