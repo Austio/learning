@@ -54,16 +54,36 @@ Some questions you could ask when going over them.
    - Would we do something differently now?: Maybe asked boss to move deadline in 2 days to give time and increase accountability
  - Did I Share it with someone: Share 50% with people
  
- 
 - Takeaways
   - Daily reminder for 10 minutes to write things down
   - Monthly for 1 hour
   - Pick a management buddy for this
   
- 
- 
-  
-   
-   
- 
+### - Chapter 3 - Push Your Team
 
+[Dick Costello Do Not Try to be Liked](https://techcrunch.com/2013/09/09/dick-costolo-warns-against-trying-to-be-liked-and-lionizing-silicon-valley-figures/)
+
+Act from a deep belief of what is right for my team.  Be forthright and clear.
+
+Focus on what you can give someone for being on your team, not just learning how to write good code but also
+  - asking the right questions
+  - looking at the bigger picture
+  
+Care Deeply about your people while not worrying about what they think about you
+  - empathy: understanding someone else's perspective, we understand how they analyze the situation.  We don't have to agree, share feelings or help them solve
+  - sympathy: empathy + feeling the same way as the other person, feeling as if we were that person
+
+If someone is not performing well, emplathy will help us to analyze their situation; was it mismanagement of expectations, external conditions affecting.  Sympathy will trigger feelings of our past failures and justifying behaviors that we otherwise would not.  Sympathy cuases us to act as if we were the ones failing which prevents being subjective.
+
+Anti Asshole Checklist 
+ - Did I show and act from a place of empathy?  Reflect the situation as you see it to determine.
+ - Did I clarify my expectations? 
+ - Did I practice what i just preached?
+ 
+Thanks that will help
+ - Share lessons learning
+ - Summarize and Followup.  In that summary explain how you understood the other side along with the next action items
+  - Have concrete examples for followup
+ - Use the right medium.  Some teams are able to handle this in 1:1 some are good with group
+  - use [5 whys](https://en.wikipedia.org/wiki/Five_whys) by asking why something happened 5 times to get to the root
+ - Provide immediate feedback: not making a decision is equally a decision as making one
