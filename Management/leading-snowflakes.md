@@ -80,10 +80,38 @@ Anti Asshole Checklist
  - Did I clarify my expectations? 
  - Did I practice what i just preached?
  
-Thanks that will help
+Things that will help
  - Share lessons learning
  - Summarize and Followup.  In that summary explain how you understood the other side along with the next action items
   - Have concrete examples for followup
  - Use the right medium.  Some teams are able to handle this in 1:1 some are good with group
   - use [5 whys](https://en.wikipedia.org/wiki/Five_whys) by asking why something happened 5 times to get to the root
  - Provide immediate feedback: not making a decision is equally a decision as making one
+   
+### - Chapter 4 - Teach how to get things done
+
+(Show How, Don't Tell What)[https://tomayko.com/blog/2012/management-style]
+
+Teach teamates how to plan, build and deliver by pairing with them.
+
+Reflect on our thoughts and reasoning while we work: Make sure the "Why" is as visible and obvious as the "how"
+Make sure everyone has the information they need to do their job effectively.  
+
+Reduce Risk and Wast by
+ - Really focus on helping people to break down tasks, the smaller the better
+ - Show how to communicate questions of making things smaller (how to release small to qa, product, support, ops, etc)
+ - Have alternatives for if the deploy goes poorly.
+ - Break features into smaller tasks to increase deadline feasibility
+ 
+ By breaking things down, it helps people build confidence in the feasibility of the deadline we're communicating.
+  - Shorter Iterations
+  - LInk dependencies
+  
+ Constantly Communicate what is holding up, what that means for deadline.
+ 
+ Show How, Dont' Tell What
+  - You don't scale, you can't always be there to tell what to do
+  - Telling people what to do is lazy, 
+  
+ 
+
