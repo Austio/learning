@@ -90,7 +90,7 @@ Things that will help
    
 ### - Chapter 4 - Teach how to get things done
 
-(Show How, Don't Tell What)[https://tomayko.com/blog/2012/management-style]
+[Show How, Don't Tell What](https://tomayko.com/blog/2012/management-style)
 
 Teach teamates how to plan, build and deliver by pairing with them.
 
@@ -109,9 +109,14 @@ Reduce Risk and Wast by
   
  Constantly Communicate what is holding up, what that means for deadline.
  
- Show How, Dont' Tell What
+ Show how, Dont' Tell What
   - You don't scale, you can't always be there to tell what to do
   - Telling people what to do is lazy, 
   
+ Not explainging why causes lack of commitment and burnout
  
-
+ Drive Book - Healthy environment 
+  - Autonomy: how decisions are made
+  - Mastery: challenging and engaging
+  - Purpose: why you are doing something
+ 
