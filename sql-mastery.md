@@ -10,6 +10,8 @@
  - equality - sql uses 3 value comparrison, true false and unknowing, comparing anything with null is an unknowing
  - where will only return values that result in true
  - like: % is wildcare *, _ is exactly 1
+ - order by: `nulls (first|last)` works on pg!  asc is default ordering
+ - distinct vs distinct on: distinct is unique by tuple distinct on is more like a group by and column based
 
 ### Common Definitions and Basics
 
@@ -43,4 +45,54 @@ select
 from actors;
 
 |JIM|JONES|Jim Jones|
+```
+
+#### Order of Execution
+famous weasels gave him some overdue love
+
+ 1. from: pick tables to be queried
+ 2. where: filter the rows
+ 3. group by: aggregate
+ 4. having: filter aggregates
+ 5. select: select columns that appear in output
+ 6. order by: sort rows
+ 7. limit
+ 
+This order is why you can't use alias table names in a where clause that are defined in a select.
+
+#### Order By / Limit
+
+Always define an order by when doing a limit.  OW it will return any order and is not defined well.
+
+Offset is supported by postgres/mysql ANSI Standard looks like this
+```
+offset 10
+limit 5;
+
+offset 10 rows fetch next 5 rows only;
+```
+
+#### Case things
+
+Case columns will return `null` if there are not matches
+
+```
+select title, length
+  case
+    when length <= 60 then 'short'
+    when length > 60 and length <= 120 then 'long'
+    when length > 120 then 'very long'
+    when length is null then 'this film does not have length'
+    else 'unknown'
+  end as length_description
+from film;  
+
+// NOTE: simple form will not handle null
+  case length
+    when <= 60 then 'short'
+    when > 60 and length <= 120 then 'long'
+    when > 120 then 'very long'
+    else 'unknown'
+  end as length_description
+  
 ```
