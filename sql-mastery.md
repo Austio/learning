@@ -1,8 +1,15 @@
-[http://masterywithsql.com/](Mastery With SQL)
+(http://masterywithsql.com/)[Mastery With SQL]
 
 ### Cool shortcuts in datagrip/dbeaver
 
  - Ctl+Space - Displays list of columns that you can select from a table when you write out the `select from TABLE` if cursor is in between select and from keywords
+ 
+### Good to knows
+ - '' vs ""  single quotes is for values, double is for table/database identifiers
+ - Dates: Always use iso standard that is not ambiguous where updated_at > 'yyyy-mm-dd' so that when cast it will not be wierd
+ - equality - sql uses 3 value comparrison, true false and unknowing, comparing anything with null is an unknowing
+ - where will only return values that result in true
+ - like: % is wildcare *, _ is exactly 1
 
 ### Common Definitions and Basics
 
