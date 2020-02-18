@@ -1,4 +1,4 @@
-(http://masterywithsql.com/)[Mastery With SQL]
+[http://masterywithsql.com](Mastery With SQL)
 
 ### Cool shortcuts in datagrip/dbeaver
 
@@ -96,3 +96,8 @@ from film;
   end as length_description
   
 ```
+### Aggs
+
+ - After a group by, the only operation you can perform on other columns are aggregates of other columns (sum, avg, etc) because all of the rows are essentially squashed into a single row
+ - having = where for groups
+ 
