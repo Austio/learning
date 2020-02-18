@@ -96,8 +96,62 @@ from film;
   end as length_description
   
 ```
-### Aggs
+### Aggs | grouping
 
  - After a group by, the only operation you can perform on other columns are aggregates of other columns (sum, avg, etc) because all of the rows are essentially squashed into a single row
  - having = where for groups
+ 
+ #### Case in aggregate/group by
+ 
+ You can use cases to group, the cases groups must match exactly or do something like group by (1)
+ 
+ ```
+ select 
+   case
+     when length < 60 then 'short'
+     when length between 60 and 120 'medium'
+     when length > 120 then 'long'
+     else 'short
+   end,
+   count(*)
+ from film
+ group by 1;
+ -- or group by ...fully repeat case statement.
+ ```
+
+You can also do case statements in aggregates
+
+```
+select
+  sum(case when rating in ('R', 'NC-17') then 1 end) as adult_films,
+  count(*) as total_films
+  100.0 * sum(case when rating in ('R', 'NC-17') then 1 end) / count(*) as percentage
+from film
+
+-- psql gives us something specific called a filter we can use
+select
+  count(*) filter(where rating in ('R', 'NC-17')) as adult_films
+```
+ 
+Other Neat Queries
+
+```
+-- Return a list of customer where all payments they’ve made have been over $2
+select customer_id
+from payment
+group  by 1
+having every(amount >= 2.00) -- alias for bool_and
+
+-- generate a histogram
+select rating, repeat('+', (count(*) / 10)::int) as "count/10"
+from film
+where rating is not null
+group by rating;
+```
+
+### Data Types
+
+- char(n) is legacy and right pads with 0 when saving
+- || characters that are null results in the whole set being null 'foo' || 'bar' || null is null
+ - use concat string function instaed
  
