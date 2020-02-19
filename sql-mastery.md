@@ -151,7 +151,55 @@ group by rating;
 
 ### Data Types
 
+- pg_typeof(X) -> return the type of something
+- cast with 
+  - `int '33'`
+  - ansi cast('33' as int)
+  - '33'::int
+
+#### String
 - char(n) is legacy and right pads with 0 when saving
 - || characters that are null results in the whole set being null 'foo' || 'bar' || null is null
  - use concat string function instaed
  
+#### Numbers
+- ints are generally 2, 4 or 8 bytes, they are whole.  count(*) returns a big int (8 bytes)
+- numerics are fixed/floating
+- ciel, floor, round, be aware of the type (numeric, precision, int, etc)
+
+```
+List percentage of total for NC-17, G, PG, PG-13, NC-17, and R
+
+select
+    ceil(sum(case when rating in ('NC-17') then 1 end)/cast(count(*) as numeric) * 100) as "NC-17",
+    ceil(sum(case when rating in ('R') then 1 end)/cast(count(*) as numeric) * 100) as "R",
+    ceil(sum(case when rating in ('G') then 1 end)/cast(count(*) as numeric) * 100) as "G",
+    ceil(sum(case when rating in ('PG-13') then 1 end)/cast(count(*) as numeric) * 100) as "PG-13",
+    ceil(sum(case when rating in ('PG') then 1 end)/cast(count(*) as numeric) * 100) as "PG"
+    -- or with pg filter: round(100.0 * count(*) filter(where rating = 'NC-17') / count(*)) as "% NC-17",
+from film;
+
+% NC-17|% PG|% G|% R|% PG-13|
+-------|----|---|---|-------|
+     21|  19| 18| 20|     22|
+
+select int '33'; -- int4 33
+select int '33.3'; -- invalid input for integer
+select cast(33.3 as int); -- int4 33
+select cast(33.8 as int); -- int4 34
+select 33::text; -- text 33
+select 'hello'::varchar(2); -- varchar he
+select cast(35000 as smallint); -- smalling out of range error
+select 12.1::numeric(1,1); -- numeric field overflow
+```
+#### Dates
+- date: use iso 'yyyy-mm-dd'
+- time: 'HH:MM:DD'
+- timestamp
+- timestamptz: note: the results of times are relative to the locally set time
+  - '2018-01-1 3:00 Australia/Brisbane'::timestamptz
+  - '2018-01-1 3:00 +10'::timestamptz
+  - '2018-01-1 3:00 AEST'::timestamptz
+  - show timezone
+- intervals
+  - select timestamptz '2018-01-01 08:35 + 8' - timestamptz '2018-01-10 08:35 EST'
