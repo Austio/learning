@@ -203,3 +203,54 @@ select 12.1::numeric(1,1); -- numeric field overflow
   - show timezone
 - intervals
   - select timestamptz '2018-01-01 08:35 + 8' - timestamptz '2018-01-10 08:35 EST'
+- date_part('hour', '2018-01-01 12:23') will return the minute value, not the total minutes (here 23 instead of much higher)
+  - use date_part('epoch') to get seconds between them
+- date_trunc('hour', ...) great for doing group by for a specific month/year 
+- current_date, current_time, current_timestamp
+
+```
+--Get rental duration (which is an int) and print as interval of days
+
+select title,
+       extract(day from make_interval(days := rental_duration)) || ' days',
+       extract(day from make_interval(days := rental_duration)) + 1 || ' days'
+from film;
+
+select
+  title,
+  cast(rental_duration || ' days' as interval)  as duration,
+  cast(rental_duration || ' days' as interval) + interval '1 day'  as "duration + 1"
+from film;
+
+Group sales by hour of day
+select extract(hour from rental_date) as part, count(*)
+from rental
+group by extract(hour from rental_date)
+order by part asc;
+
+-- Rentals where they occurred on last day of month
+select count(*)
+from payment
+where date_part('day', (payment_date + INTERVAL '1 days')) = 1
+
+select count(*) as "total # EOM rentals"
+from rental
+where date_trunc('month', rental_date) + interval '1 month' - interval '1 day'
+        = date_trunc('day', rental_date);
+
+-- series of every first day of month
+select generate_series('2018-01-01'::timestamp, '2018-12-12'::timestamp, '1 month')
+
+-- count number of letters in first name
+select
+       first_name,
+       (CHAR_LENGTH(first_name) - CHAR_LENGTH(REPLACE(first_name, 'A', '')))
+from customer
+order by 2;
+
+-- Sum money from weekends
+
+select sum(amount)
+from payment
+where  EXTRACT(ISODOW FROM payment_date) IN (6, 7)
+```
