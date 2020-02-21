@@ -254,3 +254,32 @@ select sum(amount)
 from payment
 where  EXTRACT(ISODOW FROM payment_date) IN (6, 7)
 ```
+
+### Joins
+
+The cartesian product of 2 tables is all permutations of combinations between them
+
+The Cross Join is the Cartesian Product of two tables
+
+|Table A|Table B|(Cross Join) Cartesian Product TA*TB|
+|---|---|---|
+|1,2,3|A,B,C|1A,1B,1C,2A,2B,2C,3A,3B,3C|
+
+```
+select * from a
+cross join b on a.foo = b.foo
+
+-- older style cross join syntax
+select * from a, b
+where a.foo = b.foo
+```
+
+Inner Joins are a Cross Join Plus a Filter
+ - When inner joining, output does not show up if there is not a matching row in both sides of join
+ - shorthand for join is using
+ 
+```
+select * from a
+inner join b on a.foo = b.foo
+-- inner join b using (foo)
+```
