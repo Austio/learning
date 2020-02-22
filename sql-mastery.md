@@ -12,6 +12,7 @@
  - like: % is wildcare *, _ is exactly 1
  - order by: `nulls (first|last)` works on pg!  asc is default ordering
  - distinct vs distinct on: distinct is unique by tuple distinct on is more like a group by and column based
+ - be careful on multi table joins, inner joins on a next step table basically cancel out outer joins on previous joins
 
 ### Common Definitions and Basics
 
@@ -265,6 +266,7 @@ The Cross Join is the Cartesian Product of two tables
 |---|---|---|
 |1,2,3|A,B,C|1A,1B,1C,2A,2B,2C,3A,3B,3C|
 
+
 ```
 select * from a
 cross join b on a.foo = b.foo
@@ -272,14 +274,111 @@ cross join b on a.foo = b.foo
 -- older style cross join syntax
 select * from a, b
 where a.foo = b.foo
+
+-- fancier using style
+select * from a
+cross join b using(foo)
 ```
 
-Inner Joins are a Cross Join Plus a Filter
+Inner Joins are a Cross Join + a Filter
  - When inner joining, output does not show up if there is not a matching row in both sides of join
  - shorthand for join is using
+ 
+|Table A|Table B|(Cross Join) Cartesian Product TA*TB|
+|---|---|---|
+|1,2,3|A,B,C|1A,1B,1C,2A,2B,2C,3A,3B,3C| 
  
 ```
 select * from a
 inner join b on a.foo = b.foo
 -- inner join b using (foo)
 ```
+
+Outer Joins are Inner Join + adding rows back from one of the joined tables
+ - left outer adds rows back from left table
+ - right outer adds from the right side
+ - full outer adds back from both sides
+
+For example, 
+
+#### Full Summary
+
+Another way to look at it with a realer example
+
+users table
+|user_id|first_name|
+|---|---|
+|1|jim|
+|2|jane|
+
+purchases table
+|id|user_id|item|
+|---|---|
+|98|955|'water'|
+|99|1|'beer'|
+
+```
+select * from users
+cross join purchases using (user_id)
+```
+
+|users.user_id|users.first_name|purchases.id|purchases.user_id|purchases.item|
+|---|---|---|---|---|
+|1|jim|98|955|'water'|
+|2|jane|98|955|'water'|
+|1|jim|99|1|'beer'|
+|2|jane|99|1|'beer'|
+
+```
+select * from users
+inner join purchases using (user_id)
+```
+
+|users.user_id|users.first_name|purchases.id|purchases.user_id|purchases.item|
+|---|---|---|---|---|
+|1|jim|99|1|'beer'|
+
+```
+select * from users
+left outer join purchases using (user_id)
+```
+
+|users.user_id|users.first_name|purchases.id|purchases.user_id|purchases.item|
+|---|---|---|---|---|
+|1|jim|99|1|'beer'|
+|2|jane|null|null|null|
+
+
+```
+select * from users
+right outer join purchases using (user_id)
+```
+
+|users.user_id|users.first_name|purchases.id|purchases.user_id|purchases.item|
+|---|---|---|---|---|
+|null|null|98|955|'water'|
+|1|jim|99|1|'beer'|
+
+```
+-- find the users that don't have a purchase
+select * from users
+left outer join purchases using (user_id)
+where purchases.user_id is null
+```
+
+|users.user_id|users.first_name|purchases.id|purchases.user_id|purchases.item|
+|---|---|---|---|---|
+|2|jane|null|null|null|
+
+#### Join Exercises
+
+```
+Write a query to show for each customer
+-- how many different (unique) films they've rented and
+-- how many different (unique) actors they've seen in films they've rented
+select c.customer_id, count(distinct(f.film_id)), count(distinct(fa.actor_id)) from customer c
+join rental r on c.customer_id = r.customer_id
+join inventory i on r.inventory_id = i.inventory_id
+join film f on i.film_id = f.film_id
+join film_actor fa on f.film_id = fa.film_id
+group by c.customer_id;
