@@ -303,7 +303,26 @@ For example,
 
 #### Full Summary
 
-Another way to look at it with a realer example
+
+create table users (
+  user_id int primary key,
+  first_name varchar(20)
+);
+
+create table beverages (
+  beverage_id int primary key,
+  name varchar(20),
+  user_id int not null
+--   FOREIGN KEY (user_id) REFERENCES users (user_id)
+--   removing foreign key so that we can see nulls in cross joins
+);
+
+insert into users (user_id, first_name) values (1, 'jim');
+insert into users (user_id, first_name) values (2, 'jane');
+
+insert into beverages (beverage_id, name, user_id) values (97, 'beer', 1);
+insert into beverages (beverage_id, name, user_id) values (98, 'water', 2);
+insert into beverages (beverage_id, name, user_id) values (99, 'vinegar', 55);
 
 users table
 |user_id|first_name|
@@ -311,64 +330,69 @@ users table
 |1|jim|
 |2|jane|
 
-purchases table
-|id|user_id|item|
+beverages table
+|beverage_id|user_id|item|
 |---|---|
-|98|955|'water'|
-|99|1|'beer'|
+|97|1|'beer'|
+|98|2|'water'|
+|99|55|'vinegar'|
+```
+
+select * from users
+cross join beverages;
+
+```
+|users.user_id|users.first_name|beverages.beverage_id|beverages.user_id|beverages.item|
+|---|---|---|---|---|
+|1	|jim	|97	|beer	|1    |
+|1	|jim	|98	|water	|2    |
+|1	|jim	|99	|vinegar|	55|
+|2	|jane	|97	|beer	|1    |
+|2	|jane	|98	|water	|2    |
+|2	|jane	|99	|vinegar|	55|
 
 ```
 select * from users
-cross join purchases using (user_id)
+inner join beverages using (user_id);
 ```
 
-|users.user_id|users.first_name|purchases.id|purchases.user_id|purchases.item|
+|users.user_id|users.first_name|beverages.beverage_id|beverages.item|
 |---|---|---|---|---|
-|1|jim|98|955|'water'|
-|2|jane|98|955|'water'|
-|1|jim|99|1|'beer'|
-|2|jane|99|1|'beer'|
+|1|	jim	|97	|beer |
+|2|	jane|98	|water|
 
 ```
 select * from users
-inner join purchases using (user_id)
-```
-
-|users.user_id|users.first_name|purchases.id|purchases.user_id|purchases.item|
-|---|---|---|---|---|
-|1|jim|99|1|'beer'|
+left outer join beverages using (user_id);
 
 ```
-select * from users
-left outer join purchases using (user_id)
-```
 
-|users.user_id|users.first_name|purchases.id|purchases.user_id|purchases.item|
-|---|---|---|---|---|
-|1|jim|99|1|'beer'|
-|2|jane|null|null|null|
-
+|users.user_id|users.first_name|beverages.beverage_id|beverages.item|
+|---|---|---|---|
+|1|	jim	|97	|beer |
+|2|	jane|98	|water|
 
 ```
 select * from users
-right outer join purchases using (user_id)
+right outer join beverages using (user_id);
 ```
 
-|users.user_id|users.first_name|purchases.id|purchases.user_id|purchases.item|
-|---|---|---|---|---|
-|null|null|98|955|'water'|
-|1|jim|99|1|'beer'|
+|users.user_id|users.first_name|beverages.beverage_id|beverages.item|
+|---|---|---|---|
+|1|	jim	|97	|beer |
+|2|	jane|98	|water|
+|55|<null>|99|vinegar|
+```
+-- find the beverages that don't have a user
+select * from beverages
+left outer join users using (user_id)
+where users.first_name is null;
 
 ```
--- find the users that don't have a purchase
-select * from users
-left outer join purchases using (user_id)
-where purchases.user_id is null
-```
 
-|users.user_id|users.first_name|purchases.id|purchases.user_id|purchases.item|
-|---|---|---|---|---|
-|2|jane|null|null|null|
+|users.user_id|users.first_name|beverages.beverage_id|beverages.item|
+|---|---|---|---|
+|55|99|venegar|<null>|
 
 #### Join Exercises
 
@@ -382,3 +406,14 @@ join inventory i on r.inventory_id = i.inventory_id
 join film f on i.film_id = f.film_id
 join film_actor fa on f.film_id = fa.film_id
 group by c.customer_id;
+
+--  Write a query to return a count of how many of each film we have in our inventory (include all films).
+--  Order the output showing the lowest in-stock first so we know to buy more!
+
+-- notice that we count on the right joined table column so that we do not count null values as 1 row in the count result
+--   Not doing this step would cause our values to be 1 when there were no films in inventory
+select film.title, count(inventory_id) from film
+left outer join inventory using (film_id)
+group by film_id
+order by 2 asc;
+```
