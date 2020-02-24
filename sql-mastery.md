@@ -297,12 +297,38 @@ inner join b on a.foo = b.foo
 Outer Joins are Inner Join + adding rows back from one of the joined tables
  - left outer adds rows back from left table
  - right outer adds from the right side
- - full outer adds back from both sides
+ - full outer adds back from both side
+ 
+Self Joins are easy until we only want unique items
 
-For example, 
+```
+C  1  2  3
+1 11 12 13
+2 21 22 23
+3 31 32 33
+
+select * from c as c1
+inner join c as c2 
+ where c1.id != c2.id
+
+-- Would only eliminate self paired row down center (11, 22, 33)
+
+To eliminate the duplicates of 21 with 12, you would need to do <
+select * from c as c1
+inner join c as c2 
+ where c1.id < c2.id
+
+-- would only select 12, 13, 23, which is what we want here
+ 
+```
+ 
+ 
+
+Say we were wanting to se
 
 #### Full Summary
 
+For example 
 
 create table users (
   user_id int primary key,
