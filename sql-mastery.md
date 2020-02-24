@@ -442,4 +442,33 @@ select film.title, count(inventory_id) from film
 left outer join inventory using (film_id)
 group by film_id
 order by 2 asc;
+
+
+-- Write a query to return how many copies of each film are available in each store, including zero counts if there are none.
+-- Order by count so we can easily see first which films need to be restocked in each store
+
+-- notice how we first create the set of data we will need with the cross join first (all film/store combos) before jumping into other tables
+select film.title, film.film_id, store.store_id, count(inventory.inventory_id) as stock from film
+  cross join store
+left join inventory on film.film_id = inventory.film_id and store.store_id = inventory.store_id
+group by film.film_id, store.store_id
+order by 2,3,4;
+
+-- find the rentals that were made each month of 2005
+select m.t, count(inventory_id)
+from generate_series('2005-01-01'::timestamp, '2005-12-01'::timestamp, '1 month') as m(t)
+  left outer join rental on m.t = date_trunc('month', rental.rental_date)
+  group by m.t;
+
+-- Write a query to list the customers who rented out the film with ID 97 and then at some later date rented out the film with ID 841
+select r2.customer_id as "Very Specific Order History People" from rental r1
+  join inventory as i1 on r1.inventory_id = i1.inventory_id AND i1.film_id = 97
+  cross join (
+      select * from rental
+      join inventory on rental.inventory_id = inventory.inventory_id AND inventory.film_id = 841) as r2
+  where r1.customer_id = r2.customer_id
+    and r1.rental_date < r2.rental_date;
 ```
+
+
+
