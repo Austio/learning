@@ -120,3 +120,40 @@ Reduce Risk and Wast by
   - Mastery: challenging and engaging
   - Purpose: why you are doing something
  
+### Chapter 5 - Delegate without losing quality/visibility
+
+What should we do with our time in order to build a highly effective team that enjoys working together?
+
+Delegate:
+ - set expectations
+ - trust
+ 
+Make a list of must / delegate / external
+ - for each must
+   - does it utilize my strength/responsibility as manager
+   - does it server the leader i want to become in the long run (push out of comfort zone)
+ - if no on both, delegate to other teammates  
+ 
+Must (personal)
+ - Implementing Risky Features
+ - Planning milestones/deliveries
+ - Assigning tasks
+ - Code Reviews
+ - Communicating requirements/progress with other teams
+ - Communicating with business to make sure on time
+ - Interviewing
+ 
+Must (leader): tasks we believe are crucial for our team's success
+ - prepare growth plan for each teammate
+ - meeting with members
+
+External
+ - expectations for 1 on 1's with boss
+ 
+Delegating: Set expectations/desires explicitly
+ - Goal: Someone to take ownership
+ - What do i want to happen; Be communicative, active (ownership) aware
+ - Effort includes (x,y,z)
+ - Criteria for success
+ 
+
