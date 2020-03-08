@@ -578,4 +578,18 @@ select c.first_name, c.last_name,
 from customer as c;
 ```
 
-Table Subqueries - 
+#### Table Subqueries
+Where you create a table you select from as a subquery and you can rename columns as needed form it
+
+```
+select *
+from (select customer_id, count(*) from rental group by customer_id) as t
+
+-- You can reference the tables indirectly
+select customer_id, count
+from (select customer_id, count(*) from rental group by customer_id) as t
+
+-- You can also rename the returned queries from the subquery
+select t.the_id, t.the_count
+from (select customer_id, count(*) from rental group by customer_id) as t(the_id, the_count)
+```
