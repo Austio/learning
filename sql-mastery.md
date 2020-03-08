@@ -266,7 +266,6 @@ The Cross Join is the Cartesian Product of two tables
 |---|---|---|
 |1,2,3|A,B,C|1A,1B,1C,2A,2B,2C,3A,3B,3C|
 
-
 ```
 select * from a
 cross join b on a.foo = b.foo
@@ -319,10 +318,7 @@ inner join c as c2
  where c1.id < c2.id
 
 -- would only select 12, 13, 23, which is what we want here
- 
 ```
- 
- 
 
 Say we were wanting to se
 
@@ -362,12 +358,12 @@ beverages table
 |97|1|'beer'|
 |98|2|'water'|
 |99|55|'vinegar'|
-```
 
+```
 select * from users
 cross join beverages;
-
 ```
+
 |users.user_id|users.first_name|beverages.beverage_id|beverages.user_id|beverages.item|
 |---|---|---|---|---|
 |1	|jim	|97	|beer	|1    |
@@ -390,7 +386,6 @@ inner join beverages using (user_id);
 ```
 select * from users
 left outer join beverages using (user_id);
-
 ```
 
 |users.user_id|users.first_name|beverages.beverage_id|beverages.item|
@@ -415,10 +410,10 @@ left outer join users using (user_id)
 where users.first_name is null;
 
 ```
-
 |users.user_id|users.first_name|beverages.beverage_id|beverages.item|
 |---|---|---|---|
 |55|99|venegar|<null>|
+```
 
 #### Join Exercises
 
@@ -470,5 +465,117 @@ select r2.customer_id as "Very Specific Order History People" from rental r1
     and r1.rental_date < r2.rental_date;
 ```
 
+### Subqueries
 
+#### Uncorrelated Subqueries
+Queries that contain other queries that could completely stand on their own.
 
+```
+-- 7.1 Write a query to return all the customers who made a rental on the first day of rentals
+-- (without hardcoding the date for the first day of rentals in your query)
+select * from rental
+  where date_trunc('day', rental_date) = (select date_trunc('day', min(rental_date))
+  from rental);
+
+select email, rental_date from customer
+join rental using (customer_id)
+where date_trunc('day', rental.rental_date) =  (select date_trunc('day', min(rental.rental_date)) from rental);
+
+-- 7.2 Using a subquery, return the films that don't have any actors.
+-- Now write the same query using a left join. Which solution do you think is better? Easier to read?
+
+select * from film
+ left join film_actor using (film_id) where film_actor.actor_id is null;
+
+select * from film
+  where film.film_id not in (select distinct film_id from film_actor)
+
+-- 7.3 You intend to write a humorous email to congratulate some customers on their poor taste in films.
+-- To that end, write a query to return the customers who rented out the least popular film (that is,
+-- the film least rented out - if there is more than one, pick the one with the lowest film ID)
+
+select film.title, customer.email from film
+join inventory using (film_id)
+join rental using (inventory_id)
+join customer using (customer_id)
+where film.film_id = (select film_id from film
+    left join inventory using (film_id)
+    left join rental using (inventory_id)
+    group by film_id
+    having count(rental_id)  > 0
+    order by count(rental_id), film_id
+    limit 1);
+```
+
+#### Correlated Subqueries 
+A subquery that references something in an outer table and cannot stand on its own
+
+```
+-- 7.4 Write a query to return the countries in our database that have more than 15 cities
+select country.country from country
+where (
+    select count(*)
+    from city
+    where city.country_id = country.country_id
+    ) > 15
+
+-- 7.5 Write a query to return for each customer the store they most commonly rent from
+
+select c.email, (
+    select store.store_id from customer
+    join rental using (customer_id)
+    join inventory using (inventory_id)
+    join store on store.store_id = inventory.store_id
+    where customer.email = c.email
+    group by store.store_id
+    order by count(rental_id) desc
+    limit 1
+) from customer as c
+
+-- Solution
+select
+  c.customer_id,
+  c.first_name,
+  c.last_name,
+  (select i.store_id
+   from rental as r
+     inner join inventory as i using (inventory_id)
+   where r.customer_id = c.customer_id
+   group by i.store_id
+   order by count(*) desc
+   limit 1) as "Favourite Store"
+from customer as c;
+
+-- 7.6 In the customer table, each customer has a store ID which is the store they originally registered at.
+-- Write a query to list for each customer whether they have ever rented from a different store than that one they registered at.
+-- Return 'Y' if they have, and 'N' if they haven't.
+
+select c.email, (
+    select
+      case count(*)
+      when 0 then 'N'
+      else 'Y'
+      end
+    from customer
+    join rental using (customer_id)
+    join inventory using (inventory_id)
+    join store on inventory.store_id = store.store_id
+    where c.customer_id = customer.customer_id
+      and store.store_id != c.store_id
+    ) from customer as c
+
+-- solution
+select c.first_name, c.last_name,
+  case
+    when exists
+      (select *
+       from rental as r
+         inner join inventory as i using (inventory_id)
+       where r.customer_id = c.customer_id
+         and i.store_id != c.store_id) then 'Y'
+    else 'N'
+  end as "HasRentedOtherStore"
+from customer as c;
+```
+
+Table Subqueries - 
