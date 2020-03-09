@@ -593,3 +593,66 @@ from (select customer_id, count(*) from rental group by customer_id) as t
 select t.the_id, t.the_count
 from (select customer_id, count(*) from rental group by customer_id) as t(the_id, the_count)
 ```
+
+You can also create tables with values inline.
+
+```
+select *
+from
+(values
+        ('short', 0, 60),
+        ('medium', 60, 120),
+        ('long', 120, 10000)) as t("desc", "min", "max")
+        
+-- useful when replacing a case statement
+
+select t.desc, film.*
+from
+(values
+        ('short', 0, 60),
+        ('medium', 60, 120),
+        ('long', 120, 10000)) as t("desc", "min", "max")
+join film on film.length >= t.min and film.length < t.max;
+```
+
+
+-- 7.7 Write a query to return each customer 4 times
+
+```
+select first_name, last_name from customer
+cross join (values (1),(2),(3),(4)) as t("times_to_repeat_this");;
+```
+
+-- 7.8 Write a query to return how many rentals the business gets on average on each day of the week.
+-- Order the results to show the days of the week with the highest average number of rentals first
+-- (use the round function to round the average so it's a nice whole number).
+-- Have a look at the to_char function to obtain the day name given a timestamp.
+-- For simplicity, don't worry about days in which there were no rentals.
+
+```
+select (rent_totals.total_rentals / day_count.total_days) as average_per_day, rent_totals.day_of_week from
+(select
+  count(rental_id) as total_rentals,
+  to_char(rental_date, 'Day') as day_of_week from rental
+group by 2) as rent_totals
+join (select count(*) as total_days, day_of_week
+from (
+         select distinct(to_char(rental_date, 'J')) as julian_date, to_char(rental_date, 'Day') as day_of_week
+         from rental
+     ) as dates
+group by 2) as day_count
+on day_count.day_of_week = rent_totals.day_of_week
+order by 1 desc;
+
+-- Solution 
+select
+  to_char(rent_day, 'Day') as day_name,
+  round(avg(num_rentals)) as average
+from
+  (select date_trunc('day', rental_date) as rent_day, count(*) as num_rentals
+   from rental
+   group by rent_day) as T
+group by day_name
+order by average desc;
+```
+
