@@ -155,5 +155,17 @@ Delegating: Set expectations/desires explicitly
  - What do i want to happen; Be communicative, active (ownership) aware
  - Effort includes (x,y,z)
  - Criteria for success
+
+
+### Chapter 6 - Build trust with other teams
+
+Functional Aspects of teams are well defined, but keeping them aligned is a challenge.  Conveying these explicity expectations is beneficial
+
+Problems with a fractured outlook on management
+ - Lacking vision alignment: Teams don't know what their vision is.  We need to define that for them and what the vision is for the team.  Set the vision.
+ - Different Prioritizaiton and lack of context from other teams: Multiple managers with mixed understanding of expectations trying to communicate gets messy.
+  - Need vs want misalignment: be sure to define what a need is vs a want so that you can classify and manage urgency/important things.
+  - Remove dependencies: Align teams to start optimizing for value, getting the "right things" done faster rather than optimizing our local throughput (getting work done faster)
  
 
+Building Trust starts with consistently sharing context, priorities and pains as part of execution process. 
