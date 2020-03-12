@@ -644,6 +644,11 @@ group by 2) as day_count
 on day_count.day_of_week = rent_totals.day_of_week
 order by 1 desc;
 
+select to_char(t.day, 'Day'), round(avg(count)) from (select date_trunc('day', rental.rental_date), count(*) from rental
+group by 1) as t("day", "count")
+group by 1
+order by 2 desc;
+
 -- Solution 
 select
   to_char(rent_day, 'Day') as day_name,
@@ -656,3 +661,66 @@ group by day_name
 order by average desc;
 ```
 
+#### Lateral subqueries
+
+These allow you to do a join on a correlated subquery.  Notice in the example below that we are able to use outer_customer in the inner joined table
+
+```
+-- 7.9 Write a query to return for each customer the first 'PG' film that they rented (include customers who have never rented a 'PG' film as well)
+
+select outer_customer.email, t.title, t.rental_date from customer as outer_customer
+left outer join lateral (
+  select rental.customer_id, film.title, rental.rental_date from rental
+  join inventory using (inventory_id)
+  join film using (film_id)
+  where rental.customer_id = outer_customer.customer_id
+    and film.rating = 'PG'
+  order by rental_date desc
+  limit 1
+    ) as t on outer_customer.customer_id = t.customer_id;
+```
+
+#### Common Table Expressions
+
+These allow us to pull out tables: Syntax in postgres is as follows
+
+```
+with TABLE__NAME(column_names*) as (SQL_QUERY)
+
+
+-- 7.10 Write a query to list the customers who rented out the film with title "BRIDE INTRIGUE" and then at some later date rented out the film with title "STAR OPERATION".
+-- Use a CTE to simplify your code if possible.
+
+with min_bride_query(customer_id, rental_date) as (select customer.customer_id, min(rental.rental_date) from customer
+  join rental using(customer_id)
+  join inventory using (inventory_id)
+  join film using (film_id)
+  where film.title = 'BRIDE INTRIGUE'
+  group by customer.customer_id )
+
+select * from customer
+join rental using(customer_id)
+join inventory using (inventory_id)
+join film using (film_id)
+join min_bride_query on min_bride_query.customer_id = customer.customer_id
+where film.title = 'STAR OPERATION'
+  and rental.rental_date > min_bride_query.rental_date;
+  
+-- 7.11 Write a query to calculate the amount of income received each month and compare that against the previous month's income, showing the change.
+
+with month(month, total) as (
+    select date_trunc('month', rental_date), sum(payment.amount) from rental
+    join payment using (rental_id)
+    group by date_trunc('month', rental_date)
+    order by 1 asc
+)
+
+select * from month
+cross join lateral (
+    select sum(payment.amount) from rental
+    join payment using (rental_id)
+    where date_trunc('month', rental.rental_date) = (month.month - interval '1 month')
+) as t;
+
+select * from inventory;
+```
