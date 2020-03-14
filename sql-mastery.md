@@ -721,6 +721,17 @@ from rental_detail as r1
     on r1.customer_id = r2.customer_id
     and r2.rental_date > r1.rental_date
     and r1.title = 'BRIDE INTRIGUE' and r2.title = 'STAR OPERATION';
+    
+-- second time through
+with film_join(date,title,customer_id) as (select rental.rental_date, title, rental.customer_id from rental
+join inventory i on rental.inventory_id = i.inventory_id
+join film f on i.film_id = f.film_id)
+
+select * from film_join f1
+join film_join f2 on f1.customer_id = f2.customer_id
+where f1.title = 'STAR OPERATION'
+  and f2.title = 'BRIDE INTRIGUE'
+  and f1.date > f2.date
   
 -- 7.11 Write a query to calculate the amount of income received each month and compare that against the previous month's income, showing the change.
 
@@ -757,4 +768,12 @@ from monthly_amounts as curr
   left join monthly_amounts as prev
     on curr.month = prev.month + interval '1 month'
 
+-- second attempt
+
+with months(month, amount) as (
+    select date_trunc('month', payment_date), sum(amount) from payment
+    group by 1
+    order by 1)
+select * from months as current_month
+  left join months previous_month on current_month.month = (previous_month.month + interval '1 month');
 ```
