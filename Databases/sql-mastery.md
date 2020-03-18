@@ -413,7 +413,6 @@ where users.first_name is null;
 |users.user_id|users.first_name|beverages.beverage_id|beverages.item|
 |---|---|---|---|
 |55|99|venegar|<null>|
-```
 
 #### Join Exercises
 
@@ -776,4 +775,118 @@ with months(month, amount) as (
     order by 1)
 select * from months as current_month
   left join months previous_month on current_month.month = (previous_month.month + interval '1 month');
+```
+
+#### Subquery Challenges
+
+```
+-- 7.12 Write a query to return the customers who rented a film in 2005 but none in 2006
+with r2005(customer_id_05) as (
+    select distinct(customer_id) from rental as r
+    where date_part('year', r.rental_date) = 2005
+), r2006(customer_id_06) as (
+    select distinct(customer_id) from rental as r
+    where date_part('year', r.rental_date) = 2006
+)
+select customer_id_05 from r2005
+left outer join r2006 on r2005.customer_id_05 = r2006.customer_id_06
+where customer_id_06 is null;
+
+-- Solution (more simple)
+select distinct customer_id
+from rental
+where date_part('year', rental_date) = 2005
+  and customer_id not in
+    (select customer_id
+     from rental
+     where date_part('year', rental_date) = 2006);
+
+-- 7.13 What are the top 3 countries the customers are from.
+-- Show both the number of customers from each country and percentage (round the percentage to the nearest whole number)
+
+with totals(country_id, total, name) as (
+    select c2.country_id, count(*), c2.country from customer
+  join address a on customer.address_id = a.address_id
+  join city c on a.city_id = c.city_id
+  join country c2 on c.country_id = c2.country_id
+  group by 1
+  order by 2 desc
+), sums(s) as (
+    select sum(total)
+    from totals
+)
+
+select name, round((round(total/s, 3) * 100)), s, total from totals cross join sums
+limit 3
+
+-- or 
+  select c2.country, c2.country_id, count(*) as num_customers, (count(*) * 1.0 / (select count(*) from customer)) from customer
+  join address a on customer.address_id = a.address_id
+  join city c on a.city_id = c.city_id
+  join country c2 on c.country_id = c2.country_id
+  group by 2
+  order by 3 desc
+  limit 3
+
+-- pass 3
+select c3.country,
+       count(*) as total,
+       round((count(*) * 1.0/ (select count(*) from customer)) * 100, 0)
+  from customer c
+  join address a on c.address_id = a.address_id
+  join city c2 on a.city_id = c2.city_id
+  join country c3 on c2.country_id = c3.country_id
+  group by 1
+  order by 2 desc;
+
+-- 7.14 Write a query to perform a running total of payments received, grouping by month
+-- (ie. for each month return the amount of money received that month and also the total amount of money received up to (and including)
+-- that month - this is a useful view to have if you wanted to produce a cumulative chart). Hint - Re-use the monthly_amounts CTE from exercise 7.11
+
+with months(month_date) as (
+    select distinct date_trunc('month', rental_date) from rental
+    order by 1
+  )
+select * from months as m
+cross join lateral (
+    select sum(amount) from rental as r
+    join payment p on r.rental_id = p.rental_id
+    where date_trunc('month', rental_date) <= m.month_date
+) as cumulative
+
+-- pass 2
+with dates(month,total) as (
+    select date_trunc('month', payment.payment_date), sum(amount) from payment
+    group by 1
+    order by 1 asc
+    )
+select * from dates d1
+cross join lateral (
+    select sum(d2.total) from dates d2
+    where d1.month >= date_trunc('month', d2.month)
+) as cumulative;
+
+
+-- 7.15 The rental table has 16,044 rows but the maximum rental ID is 16,049.
+-- This suggests that some rental IDs have been skipped over. Write a query to find the missing rental IDs.
+-- The generate_series function may come in handy
+
+select all_ids as "Missing IDS" from generate_series(1, 16049) as all_ids
+  left outer join (
+      select rental_id from rental
+    ) as rental_id
+   on all_ids = rental_id
+   where rental_id is null;
+
+
+-- 7.16 In an earlier exercise I asked you to see if you could find a way to return the last 3 payments made in Jan, 2007
+-- but ordered ascending. You've got the tools now to accomplish this - see if you can figure it out!
+
+select * from (
+    select * from payment
+    where date_trunc('day', payment.payment_date) = '2007-01-31'
+    order by payment_date desc
+    limit 3
+    ) as dates
+  order by payment_date asc;
 ```
