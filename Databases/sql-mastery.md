@@ -890,3 +890,71 @@ select * from (
     ) as dates
   order by payment_date asc;
 ```
+
+### Window Functions
+
+Kind of like correlated subqueries but on steroids
+
+|function|what it does|example result|
+|---|---|---|
+row_number|order sequential similar to regular numeric primary key|1,2,3,4,5,6,7|
+|rank|ordered sequentially by row_number but with all equal having same number|1,2,3,3,3,6,7|
+|dense_rank|ordered sequentially by rank but with all equal having same number|1,2,3,3,3,4,5|
+
+example query
+```
+select 
+ rating, 
+ title,
+ row_number() over (order by length),
+ rank() over (order by length),
+ dense_rank() over (order by length),
+ dense_rank() over (group by rating order by length)
+from film
+```
+
+#### Query Examples
+
+```
+-- 8.1 Write a query to return the 3 most recent rentals for each customer.
+   -- Earlier you did this with a lateral join - this time do it with window functions
+   
+   select * from (select
+          customer_id,
+          rental_id,
+           row_number() over (partition by customer_id order by rental_date desc),
+           inventory_id
+         from rental) as t(c,r,n,i)
+   where n <= 3;
+
+-- 8.2 We want to re-do exercise 7.3, where we wrote a query to return the customers who rented out the least popular film
+-- (that is, the film least rented out). This time though we want to be able to handle if there is more than
+-- one film that is least popular. So if several films are each equally unpopular, return the customers who rented out any of those films.
+
+with counts as  (
+    select f.title, f.film_id, count(f.film_id) from rental
+    join inventory i on rental.inventory_id = i.inventory_id
+    join film f on i.film_id = f.film_id
+    group by f.film_id
+), ranks as (
+    select film_id,
+           title,
+           rank() over (order by counts.count) as rank
+    from counts
+)
+select c.customer_id, c.email, ranks.title, rental.rental_date from ranks
+join inventory using(film_id)
+join rental using(inventory_id)
+join customer c on rental.customer_id = c.customer_id
+where rank = 1;
+
+
+-- 8.3 Write a query to return all the distinct film ratings without using the DISTINCT keyword
+select rating from (
+select
+rating,
+row_number() over (partition by rating order by film_id)
+from film
+    ) as t
+where t.row_number = 1 and t.rating is not null;
+```
