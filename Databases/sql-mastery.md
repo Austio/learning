@@ -893,7 +893,7 @@ select * from (
 
 ### Window Functions
 
-Kind of like correlated subqueries but on steroids
+Kind of like correlated subqueries but different.  
 
 |function|what it does|example result|
 |---|---|---|
@@ -913,6 +913,51 @@ select
 from film
 ```
 
+The window for the function is easy to consider if you think of the partition as the actual window of data we are looking at.
+Think of the window as being the restriction that is being applied by the partition.
+
+```
+select 
+  title,
+  avg(length) over (partition by rating)
+from film
+
+// for a film that has a a given rating of 'G'
+avg(length) over (partition by rating)
+
+// partitiion window expands on this
+select rating, avg(length)
+from film
+group by rating
+having rating = 'G';
+```
+
+When you add a "window frame" using an order by, aggregate functions will show a running total of the aggregate of the partition.
+This is a default of how things work using a final 'rows between unbounded preceding current row'
+
+You could adjust this and set it so that you could get something like a moving average of the last couple of days
+
+```
+select customer_id, payment_date, amount 
+  avg(amount) over (partition by customer_id 
+                    order by payment date
+                    // implied
+                    rows between unbounded preceding current row)
+
+// To remove this behavior of having a running average you would change the 'rows between to be
+rows between unbounded preceding and unbounded following
+
+// to get a running average of last 3 days
+rows between 2 preceding rows and current row
+```
+
+As additional aggregate functions (sum, avg, etc) there is also 
+ - lag: used to get back n value 
+ - lead: used to get forward n value
+ - ntile: percentile the current record is relative to window
+ - cume_dist: distribution
+ - first_value, nth_value and last_value: relative to the window *UP TO THE CURRENT ROW OF THE WINDOW BY DEFAULT*
+ 
 #### Query Examples
 
 ```
@@ -948,6 +993,24 @@ join rental using(inventory_id)
 join customer c on rental.customer_id = c.customer_id
 where rank = 1;
 
+// -- Solution
+with rent_counts as
+(
+  select
+     film_id,
+     count(*),
+     rank() over (order by count(*))
+   from rental
+     inner join inventory using (inventory_id)
+   group by film_id
+)
+select distinct customer_id
+from rental as r
+  inner join inventory as i using (inventory_id)
+where i.film_id in
+  (select film_id
+   from rent_counts
+   where rank = 1);
 
 -- 8.3 Write a query to return all the distinct film ratings without using the DISTINCT keyword
 select rating from (
@@ -957,4 +1020,88 @@ row_number() over (partition by rating order by film_id)
 from film
     ) as t
 where t.row_number = 1 and t.rating is not null;
+
+-- 8.4 Write a query to show for each rental both the rental duration and also the average rental duration from the same customer
+
+with durations(rental_duration, customer_id, rental_date) as (
+    select
+           (return_date - rental_date),
+           customer_id,
+           rental_date
+from rental)
+select rental_duration, customer_id, avg(rental_duration) over (partition by customer_id)
+from durations;
+
+
+-- 8.5 Write a query to calculate a running total of payments received, grouped by month
+-- (ie. for each month show the total amount of money received that month and also the total amount of money received
+-- up to and including that month)
+
+with monthly_amounts as
+(
+  select
+    date_trunc('month', payment_date) as month,
+    sum(amount) as amount
+  from payment
+  group by month
+)
+select
+  month,
+  amount,
+  sum(amount) over (order by month) as running_total
+from monthly_amounts;
+
+-- 8.6 Write a query to return the top 3 earning films in each rating category.
+-- Include ties. To calculate the earnings for a film, multiply the rental rate for the film by the number of times it was rented out
+
+with earnings(film_id, title, total) as (
+    select
+       film.film_id,
+       film.title,
+       sum(p.amount) as total
+from film
+join inventory i on film.film_id = i.film_id
+join rental r on i.inventory_id = r.inventory_id
+join payment p on r.rental_id = p.rental_id
+group by 1), rank(title, total, rank, category) as (
+    select earnings.title,
+           earnings.total,
+           rank() over (partition by film.rating order by total desc),
+           film.rating
+    from earnings
+        join film using (film_id)
+)
+select * from rank
+where rank <= 3;
+
+-- SOLUTION
+with film_incomes as
+(
+  select
+    f.film_id,
+    f.title,
+    f.rating,
+    f.rental_rate * count(*) as income
+  from rental as r
+    inner join inventory as i using (inventory_id)
+    inner join film as f using (film_id)
+  group by f.film_id
+),
+film_rankings as
+(
+  select
+    film_id,
+    title,
+    rating,
+    income,
+    rank() over(partition by rating order by income desc)
+  from film_incomes
+  where rating is not null
+)
+select title, rating, income
+from film_rankings
+where rank <= 3
+order by rating, rank;
+
+
 ```
