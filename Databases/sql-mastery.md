@@ -897,7 +897,7 @@ Kind of like correlated subqueries but different.
 
 |function|what it does|example result|
 |---|---|---|
-row_number|order sequential similar to regular numeric primary key|1,2,3,4,5,6,7|
+|row_number|order sequential similar to regular numeric primary key|1,2,3,4,5,6,7|
 |rank|ordered sequentially by row_number but with all equal having same number|1,2,3,3,3,6,7|
 |dense_rank|ordered sequentially by rank but with all equal having same number|1,2,3,3,3,4,5|
 
@@ -1103,5 +1103,52 @@ from film_rankings
 where rank <= 3
 order by rating, rank;
 
+-- 8.7 The rental table has 16,044 rows but the maximum rental ID is 16,049. This suggests that some rental IDs have been skipped over.
+-- Write a query to find the missing rental IDs (you previously did this using the generate_series function.
+-- Now do it using only window functions). Note you don't have to have your output formatted the same.
 
+with lagging(rental_id, lagging_id) as (
+        select rental_id,
+        lag(rental_id) over (order by rental_id)
+        from rental
+)
+select * from lagging
+where (rental_id - lagging_id != 1)
+
+-- 8.8 Calculate for each customer the longest amount of time they've gone between renting a film
+
+-- My solution, inaccurate
+with ordered_rentals(customer_id, return_date, row) as (
+    select customer_id, return_date,
+    row_number() over (partition by customer_id order by return_date desc)
+    from rental
+), ordered_lagging(customer_id, return_date, previous_date) as (
+    select customer_id, return_date,
+    lag(return_date) over (partition by customer_id order by return_date desc)
+    from ordered_rentals
+), differenced_lagging(customer_id, return_date, previous_date, difference) as (
+    select customer_id, return_date, previous_date,
+    (previous_date - return_date) as difference
+    from ordered_lagging
+    where previous_date is not null
+), largest_difference as (
+    select *,
+           first_value(difference) over (partition by customer_id order by difference desc)
+    from differenced_lagging
+)
+select * from largest_difference
+where difference = first_value
+group by customer_id;
+
+-- Solution (jc)
+with days_between as
+(
+  select customer_id, rental_date,
+    lead(rental_date) over (partition by customer_id order by rental_date) - rental_date as diff
+  from rental
+)
+select customer_id, max(diff) as "longest break"
+from days_between
+group by customer_id
+order by customer_id;
 ```
