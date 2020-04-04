@@ -1103,6 +1103,15 @@ from film_rankings
 where rank <= 3
 order by rating, rank;
 
+-- second go 
+
+with history as (select f.film_id, f.title, f.rating, (rental_rate * count(rental_id)) as total from rental
+join inventory i on rental.inventory_id = i.inventory_id
+join film f on i.film_id = f.film_id
+group by f.film_id),
+rank as (select *, rank() over (partition by rating order by total desc) as rank from history)
+select * from rank where rank.rank <= 3;
+
 -- 8.7 The rental table has 16,044 rows but the maximum rental ID is 16,049. This suggests that some rental IDs have been skipped over.
 -- Write a query to find the missing rental IDs (you previously did this using the generate_series function.
 -- Now do it using only window functions). Note you don't have to have your output formatted the same.
@@ -1115,7 +1124,15 @@ with lagging(rental_id, lagging_id) as (
 select * from lagging
 where (rental_id - lagging_id != 1)
 
+with lags as (select
+  rental_id,
+  lag(rental_id) over (order by rental_id)
+from rental)
+select * from lags where lag is null or rental_id - lag != 1;
+
 -- 8.8 Calculate for each customer the longest amount of time they've gone between renting a film
+
+select * from rental;
 
 -- My solution, inaccurate
 with ordered_rentals(customer_id, return_date, row) as (
@@ -1151,4 +1168,18 @@ select customer_id, max(diff) as "longest break"
 from days_between
 group by customer_id
 order by customer_id;
+
+Next try;
+with times as (select
+  customer_id,
+  rental_date as current_rental,
+  lag(rental_date) over (partition by customer_id order by rental_date desc) as next_rental
+  from rental
+)
+select
+  customer_id,
+  max(next_rental - current_rental) over (partition by customer_id)
+from times
+where next_rental is not null;
+
 ```
