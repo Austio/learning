@@ -169,3 +169,42 @@ Problems with a fractured outlook on management
  
 
 Building Trust starts with consistently sharing context, priorities and pains as part of execution process. 
+
+### Chapter 7: Optimize for Business Learning
+
+Don't fall in love with the solution, but the problem you're trying to solve.
+
+Optimize for What?
+
+First Figure out the Busines Value of Features
+ - Will we know when/how people hear about our product?
+ - Will we be able to understand if/how they use product?
+ - Can we change things quickly enough to improve the product?
+ - Can we measure quality of changes?
+ - Can we reduce the amount of work and test earlier?
+
+Focus on Efficiency over Throughput
+ - Efficiency: Reduce number of Work Units
+ - Throughput: More tasks in given time period
+
+Optimize for Value:
+ - Acquisition - how do you bring in more users
+ - Activation - Complete tasks that help convey value of application (1st time experience) think alarm clock proposition
+ - Retention - Increase repetive visits
+ - Referrer - INcentivise to bring in new audience
+ - Revenue - Monetize users/customers
+ 
+Understand the impact of a feature
+ - have analytics in place to focus on improving metrics above 
+ - "If you can't make engineering decisions based on data, then make engineering decisions that result in data." Kent Beck
+ 
+Optimizing or scaling components that may/may not be used is sticking our head in the sand, massive infrastructure work and automating irrelevant manual steps are bad.
+
+With business certainty, optimize for predictability
+
+Figure out and optimize bottlenecks
+ - Resolve dependencies in advance (design vs engineering)
+ - Infrastructure - reduce code neded to develop new features
+ - Automate manual work
+ 
+Companies fail when they stop asking what they would do if they were started today and instead just iterate on what they've already done.
