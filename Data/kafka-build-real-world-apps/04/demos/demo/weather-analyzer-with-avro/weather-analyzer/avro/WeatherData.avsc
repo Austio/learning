@@ -1,0 +1,14 @@
+{
+ "namespace": "weather.analyzer.models",
+ "type": "record",
+ "name": "WeatherData",
+ "fields": [
+     {"name": "epoch", "type": "long"},
+     {"name": "location",  "type": "string"},
+     {"name": "temperature", "type": "int"},
+     {"name": "weather",  "type": "string"},
+     {"name": "humidity",  "type": "int"},
+     {"name": "windSpeedInMPH",  "type": "int"},
+     {"name": "newField", "type":"string", "default":"null"}
+ ]
+}

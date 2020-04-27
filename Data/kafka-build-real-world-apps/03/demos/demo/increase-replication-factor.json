@@ -1,0 +1,6 @@
+{"version":1,
+  "partitions":[
+     {"topic":"weather","partition":0,"replicas":[0,1,2]},
+     {"topic":"weather","partition":1,"replicas":[1,2,0]},
+     {"topic":"weather","partition":2,"replicas":[2,0,1]}
+]}
