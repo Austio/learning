@@ -1181,5 +1181,153 @@ select
   max(next_rental - current_rental) over (partition by customer_id)
 from times
 where next_rental is not null;
+```
+
+### Working With Sets
+
+Sets: Queries must return same number and data type of columns
+
+For the most part, use parens to help on these
+
+```
+(...SQL) 
+UNION 
+(...OTHER_SQL)
+```
+
+Order / Group do not work on the result of a set, you have to wrap in a table subquery.
+
+
+
+ - Union - All Unique Rows combined - put two sets together (a union b includes all in a and all in b) - Excluding Duplicates
+ - Union All - All Rows combined - put two sets together (a union b includes all in a and all in b) - Keeping Duplicates
+ - Intersect - find where both meet (a interesect b includes only those in a and b)
+ - Intersect All - Return intersection where the rows in each result are the same
+```
+(select n from (values (1), (1), (3)) as v(n))
+intersect
+(select n from (values (1), (3), (4)) as v(n))
+-- 1, 3
+
+(select n from (values (1), (1), (3)) as v(n))
+intersect
+(select n from (values (1), (3), (4)) as v(n))
+-- 1 (because the 1 only aligns in the first result row in both
+``` 
+ 
+ - Except - difference of two sets, order matters (a except b is the stuff that is in a that is NOT in b)
+ - Except All - A 1 to 1 comparrison for the rows removing the ones that are the same
+ 
+```
+( select n from (values (1), (2), (3)) as v(n) )
+except all
+( select n from (values (1), (7), (8)) as v(n) )
+-- 2, 3
+
+
+( select n from (values (1), (1), (3)) as v(n) )
+except all
+( select n from (values (1), (7), (8)) as v(n) )
+-- 1, 3
+
+
+( select n from (values (1), (1), (1)) as v(n) )
+except all
+( select n from (values (1), (7), (8)) as v(n) )
+-- 1, 1
+``` 
+
+
+ 
+#### Query Examples
+
+--- 9.1 Write a query to list out all the distinct dates there was some sort of customer interaction (a rental or a payment) and order by output date
+
+```
+-- Mine
+(select rental_date as interaction_date, customer_id  from rental)
+UNION
+(select payment_date as interaction_date, customer_id from payment)
+order by 1;
+
+-- Solution, notice the cast
+(
+  select cast(rental_date as date) as interaction_date
+  from rental
+)
+union
+(
+  select cast(payment_date as date) as interaction_date
+  from payment
+)
+order by interaction_date;
+```
+
+-- 9.2 Write a query to find the actors that are also customers (assuming same name = same person)
+
+```
+(select first_name, last_name from actor)
+intersect
+(select first_name, last_name from customer)
+```
+
+
+-- 9.3 Have the actors with IDs 49 (Anne Cronyn), 152 (Ben Harris), and 180 (Jeff Silverstone) ever appeared in any films together? Which ones?
+
+```
+select title from film where film_id in (select film_id from film_actor where actor_id = 49
+intersect
+select film_id from film_actor where actor_id = 152
+intersect
+select film_id from film_actor where actor_id = 180);
+```
+
+-- 9.4 The missing rental IDs problem that we've encountered several times now is the perfect place to use EXCEPT.
+-- Write a query using the generate_series function and EXCEPT to find missing rental IDs (The rental table has 16,044
+-- rows but the maximum rental ID is 16,049 - some IDs are missing)
+
+```
+-- mine
+select * from generate_series(1, 16049)
+except
+select rental_id from rental;
+
+-- solution, uses table to define bounds of generate series
+(
+  select t.id
+  from generate_series(
+    (select min(rental_id) from rental),
+    (select max(rental_id) from rental)) as t(id)
+)
+except
+(
+  select rental_id
+  from rental
+);
+```
+
+-- 9.5 Write a query to list all the customers who have rented out a film on a Saturday but never on a Sunday. Order the customers by first name.
+
+```
+-- mine
+(select distinct customer_id from rental where EXTRACT(ISODOW FROM rental_date) = 6)
+except
+(select distinct customer_id from rental where EXTRACT(ISODOW FROM rental_date) = 0)
+
+-- solution, actually works
+(
+  select first_name, last_name
+  from rental
+    inner join customer using (customer_id)
+  where date_part('isodow', rental_date) = 6
+)
+except
+(
+  select first_name, last_name
+  from rental
+    inner join customer using (customer_id)
+  where date_part('isodow', rental_date) = 7
+)
+order by first_name;
 
 ```
