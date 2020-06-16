@@ -19,6 +19,7 @@
 Common definitions
  - Constraints: ensure right data goes in. provide Referential integrety (foreign keys, primary keys, not null) make sure validity of data is correct (join table).
  - Normalization: ensures things are mapped correctly, a film with actor_1, actor_2, etc vs an actor_files join table
+ - CTE: Common Table Expression.  Extract table from query
  
 Derived Queries create a new representations of another column or group of columns
 
@@ -1329,5 +1330,72 @@ except
   where date_part('isodow', rental_date) = 7
 )
 order by first_name;
+```
+
+-- 9.6 Write a query to list out all the distinct dates there was some sort of customer interaction (a rental or a
+-- payment) and order by output date. Include only one row in the output for each type of interaction
 
 ```
+-- mine
+select distinct date from (
+    select date_trunc('day', rental_date) from rental
+    union
+    select date_trunc('day', payment_date) from payment) as all_dates(date)
+order by 1 asc;
+
+-- solution, note: adds a column to results so you can identify the source
+(
+  select cast(rental_date as date) as interaction_date, 'rental' as type
+  from rental
+)
+union
+(
+  select cast(payment_date as date) as interaction_date, 'payment' as type
+  from payment
+)
+order by interaction_date;
+```
+
+-- 9.7 Write a query to return the countries in which there are both customers and staff. Use a CTE to help simplify your code.
+
+```
+-- mine
+(select country_id, country from customer
+join address using(address_id)
+join city using(city_id)
+join country using(country_id))
+intersect
+(select country_id, country from staff
+join store using(store_id)
+join address on store.address_id = address.address_id
+join city using(city_id)
+join country using(country_id));
+
+-- Soluetion, note the use of a CTE to make this more managable
+
+with address_country as
+(
+  select address_id, country
+  from address
+    inner join city using (city_id)
+    inner join country using (country_id)
+)
+(
+  select country
+  from staff
+    inner join address_country using (address_id)
+)
+intersect
+(
+  select country
+  from customer
+    inner join address_country using (address_id)
+);
+```
+
+-- 9.8 Imagine you had two queries - let's call them A and B. 
+-- Can you figure out how you would use set operators to return the rows in either A or B, but not both.
+
+(A INTERSECT B)
+EXCEPT
+(A UNION B)
