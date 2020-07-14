@@ -680,7 +680,7 @@ left outer join lateral (
     ) as t on outer_customer.customer_id = t.customer_id;
 ```
 
-#### Common Table Expressions
+#### Common Table Expressions (CTE)
 
 These allow us to pull out tables: Syntax in postgres is as follows
 
@@ -1198,8 +1198,6 @@ UNION
 
 Order / Group do not work on the result of a set, you have to wrap in a table subquery.
 
-
-
  - Union - All Unique Rows combined - put two sets together (a union b includes all in a and all in b) - Excluding Duplicates
  - Union All - All Rows combined - put two sets together (a union b includes all in a and all in b) - Keeping Duplicates
  - Intersect - find where both meet (a interesect b includes only those in a and b)
@@ -1238,8 +1236,6 @@ except all
 -- 1, 1
 ``` 
 
-
- 
 #### Query Examples
 
 --- 9.1 Write a query to list out all the distinct dates there was some sort of customer interaction (a rental or a payment) and order by output date
@@ -1399,3 +1395,108 @@ intersect
 (A INTERSECT B)
 EXCEPT
 (A UNION B)
+
+### Tables and Constraints
+
+Faces of SQL 
+ - DDL (Data Definition Language) - Create, Alter, Drop
+ - DML (Date Manipulation) - Insert, Update, Delete Select
+ - DCL (Data Control) - Grant Revoke
+ - TCL (Transaction Control) - Begin, Commit, Rollback
+ 
+Good Touchups
+ - Create Table `IF NOT EXISTS`
+ - Drop Schema x `cascade` -> cascade purges all nested
+
+```
+
+-- 10.1 In this and the following exercises in this chapter, we're going to be doing some lightweight database
+-- modelling work for a fictional beach equipment rental business.
+-- Your answers may deviate a little from mine as we go, and that's fine -
+-- database design is a quite subjective topic.
+-- To kick things off, we'll keep working with our existing database
+-- but we want to create all our tables within a schema called 'beach'. Write a SQL statement to create the 'beach' schema.
+
+create schema beach;
+
+-- 10.2 Create a table to store customers.
+-- For each customer we want to capture their first name, last name, email address, phone number, and the date the account was created.
+-- Don't worry about primary keys and constraints for now - just focus on the create statement
+-- and choosing what you think are appropriate data types for the listed attributes.
+
+create table beach.customers (
+    first_name varchar(100),
+    last_name varchar(100),
+    email_address varchar(100),
+    phone_number varchar(20),
+    created_at date
+)
+
+-- 10.3 Create a table to store details about the equipment to be rented out.
+-- For each item, we want to store the type ('surf board', 'kayak', etc.),
+-- a general ad-hoc description of the item (color, brand, condition, etc),
+-- and replacement cost so we know what to charge customers if they lose the item.
+
+create table beach.equipment (
+    type varchar(100) not null,
+    description text,
+    cost_in_cents integer
+)
+
+-- 10.4 After running the business for a while, we notice that customers sometimes lose equipment.
+-- Write a SQL statement to alter the equipment table (assume it already has data in it we don't want to lose)
+-- to add a column to track whether the item is missing.
+
+alter table beach.equipment
+  add column is_missing boolean default true;
+```
+
+### Primary Keys
+
+surrogate and natural primary keys
+ - surrogate -> Something that is artificial that will identify uniquely.  For instance `id`
+ - natural -> Something that is inherently unique, vin number for cars, SSN for people
+ 
+Syntax for declaring this will vary, can add `primary` or actually name it with something like
+  `constraint YOUR_NAME_FOR_THIS_PK primary key (column)`
+  
+Composite Primary Keys -> Multiple Columns act as PK
+  
+Two ways to create an incremented pk in "modern syntax"
+ - column_name type GENERATED { ALWAYS | BY DEFAULT } as IDENTITY
+ - always = do this all the time
+ - by default = do this if one is not provided
+ 
+```
+
+-- 10.5 Add a surrogate primary key for the customers table using the GENERATED AS IDENTITY syntax
+-- (we assume not all customers will provide an email address or phone number ruling
+-- them out as potential natural keys). Note you may drop the schema/table and re-create it
+-- from scratch.
+
+create table beach.customers (
+    id bigint generated always as identity primary key,
+    first_name varchar(100),
+    last_name varchar(100),
+    email_address varchar(100),
+    phone_number varchar(20),
+    created_at date
+)
+
+-- 10.6 Add a surrogate primary key for the equipment table using one of the serial types.
+-- Also add in to the table definition the 'missing' column from exercise 10.4.
+-- Note you may drop the schema/table and re-create it from scratch.
+
+alter table beach.equipment
+  add column id bigint generated always as identity primary key;
+
+-- 10.7 Create a new table to store information about each rental with an appropriate primary key.
+-- For each rental, store the customer, the item that was rented, the rental date, and the return date.
+
+create table beach.rentals (
+  id bigint generated always as identity primary key,
+  equipment_id bigint not null,
+  customer_id bigint not null,
+  rental_date timestamp not null,
+  return_date timestamp
+``` 
