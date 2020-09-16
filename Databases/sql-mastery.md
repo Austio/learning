@@ -19,6 +19,7 @@
 Common definitions
  - Constraints: ensure right data goes in. provide Referential integrety (foreign keys, primary keys, not null) make sure validity of data is correct (join table).
  - Normalization: ensures things are mapped correctly, a film with actor_1, actor_2, etc vs an actor_files join table
+ - CTE: Common Table Expression.  Extract table from query
  
 Derived Queries create a new representations of another column or group of columns
 
@@ -679,7 +680,7 @@ left outer join lateral (
     ) as t on outer_customer.customer_id = t.customer_id;
 ```
 
-#### Common Table Expressions
+#### Common Table Expressions (CTE)
 
 These allow us to pull out tables: Syntax in postgres is as follows
 
@@ -1181,5 +1182,321 @@ select
   max(next_rental - current_rental) over (partition by customer_id)
 from times
 where next_rental is not null;
+```
+
+### Working With Sets
+
+Sets: Queries must return same number and data type of columns
+
+For the most part, use parens to help on these
 
 ```
+(...SQL) 
+UNION 
+(...OTHER_SQL)
+```
+
+Order / Group do not work on the result of a set, you have to wrap in a table subquery.
+
+ - Union - All Unique Rows combined - put two sets together (a union b includes all in a and all in b) - Excluding Duplicates
+ - Union All - All Rows combined - put two sets together (a union b includes all in a and all in b) - Keeping Duplicates
+ - Intersect - find where both meet (a interesect b includes only those in a and b)
+ - Intersect All - Return intersection where the rows in each result are the same
+```
+(select n from (values (1), (1), (3)) as v(n))
+intersect
+(select n from (values (1), (3), (4)) as v(n))
+-- 1, 3
+
+(select n from (values (1), (1), (3)) as v(n))
+intersect
+(select n from (values (1), (3), (4)) as v(n))
+-- 1 (because the 1 only aligns in the first result row in both
+``` 
+ 
+ - Except - difference of two sets, order matters (a except b is the stuff that is in a that is NOT in b)
+ - Except All - A 1 to 1 comparrison for the rows removing the ones that are the same
+ 
+```
+( select n from (values (1), (2), (3)) as v(n) )
+except all
+( select n from (values (1), (7), (8)) as v(n) )
+-- 2, 3
+
+
+( select n from (values (1), (1), (3)) as v(n) )
+except all
+( select n from (values (1), (7), (8)) as v(n) )
+-- 1, 3
+
+
+( select n from (values (1), (1), (1)) as v(n) )
+except all
+( select n from (values (1), (7), (8)) as v(n) )
+-- 1, 1
+``` 
+
+#### Query Examples
+
+--- 9.1 Write a query to list out all the distinct dates there was some sort of customer interaction (a rental or a payment) and order by output date
+
+```
+-- Mine
+(select rental_date as interaction_date, customer_id  from rental)
+UNION
+(select payment_date as interaction_date, customer_id from payment)
+order by 1;
+
+-- Solution, notice the cast
+(
+  select cast(rental_date as date) as interaction_date
+  from rental
+)
+union
+(
+  select cast(payment_date as date) as interaction_date
+  from payment
+)
+order by interaction_date;
+```
+
+-- 9.2 Write a query to find the actors that are also customers (assuming same name = same person)
+
+```
+(select first_name, last_name from actor)
+intersect
+(select first_name, last_name from customer)
+```
+
+
+-- 9.3 Have the actors with IDs 49 (Anne Cronyn), 152 (Ben Harris), and 180 (Jeff Silverstone) ever appeared in any films together? Which ones?
+
+```
+select title from film where film_id in (select film_id from film_actor where actor_id = 49
+intersect
+select film_id from film_actor where actor_id = 152
+intersect
+select film_id from film_actor where actor_id = 180);
+```
+
+-- 9.4 The missing rental IDs problem that we've encountered several times now is the perfect place to use EXCEPT.
+-- Write a query using the generate_series function and EXCEPT to find missing rental IDs (The rental table has 16,044
+-- rows but the maximum rental ID is 16,049 - some IDs are missing)
+
+```
+-- mine
+select * from generate_series(1, 16049)
+except
+select rental_id from rental;
+
+-- solution, uses table to define bounds of generate series
+(
+  select t.id
+  from generate_series(
+    (select min(rental_id) from rental),
+    (select max(rental_id) from rental)) as t(id)
+)
+except
+(
+  select rental_id
+  from rental
+);
+```
+
+-- 9.5 Write a query to list all the customers who have rented out a film on a Saturday but never on a Sunday. Order the customers by first name.
+
+```
+-- mine
+(select distinct customer_id from rental where EXTRACT(ISODOW FROM rental_date) = 6)
+except
+(select distinct customer_id from rental where EXTRACT(ISODOW FROM rental_date) = 0)
+
+-- solution, actually works
+(
+  select first_name, last_name
+  from rental
+    inner join customer using (customer_id)
+  where date_part('isodow', rental_date) = 6
+)
+except
+(
+  select first_name, last_name
+  from rental
+    inner join customer using (customer_id)
+  where date_part('isodow', rental_date) = 7
+)
+order by first_name;
+```
+
+-- 9.6 Write a query to list out all the distinct dates there was some sort of customer interaction (a rental or a
+-- payment) and order by output date. Include only one row in the output for each type of interaction
+
+```
+-- mine
+select distinct date from (
+    select date_trunc('day', rental_date) from rental
+    union
+    select date_trunc('day', payment_date) from payment) as all_dates(date)
+order by 1 asc;
+
+-- solution, note: adds a column to results so you can identify the source
+(
+  select cast(rental_date as date) as interaction_date, 'rental' as type
+  from rental
+)
+union
+(
+  select cast(payment_date as date) as interaction_date, 'payment' as type
+  from payment
+)
+order by interaction_date;
+```
+
+-- 9.7 Write a query to return the countries in which there are both customers and staff. Use a CTE to help simplify your code.
+
+```
+-- mine
+(select country_id, country from customer
+join address using(address_id)
+join city using(city_id)
+join country using(country_id))
+intersect
+(select country_id, country from staff
+join store using(store_id)
+join address on store.address_id = address.address_id
+join city using(city_id)
+join country using(country_id));
+
+-- Soluetion, note the use of a CTE to make this more managable
+
+with address_country as
+(
+  select address_id, country
+  from address
+    inner join city using (city_id)
+    inner join country using (country_id)
+)
+(
+  select country
+  from staff
+    inner join address_country using (address_id)
+)
+intersect
+(
+  select country
+  from customer
+    inner join address_country using (address_id)
+);
+```
+
+-- 9.8 Imagine you had two queries - let's call them A and B. 
+-- Can you figure out how you would use set operators to return the rows in either A or B, but not both.
+
+(A INTERSECT B)
+EXCEPT
+(A UNION B)
+
+### Tables and Constraints
+
+Faces of SQL 
+ - DDL (Data Definition Language) - Create, Alter, Drop
+ - DML (Date Manipulation) - Insert, Update, Delete Select
+ - DCL (Data Control) - Grant Revoke
+ - TCL (Transaction Control) - Begin, Commit, Rollback
+ 
+Good Touchups
+ - Create Table `IF NOT EXISTS`
+ - Drop Schema x `cascade` -> cascade purges all nested
+
+```
+
+-- 10.1 In this and the following exercises in this chapter, we're going to be doing some lightweight database
+-- modelling work for a fictional beach equipment rental business.
+-- Your answers may deviate a little from mine as we go, and that's fine -
+-- database design is a quite subjective topic.
+-- To kick things off, we'll keep working with our existing database
+-- but we want to create all our tables within a schema called 'beach'. Write a SQL statement to create the 'beach' schema.
+
+create schema beach;
+
+-- 10.2 Create a table to store customers.
+-- For each customer we want to capture their first name, last name, email address, phone number, and the date the account was created.
+-- Don't worry about primary keys and constraints for now - just focus on the create statement
+-- and choosing what you think are appropriate data types for the listed attributes.
+
+create table beach.customers (
+    first_name varchar(100),
+    last_name varchar(100),
+    email_address varchar(100),
+    phone_number varchar(20),
+    created_at date
+)
+
+-- 10.3 Create a table to store details about the equipment to be rented out.
+-- For each item, we want to store the type ('surf board', 'kayak', etc.),
+-- a general ad-hoc description of the item (color, brand, condition, etc),
+-- and replacement cost so we know what to charge customers if they lose the item.
+
+create table beach.equipment (
+    type varchar(100) not null,
+    description text,
+    cost_in_cents integer
+)
+
+-- 10.4 After running the business for a while, we notice that customers sometimes lose equipment.
+-- Write a SQL statement to alter the equipment table (assume it already has data in it we don't want to lose)
+-- to add a column to track whether the item is missing.
+
+alter table beach.equipment
+  add column is_missing boolean default true;
+```
+
+### Primary Keys
+
+surrogate and natural primary keys
+ - surrogate -> Something that is artificial that will identify uniquely.  For instance `id`
+ - natural -> Something that is inherently unique, vin number for cars, SSN for people
+ 
+Syntax for declaring this will vary, can add `primary` or actually name it with something like
+  `constraint YOUR_NAME_FOR_THIS_PK primary key (column)`
+  
+Composite Primary Keys -> Multiple Columns act as PK
+  
+Two ways to create an incremented pk in "modern syntax"
+ - column_name type GENERATED { ALWAYS | BY DEFAULT } as IDENTITY
+ - always = do this all the time
+ - by default = do this if one is not provided
+ 
+```
+
+-- 10.5 Add a surrogate primary key for the customers table using the GENERATED AS IDENTITY syntax
+-- (we assume not all customers will provide an email address or phone number ruling
+-- them out as potential natural keys). Note you may drop the schema/table and re-create it
+-- from scratch.
+
+create table beach.customers (
+    id bigint generated always as identity primary key,
+    first_name varchar(100),
+    last_name varchar(100),
+    email_address varchar(100),
+    phone_number varchar(20),
+    created_at date
+)
+
+-- 10.6 Add a surrogate primary key for the equipment table using one of the serial types.
+-- Also add in to the table definition the 'missing' column from exercise 10.4.
+-- Note you may drop the schema/table and re-create it from scratch.
+
+alter table beach.equipment
+  add column id bigint generated always as identity primary key;
+
+-- 10.7 Create a new table to store information about each rental with an appropriate primary key.
+-- For each rental, store the customer, the item that was rented, the rental date, and the return date.
+
+create table beach.rentals (
+  id bigint generated always as identity primary key,
+  equipment_id bigint not null,
+  customer_id bigint not null,
+  rental_date timestamp not null,
+  return_date timestamp
+``` 
