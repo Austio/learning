@@ -1,10 +1,16 @@
 ## Production Ready Graphql
 
 Discussion Points:
- - 
+ - History BFF, Customizable, GQL, Rest
+ - Client First Design
  - Interfaces/Unions, User example with having an Interface and Viewer
  - Expressive: Splitting out more fields, findById and findByName
+ - Anemic Graphql
+ - CourseGrained (bulk many) vs FineGrained (singular)
+ - Contrast sharing types with inheritance vs interfaces composition 
  
+Disagree
+ - Providing both edges and edges/node
 
 GQL: Specification for API query language and a server engine capable of executing said queries
 
@@ -182,3 +188,254 @@ findByName(name: String)
 
 Stronger Schema:  Return full types when possible, combine things like cardNumber, cardDate, into a Card type that has a number and date
   
+Specific VS Generic:  
+ - Too generic tend to be optimized fo rno one and harder to reason about
+ - Fields should often do one thing
+ - A good indication of a field trying to do too much is a boolean field that is controller coupling
+ - Another is sql like code for greater than, includes, etc, this causes server team to handle some serious performance edge cases inside a single resolver
+  
+```
+# Too generic 
+posts(first: Int!, includeArchived: Boolean): [Post!]!
+
+# Better
+posts(first: Int!): [Post!]!
+archivedPosts(first: Int!): [Post!]!
+```
+
+Anemic Graphql: Designing schema purly as dumb bags of data instead of actions, use cases and functionality
+
+```
+# Query Example, plushing logic to client
+
+Product: {
+  price: Int!
+  discounts: [Int!]!
+}
+
+# Works because client can reduce over the price and apply the discounts, but add tax and it blows up
+Product: {
+  price: Int!
+  discounts: [Int!]!
+  tax: Int!
+}
+
+# What we are missing here is
+Product {
+  totalPrice: Int!
+}
+
+### Mutation Example
+
+type Mutation {
+  updateCheckout(input: UpdateCheckoutInput): UpdateCheckoutPayload
+}
+
+input UpdateCheckoutInput {
+  email: Email
+  address: Address
+  items: [ItemInput!]
+  creditCard: CreditCard
+  billing: Address
+}
+
+# Problems
+ - Clients has to guess how to make a specific action
+ - Cognitive overhead, what should they select
+ - Focused on shape of internal data, don't indicate what is possible
+ - Everything is nullable!
+
+instead inputs should describe what we expect
+
+type Mutation {
+  addItemToCheckout(input: AddItemToCheckoutInput): UpdateCheckoutPayload
+}
+
+input AddItemToCheckoutInput {
+  checkoutID: ID!
+  item: ItemInput!
+}
+
+ - now strongly typed and obvious
+ - Server side is easy
+```
+
+#### Relay Spec
+ - Method to refetch with global ID
+ - Connection concept to paginate
+ - Specific structure for mutations
+
+Offset -> Bad for big data sets, can be inaccurate due to list changes while offsetting
+Cursor -> Stable ID that points to an item in the list
+
+Connections return a connection type with two fields
+ - Edge: Contains data we requested, but not directly, exposes things like the cursor
+ - Node: The actual data in the edge
+ 
+Some teams use the edge to encode relationship, like `role` at github 
+ 
+```
+products {
+  edges {
+    cursor
+    node {
+      name 
+    }
+  }
+}
+
+# Returns
+{
+  "data": {
+    "products: {
+      "edges: [
+        {
+          "cursor": "xyz----"
+          "node": {
+            "name": "Something"
+          }
+        }
+      ]
+    }
+  }
+}
+``` 
+
+Sharing Types
+
+Sharing TOO MUCH rarely turns out well.  Good examples Imagine this Hierarch
+
+```
+type UserConnection { edges: [UserEdge!]! }
+type UserEdge { node: User }
+type User { login: String! }
+type Organization { users: UserConnection!, teams: [Team] }
+```
+
+Now we add a concept of teams, natural inclination is to add members as a user connection
+
+```
+type Team { members: UserConnection! }
+```
+
+However, once the Type of User grows and diverges we are stuck, we can't add anything specific to the UserEdge about being an orgAdmin or teamLead
+
+If instead we had opted for a 
+```
+type TeamMemberConnection { members: UserConnection! }
+type OrgUserConnection { members: UserConnection! }
+
+then the members of team and org user can diverge without issue
+
+type Team { members: TeamMemberConnection! }
+type Organization { users: OrgUserConnection!, teams: [Team] }
+```
+
+Another common example is sharing inputs, having a singular ProductInput for both create and update.
+
+Global Identification
+ - Opaque identifiers vs ID identifiers, opaque allows us to change how they are generated
+ - Don't always need global identification
+ 
+Nullability
+ - Can it return null or not, a field cannot return null at runtime defined by using the bang symbol 
+ - Returning null for nonnull is an error condition and the entire query is the null with an error
+ 
+```
+type Product {
+  name: String!
+  price: Money
+}
+
+type Shop {
+  name: String
+  topProduct: Product
+}
+
+query {
+  shop {
+    name 
+    topProduct {
+      name
+      price
+    }
+  }
+}
+``` 
+
+Now, in the above if we return null for name, it will cause the entire result to be null because both TopProduct and it's name are non-null
+
+This illustrates how powerful nullability can be
+
+Non-Nullability is great for
+ - expression
+ - allows clients to avoid defensive code
+ 
+It is dangerous because
+ - Non-null fields are harder to evolve, non-null to null is a breaking change
+ - Very hard to predict what can be null or not, especially in distributed environments (timeouts, transient errors, rate limits)
+
+When to use Non-Null
+ - Arguments: Non-Null is almost always better to allow more predictable and understandable
+ - Fields that return objects backed by db associations, network calls or things that can fail should be nullable
+ - Simple scalars on objects that have been loaded by the parent are safe to be non-null
+ - Rarely: For object types you are strongly confident will never be null
+
+Abstract Types
+
+The type below is a post, but it is sometimes a birthday and sometimes content
+```
+type SocialMediaFeedCard {
+  id: ID!
+  title: String!
+  birthday: DateTime
+  postContent: String
+}
+```
+
+Instead split this into Abstract types
+```
+interface SocialMediaFeedCard {
+  id: ID!
+  title: String!
+}
+
+type BirthdayFeedCard implements SocialMediaFeedCard {
+  id: ID!
+  title: String!
+  birthday: DateTime
+}
+
+type ContentFeedCard implements SocialMediaFeedCard {
+  id: ID!
+  title: String!
+  content: String!
+}
+```
+
+###### Union or Interface
+ - Interfaces provide common shared *behaviors* (Starrable)
+ - Unions when it can return different things (Search)
+
+Don't overuse Interfaces, great for stronger contracts, but be sure that you are sharing common BEHAVIOR not common DATA.  
+A good interface should mean something to the API Consumers.  Describes and provides a common way to do or behave like something instead of being or having something.
+A good bad example is 'naming', when we don't have a strong meaning in the schema, naming will be awkward and meaningless, like an ItemInterface or ItemFields or ItemInfo
+
+Abstract types giveus an easy way to evolve over time, but that is only true if we follow Liskov's Substitution Principle
+
+###### Static Queries
+ - Does not change based on variable, condition or state of th eprogram
+ - Gives us insight into data requirements of clients
+ - Can give the operations names
+ - Known at build time, searchable
+ - Caching
+ 
+###### Mutations
+ - Encouraged to accept Specific input types (CreateProductInput) and return Payload types (CreateProductPayload)
+ 
+###### Fine-Grained or Course-Grained
+ 
+ 
+
+ 
+ 

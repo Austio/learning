@@ -1,5 +1,8 @@
 [http://masterywithsql.com](Mastery With SQL)
 
+### Setup
+ - https://github.com/neilwithdata/mastery-with-sql
+
 ### Cool shortcuts in datagrip/dbeaver
 
  - Ctl+Space - Displays list of columns that you can select from a table when you write out the `select from TABLE` if cursor is in between select and from keywords
@@ -1500,3 +1503,16 @@ create table beach.rentals (
   rental_date timestamp not null,
   return_date timestamp
 ``` 
+=======
+
+### Working with Sets
+ 
+- union - combine two groups together removing duplicates (names of actors, customers and people)
+- union all - union but do not remove duplicates
+- intersect - distinct values that are in both groups are returned
+- intersect all - intersect but keep duplicates that align exactly in position of results
+
+#### Union
+Data types on all columns selected must be the same, names do not
+
+###
