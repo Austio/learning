@@ -150,6 +150,137 @@ Mandate: Top down, good-enough approach quickly when teams have bandwidth to ado
 #### Presenting
  - Start with conclusion (Bottom Line Up Front)
 
+## CPT 4 Approaches
+
+ - Environments that tolerate frequent exceptions are susceptible to bias and inefficient.  Consistency is king.
+ - Orgs survive by adapting ot the dynamic circumstances they live in.  Staying stuck in old ways can lead to failure.
+ 
+ - Solution to these divergent issues, "Work the policy, not the exceptions"
+ 
+ If you find yourself writing constraints that don't constrain choice, it's useful to check if you are dancing around an uhstated goal.
+ - policy is expensive, don't write it if they do little to constrain behavior
+ - in non-constraining examples, write norms that provide nonbinding recommendations
+ 
+Applying policy consistency is challenging because
+ - Accepting reduced opportunity space: Good constraints make trade-offs that deliberately narrow opportunity space
+ - Locally suboptimal: Satisfying global constraints leads to local inefficiency 
+ 
+At a sufficiently high rate of change, policy is indistinguishable from exception.
+ - Batch changes to monthly or quarterly so that you have many examples and a lower rate of change
+ 
+Our job is to create an environment for those around us to be their best, in fair surroundings.
+ - NO is an expression of what is possible for the team you lead to do.
+ 
+Expressing no effectively requires you to be able to say no and explain the constraints then articulate why the proposed path is either unattainable or undesirable.
+
+Articulating Constraints is harder in two areas
+ - Velocity: Why is this taking so long?
+  - When people ask for more, provide a compelling explanation of how your team finished work "Finishes" is different than "does".  Half done work has no value.
+  - To understand the slowdowns, you have to either do a sampling profile (check on what people are working on) 
+  - You can add capacity by moving resources to the team or creating new resources
+  - Best outcome of a velocity discussion is to identify a reality based approach that will support your core constraint.  The second best outcome is for folds to agree that you're properly allocated against your constraints and shift conversation to prioritization
+ - Prioritization: Why can't you work on this other project?
+  - Break down your priorities into; all incoming tasks, guiding principles for how work is selected then share subsets of tasks you've selected based on those guiding principles
+  - Ask "Does this seem like the right list of tasks" once you articulate guiding principles
+  - When a stakeholder disagrees with your priorities, understand their requests, sit down with them to test their ask against your guiding principles and currently prioritized work.
+   - if their requests are more important, shift focus, prefer to do this at the start of the next spring to prevent churn from shifting priorities immediately
+    
+#### Relationships
+
+"With the right people, any process works, with the wrong people, no process works"
+
+See ourselves as how we treat a member of our team who is not succeeding.  Your guide is not at the mirror but at the compassion.
+ - Who do we promOte, who do we assign raises, Growth, PTO, working hours
+ - Remember, we leave a broad wake and our actions have a profound impact on those around us
+
+Strong Relationships > Any Problem
+ - Almost every internal problem can be traced back to a missing or poor relationship.  
+ - Technical Disagreements are good for learning for everyone.  
+ - Spend more time with people that you have a bad relationship with, have dinner with them
+ - If two engineers struggle tow ork together, help them build together
+
+#### Your company, your team, yourself
+ - Start thinking form company perspective, does the objective align with what we need
+ - Then make decisions from team, push back on timelines that would force your team into a death march
+ - Pay yourself, give what you can sustainably give then draw the line
+ 
+#### Growth Plates 
+ - Manage between execution and ideas, when you have a lot of ideas execution is valued more
+
+### How do engineering managers get stuck
+ - Only Manage Down: Building something your team wants to build, which company/customers aren't interested in
+ - Only Manage Up: Following your managers wishes to a point where the team evaporates
+ - Never Manage Up: Your team's success and recognition depend on your relationship with management chain, don't let excellent work go unnoticed, share it up
+ - Optimize Locally: Don't pick technology the company can't support or build products that puts you in competition with another team
+ - Assume hiring never solves problems: Firefighting is great, but eventually you will hire or burn out
+ - Don't spend time building relationships: You need a supportive social network within the company
+ - Define Roles too Narrowly: You should fill all gaps and do things you really don't want to do
+ - Forget that their manager is a human: 
+ 
+More Experienced Managers:
+ - Do what worked at previous company
+ - Spend too much time building relationships (smaller companies are execution focused)
+ - Assume hiring can solve every problem
+ - Abscond rather than delegate: Delegation is important, however it's easy to go too far and ignore critical responsibilities you ask others to take on
+ - Become disconnected from ground truth: ground decisions in real reality
+ 
+Managers of any level:
+ - Mistake team size for impact: Larger team does not mean better job
+ - Mistake title for impact: titles don't translate
+ - Confuse authority with truth: Authority lets you get away with weak arguments and poor justifications, it's an expensive way to work and eventually people will turn off their minds and simply follow orders
+ - Don't trust the team enough to delegate: You can't scale your impact if you don't give enough room to do things, many organizations become bottlenecked on approvals which is a sure proxy for lack of trust
+ - Let others manage their time: 
+ - Only see the problems: Don't forget to celebrate the good stuff 
+ 
+#### Partner with your manager
+ - You need them to know a few things about you
+ - You need to know a few things about them
+ - You should occasionally update the things you know about each other
+
+Things the manager should know
+ - What problems you are trying to solve (who)
+ - That you are making progress (Specifically, that you are not stuck)
+ - What you prefer to work on (So they can staff properly)
+ - How busy you are (So that they know if you can take opportunity that comes up)
+ - Your professional goals and growth areas, where you are between bored and challenge
+ - How you believe you are being measured
+ 
+How to do this
+ - Maintain a document with the information
+ - Sprinkle this information in one on ones
+ - Write a self reflection quarterly which covers each of those aspects, share with manager
+ 
+Other good things to know
+ - What are their current priorities, key problems and initiatives
+ - How stressed, busy they are, do they feel like they have time to grow in their role
+ - Is there anything you can do to help
+ - What are they trying to improve on themselves
+ 
+#### Finding managerial scope
+- Manager - Manage a team
+- Director - Manage a team of managers
+- VP - Manage an organization
+
+Don't worry so much about titles, pursue scope where you take responsibility for the success of increasingly important complex facets of the organization and company.
+
+There is a lot less competition for hard work
+ 
+#### Setting organizational direction
+
+- Find directions: Cast a wide net for what other companies did well and how they did it.  Meet with peer companies and ask them what they're focused on.  
+
+#### Close out solve or delegate
+
+When you move from ic to lead to manager to "manager of managers" it is unsettling because you lose access to what used to make you happy and haven't found new sources of self-worth.  Also your skills and habits stop working will.  Now rolling up sleeves and working is probably the wrong answer because you are inefficient and a blocker.
+
+For each request you have to choose a path
+ - Close Out: Make a decision and communicate so that the task never comes back to you, fix it as quickly and permanently as possible
+ - Solve: Design a solution such that you won't need to spend time on this problem again in the next 6 months
+ - Delegate: Redirect to ask someone else to handle   
+ 
+ 
+ 
 ## Reference Articles
 
 [Effectively Using AWS Reserved Instances](Effectively Using AWS Reserved Instances)
+
