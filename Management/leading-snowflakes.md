@@ -208,3 +208,17 @@ Figure out and optimize bottlenecks
  - Automate manual work
  
 Companies fail when they stop asking what they would do if they were started today and instead just iterate on what they've already done.
+
+### Chapter 9
+
+Scaling Team and setting 
+
+
+ - Misalignment
+
+Alignment of Core Values.  Define what those are
+ - Straight Talk
+ - Assertiveness, ego
+ - What is right for
+ - How to treat failures
+
