@@ -435,7 +435,139 @@ Abstract types giveus an easy way to evolve over time, but that is only true if 
  
 ###### Fine-Grained or Course-Grained
  
+Fine Grained meaning very small scope, pushes business logic to clients to composeCourse meaning it bundles up a lot for you 
+ - eg, create a product, add a label to it then modify it's price
+ - if that represents one action in the UI what do you do if 1 fails?
+But you don't want a client to use 5 different 
+ 
+Fine vs courses grained mutations depends on needs of client and ability of the server
+ - Coarse-Grained create mutations
+ - Fine Grained mutations to update an entity
+  
+How do you handle a case where you want multiple things to succeed at once or none at all?
+ 
+###### Errors
+
+ - Make sure that queries can handle new error cases as the schema evolves
  
 
+Basic GQL Error is like this
+
+```
+{
+  errors: [{
+    "message": "Could not connect to product service.",
+    "locations": [{ "line": 6, "column": 7 }],
+    "path": ["viewer", "products", 1, "name"]
+    // Can extend to add extensions
+    "extensions": {
+      "code": "SERVICE_CONNECT_ERROR"
+    }
+  }],
+  "data": {
+    "shop": {
+      "name": "Shopy",
+      "products": [
+        { "id": 1000, "price": 100 },
+        { "id": 1002, "price": null },
+        { "id": 1003, "price": 103 }
+      ]
+    }
+  }
+}
+```
+
+This can happen for any number of reasons, in the above, it is because the second item in the array has a null price and it is non-null
+
+But take mutations for example, if you wanted to return an error for say the equivalent of a 409, you can't do that easily because it 
+ - Error information is limited
+ - Errors are outside of the GQL Schema, no types 
+ - Null propogation causes a whole slew of issues that will have to stay top of mind to prevent cascading errors
  
- 
+It is better to divide errors into two types
+ - Developer/Client Errors (rate limit, wrong format, etc): Something went wrong during the query that the developer needs to handle on the client
+ - User Errors: The user/client did something wrong (checkout twice)
+
+Errors section is not great for handling user facing errors that are part of the business/domain rules
+
+Some approaches to this are
+
+*Errors as Data* 
+
+1. Add a field for the possible errors in payload
+ - pros: easy
+ - cons: account may or may not be nil, clients don't have to query the errors field, so they don't know why accoutn in null
+```
+type SignUpPayload {
+  emailWasTaken: Boolean!
+ # nil if the Account could not be created
+  accont: Account
+}
+
+// or as a type
+type SignUpPayload {
+  userErrors: [UserError!]!
+  accont: Account
+}
+
+type UserError {
+  message: String!
+  field: [String!]
+  code: UserErrorCode
+}
+```
+
+2. Union / Result Type
+pros: Very descriptive
+cons: Clients have to query all cases and handle them
+
+```
+union SignUpPayload = SignUpSuccess | UserNameTaken | PasswordTooWeak
+
+signup(email: 'foo@bar', password: 'biz') {
+  ... on SignUpSuccess {
+    account { id }
+  }
+  ... on UserNameTake {
+    message
+    suggestedUsername
+  }
+  ... on PasswordTooWeak  {
+    meassage
+    passwordRules
+  }
+}
+```
+
+Or as an interface so that you don't have to handle all concrete types initially
+
+```
+interface UserError {
+  message: String!
+  code: ErrorCode!
+  path: [String!]!
+}
+
+type DuplicateProductError implements UserError {
+  message: String!
+  code: ErrorCode!
+  path: [String!]!
+  duplicateProduct: Product!
+}
+
+// Then query can eb
+
+createProduct(name: "book") {
+  product {
+    name
+  }
+  userErrors {
+    message
+    code
+    path
+    ... on DuplicateProductError {
+      duplicateProduct
+    }
+  }
+}
+```
