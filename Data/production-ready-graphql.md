@@ -571,3 +571,35 @@ createProduct(name: "book") {
   }
 }
 ```
+
+###### Async Behavior
+
+Shopify has the concept of returning a response that signals polling (Operation Status of PENDING, CANCELED, FAILED, COMPLETE)
+This allows people to poll when they submit an async job
+
+###### Summary
+
+- Use design first approach to schema development, discuss what is known about the domain and ignore impleementation details
+- Design in terms of client use cases, don't think of data, types or fields
+- Make schema's as expressive as possible
+- Avoid the templation for generic or clever schemas
+
+
+#### Implementing GQL Servers
+
+At its core, GQL is a type system, a runtime and a way to access.
+
+Resolvers are functions that fulfil the data access. Arguments are generall  
+ 1. The parent result
+ 2. The arguments
+ 3. The context
+ 
+Code first vs Schema First
+ - Code First: Graphql Ruby, create code that creates a schema that generates SDL
+   - less familiar for graphql, you can dfine the schema and resolvers, the interface and runtime in the same place
+ - Schema First: Create the schema that generates the SDL, 
+   - benefit is creating using a common language, downside is that it is harder to maintain on large projects
+ - Annotation Based: Fully integrates with languages, graphql-spqr in java
+
+IDEA: Mark Feature Flags and Such on types for the SDL
+
