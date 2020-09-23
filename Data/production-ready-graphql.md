@@ -572,10 +572,39 @@ createProduct(name: "book") {
 }
 ```
 
-###### Async Behavior
+IDEA: Mark Feature Flags and Such on types for the SDL
+
+Naming Mutations
+ - Idea: Adding @tags to the payload for documentation (@tags(names: ["product"]))
+ - Nested: Have a parent field that has delete, create, etc under it
+ - Consistency is all that really matters
+
+Async Behavior
 
 Shopify has the concept of returning a response that signals polling (Operation Status of PENDING, CANCELED, FAILED, COMPLETE)
 This allows people to poll when they submit an async job
+
+Shopify this does this really simply with a result that
+ - Jobs identifiably by a global id and have two fields
+ - 1. done, a boolean if async job is finished
+ - 2. query: field that has the Query root type so clients can get the new state of things
+
+```
+// Another example
+type Query { payment: Payment }
+
+union Payment = PendingPayment | CompletedPayment
+
+// OR opt fo ra union instead
+type Operation {
+  status: OperationStatus
+  result: OperationResult
+}
+
+enum OperationStatus {
+  PENDING CANCELED FAILED COMPLETED
+}
+```
 
 ###### Summary
 
@@ -584,22 +613,101 @@ This allows people to poll when they submit an async job
 - Make schema's as expressive as possible
 - Avoid the templation for generic or clever schemas
 
-
 #### Implementing GQL Servers
 
 At its core, GQL is a type system, a runtime and a way to access.
 
-Resolvers are functions that fulfil the data access. Arguments are generall  
+Resolvers are functions that fulfil the data access in a depth first search like way. Arguments are generall  
  1. The parent result
  2. The arguments
  3. The context
- 
+  
 Code first vs Schema First
  - Code First: Graphql Ruby, create code that creates a schema that generates SDL
-   - less familiar for graphql, you can dfine the schema and resolvers, the interface and runtime in the same place
+   - less familiar for graphql
+   - benefit: you can define the schema and resolvers, the interface and runtime in the same place
+   - eg: using a macro to build connections Connection.build(Types::Comment)
+   - downside: tools that operate on the SDL can't understand your schema definitions
  - Schema First: Create the schema that generates the SDL, 
-   - benefit is creating using a common language, downside is that it is harder to maintain on large projects
+   - benefit is creating using a common language
+   - downside: is provides no way to describe logic for the field
+   - downside: separating schema description and what happens is a challenge as it grows and maintaining the types/mapped resolvers
+   - downside: harder to define reusable tooling and type definition helpers
  - Annotation Based: Fully integrates with languages, graphql-spqr in java
 
-IDEA: Mark Feature Flags and Such on types for the SDL
+Graphql can print the schema in ruby with `GraphQL::Schema::Printer.print_schema(MySchema)`
 
+Summary
+ - Build schema with code first approach
+ - Check the schema into version control
+ 
+#### Resolver Design
+
+Graphql is an API Interface, not the source of truth for the business
+
+ - Graphql
+ - Domain Logic
+ - Persistence
+ 
+Great resolves contain very little code, it deals with user input, calls down to domain and then presents the results
+
+Don't mutate the context object
+ 
+On lookaheads, avoid tempatation to eagerly fetch additional child data because
+ - GQL fields on query can be executed in parallel
+ - As your schema evolves new queries that your resolve didn't expect can start making appearances
+ 
+#### Schema Metadata
+
+Adding tags for 'under development'
+ - Code first allows macros
+ - SDL First through directives which are 
+ 
+oauth_scope metadata attribute lets us automate checks and publish
+
+#### Multiple Schemas
+
+Can have mulple schemas that are created at build or run time
+ - build: literally have two schemas
+ - runtime: through filters and schema masks
+ 
+With visibility we don't want clients to see that fields or types exist in the schema.  
+
+Github allows devs to use a `feature_flagged` to hide visability of certain fields
+ - Great for enforcement
+ - Not good for testing and tracking
+ 
+I don't really like this because it is unnecessary unless you have types that are sensitive
+ 
+```ruby
+class FeatureFlagMask
+  def call(schema_member, ctx)
+    current_user = ctx[:current_user]
+
+    if schema_memner.feature_flagged
+      FeatureFlags.get(schema_member.feature_flagged).enabled?(current_user)
+    else 
+      true
+    end
+  end
+end
+
+MySchema.execute(query_string, only: FeatureFlagMask) PG 100
+```
+
+#### Multiple Schemas
+
+Schema stitching is a thing
+
+#### Testing
+
+Test like an integration
+
+Summary
+ - Prefer code first frameworks over SDL
+ - Keep GQL Layer as thin as possible, refactor logic to its own domain
+ - Keep resolvers simple, don't mutate context
+ - Modularize when it starts hurting
+ - Test domain logic at domain layer, Integration tests best for gql
+ - Use visibility filters for small schema variations at runtime
+ 
