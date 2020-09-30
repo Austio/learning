@@ -711,3 +711,55 @@ Summary
  - Test domain logic at domain layer, Integration tests best for gql
  - Use visibility filters for small schema variations at runtime
  
+### Security
+
+#### Rate Limiting
+Complexity of Query Per Minute approach: Take the query cost and use that to rate limit uses
+ - Calculate cost per field
+ - Calculate cost per number of items
+ - Graphql Ruby - Ahead of time analytisis api https://graphql-ruby.org/queries/ast_analysis.html
+
+Server Time Per Minute Cost
+ - Calculate time to execute in a middleware and use that
+ 
+Expose the responses using Headers
+ - x-ratelimit-limit: n
+ - x-ratelimit-remainint: n
+ - x-ratelimit-reset: epoch
+ 
+Github Allows you to request the complexity calculation of a request ahead of time
+
+```
+query {
+  // DryRun is don't calculate the query, just tell me what it would cost
+  rateLimit(dryRun: boolean) {
+    cost
+    limit
+    remaining
+    resetAt
+  }
+  ...yourQuery
+}
+```
+
+Shopify also returns this as part of a graphql extension
+
+Downsides include
+ - Gaming the system
+ - Reliably being able to calculate what they want
+
+Other ideas:  
+ - You can set max depth of a query: https://graphql-ruby.org/schema/definition.html#default-limits
+ - Max complexity per query
+ - Node limit
+ - Limit total bytesize on queries and variables to prevent DOS
+ 
+#### Authentication
+- Keep it out of graphql
+  
+#### Authoriziation
+- API Scopes: Authorization on what fields they can acces
+- Business logic: Can a user do X,Y,Z
+
+Prioritize object authorization over field authorization
+- Do this at the type level instead of the field level because it is very hard to track down all the ways an object can be accessed
