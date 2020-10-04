@@ -763,3 +763,51 @@ Other ideas:
 
 Prioritize object authorization over field authorization
 - Do this at the type level instead of the field level because it is very hard to track down all the ways an object can be accessed
+
+### Performance and Monitoring
+
+Most important for graphql is, did a query that used to take 200ms now take 500200ms
+ - Log out When a query takes too long
+ - Hash query and variables to keep track of historical requests
+
+Think of query in three parts
+ - Parse + Lexing
+ - Validation + Static Analysis
+ - Execution
+  - Can attach a custom response timings as part of an extension
+
+#### N+1 and Dataloader
+
+When a query is colocated, it can be naie to want to pre-load a set of known queries that happen below it, however that it the responsibility of the subfield
+-user
+ - friends
+   - bestFriends
+
+It is easy in this situation to get where we perform 100's of single queries due to the separtion of concerns here
+
+```
+{
+ user {
+   friends(total: 1000) {
+     bestFriends(total: 2000) {
+       name
+     }
+   }
+ }
+}
+```
+
+Naive: just run the queries as the come up, this falls apart
+Eager Load with Look ahead: Optimized but falls apart in complex scenarios due to the combunitorial nature of graphql
+Data Loader = Lazy Load: Combine the N+ queries until the absolute last chance to need them, then fire them in 1 go when posisble
+
+For Data Loader, you resolve the levels of graphql response by depth, then all requests for data go to a loader to ensure they are resolved well
+Loader.load(key)-> Schedules the key to be loaded
+Loader.perform -> Actually requests the data
+ [Lee Byron Walkthrough of Code](https://www.youtube.com/watch?v=OQTnXNCDywA)
+
+Downsides to DataLoader
+ - Monitoring is harder
+ - Execution model is harder to grok
+ - Performance of a single field is a lie, they could batch up 1000+ requests but be super fast
+ - Everything is now Async
