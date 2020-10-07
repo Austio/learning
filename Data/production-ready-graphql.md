@@ -811,3 +811,36 @@ Downsides to DataLoader
  - Execution model is harder to grok
  - Performance of a single field is a lie, they could batch up 1000+ requests but be super fast
  - Everything is now Async
+
+## Caching
+
+Freshness: The time since something is valid, usually through 'Cache-Control: max-age=3600' and 'Expires' headers. Great for static (assets)
+Validation: Way clients avoid refetching when they don't know for sure if something is valid.  Usually through 'Last-Modified' (server sends an if-modified-since response) and 'ETag'
+
+Http Caching just won't work, graphql posts requests, http will not cache posts.
+ - similar to user based api
+
+Application Caching
+ - Shopify uses a cachable directive and if all fields are cachable it uses the cache
+ - Key => user_id, query, every field cachable, variables, operation name, cache buster
+
+```
+field Foo @cacheable {
+  name: String
+}
+```
+
+Compiled Queries
+ - Like persisted only compiled ahead of time to avoid rework at runtime
+
+Summary
+ - Caching is hard
+ - Monitoring requires at field and query level rather than endpoint level
+ - N+1 can be avoided with data loader
+ - Caching is possible, but not as big of a deal as other mediums
+
+
+
+
+Discussion:
+ - I disagree with his "oh you can actually use http caching" mantra.  In development this would not work
