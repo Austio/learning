@@ -168,6 +168,8 @@ Applying policy consistency is challenging because
 At a sufficiently high rate of change, policy is indistinguishable from exception.
  - Batch changes to monthly or quarterly so that you have many examples and a lower rate of change
  
+#### On NO 
+ 
 Our job is to create an environment for those around us to be their best, in fair surroundings.
  - NO is an expression of what is possible for the team you lead to do.
  
@@ -278,9 +280,33 @@ For each request you have to choose a path
  - Solve: Design a solution such that you won't need to spend time on this problem again in the next 6 months
  - Delegate: Redirect to ask someone else to handle   
  
- 
- 
-## Reference Articles
+## Culture
 
+ - The basis: an inclusive organization is one in which individuals have access to opportunity and membership
+ 
+Measuring:
+  - Retention: who is staying and going
+  - How often do folks get picked to lead a project
+  - Distribution: Are there enough of people like others in leadership positions
+  - Time at level: how long do people stay at one level as opposed to another
+
+Membership:
+ - Recurring Weekly Events: Allow Coworkers to interact socially during work hours.
+ - Employee Resource Groups: Folks with similar background to build community
+ - Team Offsites: Coffee Chats to get people interacting when they dont' need something from each other
+
+With the above things, measure Retention, Amount of people asking others to join, Attendance and quality of completion rates of chats
+
+Project Lead Selection: To increase the number of people that will interact with a project
+ - Define Scope and Goals in a Short document.  Specifics:
+   - Time Commitment, Requirements to Apply, Selection Criteria
+ - Announce the availability to apply
+ - Nudge folks to apply, sponsor them by finding an advisor
+   
+Hero's
+ - Kill the hero programmer or kill the environment that enables the hero
+ - Projects fail all the time, acknowledge misteps that exacerbate mistakes and cut losses on bad decisions before burning ourselves out.  Then we can learn from our mistakes and improve.
+
+## Reference Articles
 [Effectively Using AWS Reserved Instances](Effectively Using AWS Reserved Instances)
 
