@@ -839,8 +839,65 @@ Summary
  - N+1 can be avoided with data loader
  - Caching is possible, but not as big of a deal as other mediums
 
-
-
-
 Discussion:
  - I disagree with his "oh you can actually use http caching" mantra.  In development this would not work
+ 
+## Tooling
+
+ - Graphql Doctor, graphql-schema-linter
+ - Analysis on the query ( do this in sidekiq ) include
+  - The actor behind teh query
+  - The version of the schema (A SHA256 of the current schema)
+  - Any errors, including parse error, gql errors
+  - Resolver timings, full query time, everything in perf chapter
+ - Denormalize the query into a set of entities
+  - A list of fields (with parents)
+  - A list of arguments (with parents)
+  - List of fragments used
+  - Enums used
+
+After storing the above in logs
+ - Find top 10 list of integrators querying User.name
+ - Fields frequently used together 
+ - Slowest Fields
+ - Safe to remove an optional argument
+
+Can replace all "QUERY" arguments with "REDACTED" to prevent any sensitive info
+
+## Workflow
+
+ - Design your API
+   - collaborate on initial design using SDL
+   - Involve project managers, designers and documentation specialists as early as possible in the process
+   - Once the schema is ready
+ - Review
+   - Think about the core design
+   - Review "teams" don't scale, invest in schema/API quality tools to cut down review time
+ - Development
+   - Comes AFTER design and use case
+ - Publish -> Shippit
+   - Provide a header to opt in to a new feature, put that behind a feature flag tag
+   
+```
+# Example of API for a query flag
+type Query {
+  newFeature: SOMETHING!
+    @preview(name: "new-shiny-feature"
+}
+```   
+
+## Public Graphql APIs
+
+"The target audience should be the single biggest influence on your API Design"
+ - Daniel Jacobson, concerning netflix approach to APIs
+
+Pros
+ - Use cases out of the box
+ - More fine grained than "Standard" rest
+ 
+Cons
+ - Lack of Conventions, a lot has to be reinvented with Errors, caching, rate limiting, timeouts
+
+Rely on convention as much as possible, return common error codes here (429, 403, etc)
+
+Public API's increase complexity
