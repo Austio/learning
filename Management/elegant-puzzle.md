@@ -303,6 +303,12 @@ Project Lead Selection: To increase the number of people that will interact with
  - Announce the availability to apply
  - Nudge folks to apply, sponsor them by finding an advisor
    
+Managing Freedom:
+ - Positive: can do what you want
+ - Negative: restricts you
+ 
+Tom Demarco, every time you start a new project, do something new. 
+   
 Hero's
  - Kill the hero programmer or kill the environment that enables the hero
  - Projects fail all the time, acknowledge misteps that exacerbate mistakes and cut losses on bad decisions before burning ourselves out.  Then we can learn from our mistakes and improve.
