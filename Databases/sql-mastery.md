@@ -1581,4 +1581,92 @@ update playground.notes
   where user_email = 'me@example.com';
 ```
 
-#### Foreign keys prevent
+```
+-- 10.8 Add appropriate foreign keys to the rentals table. Setup the foreign keys such that if the referenced customer or equipment is deleted,
+-- the related entries in the rentals table will also be deleted. Note you may drop the schema/table and re-create it from scratch
+
+alter table beach.rentals
+ add foreign key (equipment_id) references beach.equipment (id) on delete cascade;
+
+alter table beach.rentals
+  add foreign key (customer_id) references beach.customers (id) on delete cascade;
+```
+
+### Check, Unique, Not Null 
+
+These constraints do what they say
+- Not null requires data
+- Unique requires no duplicates
+- Check will run the statement on save and fail if it doesn't pass
+
+```
+10.9 Add appropriate check, unique, not null, and default constraints to the customers table to capture the following requirements: a) A customer must provide both a first name and last name b) A customer must provide at least one contact detail - a phone number or email address c) The create date should be the date the new customer record is inserted in the table d) No two customers should have the same email address or phone number
+create table beach.customers (
+  customer_id bigint generated always as identity primary key,
+  email text unique,
+  first_name text not null,
+  last_name text not null,
+  phone text unique,
+  create_date date not null default current_date,
+  check (email is not null or phone is not null)
+);
+
+10.10 Add appropriate check, unique, not null, and default constraints to the equipment table to capture the following requirements: a) A newly added item should not be missing! b) Each item must have a type c) The replacement cost can be NULL. But if provided, it must be a positive number
+
+You might be wondering about the check constraint for replacement_cost and why you didn't have to explicitly permit null. It's always important to keep in mind the '3 valued' logic employed by SQL where an expression can evaluate to true, false, or unknown. On inserting a replacement cost of NULL, the comparison "Is NULL >= 0" evaluates to unknown. Check constraints reject values that evaluate to false, but unknown is fair game. Which in this case, is exactly what we want.
+
+create table beach.equipment (
+  equipment_id bigserial primary key,
+  item_type text not null,
+  description text,
+  replacement_cost numeric(7, 2) check (replacement_cost >= 0),
+  missing boolean not null default false
+);
+```
+
+## Transactions
+
+ - errors in a transaction cause an aborted state, you have to rollback from to continue
+ 
+ 
+CREATE TABLE public.actor (
+    actor_id serial NOT NULL,
+    first_name varchar(45) NOT NULL,
+    last_name varchar(45) NOT NULL,
+    last_update timestamp NOT NULL DEFAULT now(),
+    CONSTRAINT actor_pkey PRIMARY KEY (actor_id)
+);
+
+CREATE INDEX idx_actor_last_name on public.actor USING btree (last_name);
+
+```
+begin;
+
+insert into actor(first_name, last_name)
+values
+ ('Keanu', 'Reeves'),
+ ('Tom', 'Cruise'),
+ ('Winona', 'Ryder');
+
+select *
+from actor
+returning *; // returns the rows that were changed, useful in scripts to see values and such
+
+rollback; || commit;
+```
+
+```
+11.4 Write an insert statement to insert a new customer in to the customer table with any details of your choosing. 
+Use the returning clause to return the inserted row. For this and all upcoming exercises, 
+remember to do this inside a transaction block and rollback the change afterwards!
+
+begin;
+
+insert into public.customers(last_name)
+values ("foo")
+returning *;
+
+rollback;
+```
+
+
