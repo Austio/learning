@@ -1627,7 +1627,7 @@ create table beach.equipment (
 ## Transactions
 
  - errors in a transaction cause an aborted state, you have to rollback from to continue
- 
+ - commit; saves, rollback; takes back
  
 CREATE TABLE public.actor (
     actor_id serial NOT NULL,
@@ -1669,4 +1669,103 @@ returning *;
 rollback;
 ```
 
+### Updating Data
 
+You can update columns with a correlated subquery
+
+// Sync values across tables
+update payment
+set payment_date = 
+  (select rental_date 
+   from rental
+   where payment.rental_id = rental.rental_id);
+   
+// update the activebool for users
+update customer
+set activebool = true
+where exists 
+  (select *
+   from rental
+   where ental_date >= '2006-01-01'
+     and rental.customer_id = customer.cutomer_id)
+returning *;     
+
+```   
+-- 11.6 All customers should have an email address of the form [first_name].[last_name]@sakilacustomer.org 
+   (all in lower case). Write an update statement so that all customers have an email address in this format.
+
+// My solution
+update beach.customers
+set email =
+    (select concat(b.first_name, '.', b.last_name, '@sakilacustomer.org'
+     from beach.customers b
+     where b.id = beach.customers.id)
+
+// Their solution
+update customer
+set email = lower(first_name || '.' || last_name || '@sakilacustomer.org');
+```
+
+
+```
+
+-- 11.7 Write an update statement to update the rental rate of the 20 most rented films by 10%
+
+begin;
+
+with top_titles as (
+  select film.title as title, count(film.title) from film
+  join inventory on inventory.film_id = film.film_id
+  join rental on rental.inventory_id = inventory.inventory_id
+  group by film.title
+  order by count desc
+  limit 20)
+
+select rental_rate, title
+from film
+where title in (select title from top_titles);
+
+update film
+set rental_rate = (film.rental_rate * 1.1)
+where film.title in (select title from top_titles);
+
+select rental_rate, title
+from film
+where title in (select title from top_titles);
+
+rollback;
+
+-- their solution
+
+update film
+set rental_rate = rental_rate * 1.1
+where film_id in
+  (
+    select
+      i.film_id
+    from rental as r
+      inner join inventory as i using (inventory_id)
+    group by i.film_id
+    order by count(*) desc
+    limit 20
+  );
+```
+
+```
+-- 11.8 Write a script to add a new column to the films table to hold the length of each film in hours (have a look at some of the examples for the ALTER TABLE command) and then populate this new column with the correct values
+
+alter table film
+add column length_in_hours smallint;
+
+update film
+set length_in_hours = round(film.length / 60);
+
+-- their solution used a numeric to allow for 1.2 hours and similar
+
+alter table film
+  add column length_hrs numeric(2, 1);
+
+update film
+set length_hrs = length / 60.0
+returning *;
+```
