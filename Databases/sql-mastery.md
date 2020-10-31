@@ -1769,3 +1769,170 @@ update film
 set length_hrs = length / 60.0
 returning *;
 ```
+
+#### Deleting
+
+delete from and truncate are your main things here
+
+```
+-- 11.9 Delete all the payments where the payment amount was zero, returning the deleted rows
+begin;
+
+delete from payment
+where amount = 0
+returning *;
+
+rollback;
+
+-- 11.10 Delete all the unused languages from the language table
+
+select * from language
+where not exists (
+    select * from film where film.language_id = language.language_id
+    )
+```
+
+Exercises
+
+```
+-- 11.11 Write a single update statement to update the activebool column for customers to be true if they made a
+-- rental in 2006 or later, and false otherwise.
+
+update customer
+set activebool = true
+    where exists (
+    select * from rental
+    where rental.customer_id = customer.customer_id and rental_date >= date('2006-01-01'));
+
+-- Solution, i missed the "and false" part
+
+update customer
+set activebool =
+  case
+    when exists
+      (select *
+       from rental
+       where rental.customer_id = customer.customer_id
+         and rental_date >= '2006-01-01')
+       then true
+    else false
+  end;
+
+
+-- 11.12 Create a new table, with appropriate primary keys and foreign keys, to hold the amount of inventory of each
+-- film in each store (store_id, film_id, stock_count). In this table we want to store the stock level for every
+-- film in every store - including films that aren't in stock. Write an "upsert" statement to populate the table
+-- with the correct values. By "upsert", I mean insert a SQL statement that will either insert a new row in the
+-- table (ie. a new film, store, stock count) or update the stock count if the film/store attempting to be inserted
+-- already exists in the table). Research PostgreSQL's INSERT ON CONFLICT and look at the examples for some
+-- guidance on how to do this.
+
+
+create table stock
+(
+    stock_id serial,
+    film_id integer references film (film_id) not null,
+    store_id integer references store (store_id) not null,
+    stock_count integer default 0 not null
+);
+
+create unique index idx_film_id_and_store_id on stock (store_id, film_id);
+
+select * from stock;
+
+with stock_values as (select film_id, store.store_id, 1 as stock_count from film
+    join inventory using (film_id)
+    cross join store)
+
+insert into stock select * from stock_values
+on conflict (store_id, film_id)
+DO UPDATE SET stock_count = stock.stock_count + 1 where stock.store_id = EXCLUDED.store_id and stock.film_id = EXCLUDED.film_id;
+
+-- Solution I missed the update 
+insert into inventory_stats(store_id, film_id, stock_count)
+  select s.store_id, f.film_id, count(i.inventory_id)
+  from film as f
+    cross join store as s
+    left join inventory as i
+      on f.film_id = i.film_id
+      and s.store_id = i.store_id
+  group by f.film_id, s.store_id
+on conflict (store_id, film_id)
+do update set
+  stock_count = excluded.stock_count;
+
+
+-- 11.13 Write a single statement to delete the first rental made by each customer and to avoid any foreign key
+-- violations you'll also have to delete any associated payments in that same statement.
+-- You might need to do some research online to figure this one out.
+-- As a hint, you can use Common Table Expressions (CTEs) with delete statements and delete statements themselves can return results with the RETURNING clause!
+
+with min_dates(time, customer_id) as (select min(rental_date), customer_id from rental
+group by customer_id)
+
+delete from payment where rental_id in (select rental_id from rental
+ join min_dates on rental.customer_id = min_dates.customer_id and min_dates.time = rental.rental_date);
+
+delete from rental where rental_id in (select rental_id from rental
+ join min_dates on rental.customer_id = min_dates.customer_id and min_dates.time = rental.rental_date);
+
+
+with deleted_rentals as
+(
+  delete from rental
+  where rental_id in
+    (select distinct on (customer_id) rental_id
+     from rental
+     order by customer_id, rental_date)
+  returning rental_id
+)
+delete from payment
+where rental_id in
+  (select rental_id
+   from deleted_rentals);
+
+-- 11.14 In the films table the rating column is of type mpaa_rating, which is an ENUM.
+-- You've read online about the downsides of ENUMs and now want to convert your table design to instead
+-- store the different mpaa rating types in a reference table with the type as the primary key.
+-- Write a script to create the new table, populate it with data, convert the film table,
+-- and then drop the mpaa_rating type so it won't be used ever again. You're going to need to Google
+-- a few ideas and look up some documentation to get through this one - good luck!
+
+create table mpaa_film_rating(
+    type varchar(8) primary key unique
+)
+
+insert into mpaa_film_rating (
+    SELECT unnest(enum_range(NULL::mpaa_rating)) as ratings
+)
+
+alter table film add column mpaa_film_rating varchar(8);
+
+insert into film (film_id, mpaa_film_rating)
+select film_id, rating from film
+ON DUPLICATE KEY(film_id) UPDATE mpaa_film_rating=excluded.mpaa_film_rating where excluded.film_id = film_id;
+
+alter table film drop column rating;
+
+alter table film add foreign key (
+    mpaa_film_rating ) references mpaa_film_rating.type;
+
+
+--- Solution
+
+create table mpaa_ratings
+(
+  rating text primary key
+);
+
+insert into mpaa_ratings
+  select unnest(enum_range(null::mpaa_rating));
+
+alter table film
+  alter column rating drop default,
+  alter column rating type text,
+  alter column rating set default 'G',
+  add foreign key (rating) references mpaa_ratings(rating);
+
+drop type mpaa_rating;
+```
