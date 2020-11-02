@@ -1936,3 +1936,113 @@ alter table film
 
 drop type mpaa_rating;
 ```
+
+### Views/
+
+Database View: Virtual Table, holds queries you do over and over.  For instance, an address spread over multiple tables
+ - Creating a view doesn't run the query, just saves it for later   
+ - You can join, query and whatever as is if the view is a regular table
+ - Can use this for security purposes, limit the fields certain db users can read as a dba
+ 
+Materialized View:
+
+```
+Views: 
+
+-- 12.1 We often need to get basic film information for a rental and so regularly find ourselves writing queries
+-- to join from the rental table on to the inventory and film tables. Write a view called vw_rental_film to make
+-- this more convenient, returning for each rental ID the film's title, length, and rating.
+-- Then write a query to return all the rows from this view to check it's working as expected.
+
+create view vw_rental_film as
+select customer_id, inventory_id, f.film_id, rental_id, f.title, f.rating, f.length, rental_date, return_date from rental r
+  join inventory using (inventory_id)
+  join film f on inventory.film_id = f.film_id;
+
+-- Solution
+
+create view vw_rental_film as
+  select
+    r.rental_id,
+    f.title,
+    f.length,
+    f.rating
+  from rental as r
+    inner join inventory as i using (inventory_id)
+    inner join film as f using (film_id)
+  order by r.rental_id;
+
+-- 12.2 Use the vw_rental_film view you just created to return, for each customer, the number of 'R' films they've rented out.
+-- Include customers who haven't rented any R films also. Note - this is trickier than it first appears...be very careful and double-check your results!
+
+with ratings(customer_id, rating, count) as (
+  select customer.customer_id, rating, count(rating) from customer
+  left outer join vw_rental_film vrf on customer.customer_id = vrf.customer_id
+  group by 1, rating
+  having rating = 'R'
+  order by 1)
+
+select customer_id,
+       case count
+         when count then count
+         else 0
+       end as count
+  from customer
+  left outer join ratings using(customer_id)
+  where customer_id > 0;
+
+-- Solution
+
+select
+  c.customer_id,
+  count(r.rental_id)
+from customer as c
+  left join (rental as r
+               inner join vw_rental_film as rf
+                 on r.rental_id = rf.rental_id
+                 and rf.rating = 'R')
+    using (customer_id)
+group by c.customer_id
+order by c.customer_id;
+
+
+-- 12.3 Create a view called vw_monthly_totals that returns the amount of income received each
+-- month (you've done this a couple of times in this course now - time to finally save this
+-- in a view to avoid the repetition!)
+
+create view vm_monthly_totals as
+with summed_months as (select date_trunc('month', rental.rental_date) as month, sum(rental_rate) as total from rental
+  join inventory i on rental.inventory_id = i.inventory_id
+  join film f on i.film_id = f.film_id
+  group by 1
+  order by 1),
+  months as (select * from generate_series('2005-01-01'::timestamp, '2006-03-01'::timestamp, '1 month') as month)
+select months.month,
+       case total
+       when total then total
+       else 0
+       end as total
+    from months
+    left outer join summed_months on summed_months.month = months.month;
+
+-- solutions
+
+-- 12.4 Using the new vw_monthly_totals view and window functions (remember how those work?
+-- If not, here's your chance to refresh!), write a query that returns the amount of income
+-- received each month and compares it against the previous month's income, showing the change.
+
+with totals as (select month, total,
+    coalesce(lag(total) over (order by month desc), 0) as previous
+    from vm_monthly_totals)
+
+select month, total - previous as difference from totals;
+
+-- solution
+
+select
+  month,
+  total as income,
+  lag(total) over (order by month) as "prev month income",
+  total - lag(total) over (order by month) as "change"
+from vw_monthly_totals;
+```
