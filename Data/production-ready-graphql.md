@@ -904,7 +904,9 @@ Public API's increase complexity
 
 ## GQL In a Distributed Architecture
 
-Graphql Can act as an API Gateway as a gateway to microservices.  Some considerations are
+Graphql Can act as an API Gateway as a gateway to microservices.
+
+Recommentation: Use a single graphql service and have it coordinate with services as a thin layer
 
 ### As a simple proxy
 
@@ -932,3 +934,15 @@ Prefer this:  Keep a single gateway with a single graphql instance coordinating 
 
 Graphql is an inherently centralized approach to APIs.  We can try to decentralize (federation, stitching) as much as we want, but the reality is that we still end up with centralization, either through very complex gateway or building a single Graphql Server.
 Keeping this simple and at a single place will allow it to be easily handled by the team.
+
+## Versioning
+
+ - A non-null field actually can be null at runtime
+
+With deprecations, include a reason, the date it will no longer work, an alternative, and link for more explanation
+
+## Docs
+
+tools - Graphql-Voyager, Graphql Docs
+
+Don't just return types:  Also show use cases and have pre-made queries
