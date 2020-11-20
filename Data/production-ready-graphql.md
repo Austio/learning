@@ -7,8 +7,8 @@ Discussion Points:
  - Expressive: Splitting out more fields, findById and findByName
  - Anemic Graphql
  - CourseGrained (bulk many) vs FineGrained (singular)
- - Contrast sharing types with inheritance vs interfaces composition 
- 
+ - Contrast sharing types with inheritance vs interfaces composition
+
 Disagree
  - Providing both edges and edges/node
 
@@ -20,7 +20,7 @@ Netflix: API Redesign due to Substantial Limitations to one size fits all REST A
 SoundCloud: Time to add new features and handle different needs, designed Use Cases and Backends for Frontends, 1 per client (android, mobile, ios, javascript)
 Facebook: Frustrated by differences in data, wanted to use apps and server queries
   - Considerable amount of code to write both server to prepare and client to parse
-  
+
 #### Important Elements
 Type System: Schema Definition Language, Canonical Representation of GQL schema.
 Types and Fields: Can request types off of objects that are nested
@@ -30,7 +30,7 @@ Query Alias: Receive data in different format than defined
 Enums: Define what is acceptable
 Abstract Types: Allow clients to expect return type of a field to act in a certain way.
  - Interfaces allow us to define the contract that concrete types implement
- 
+
 ```
 interface Discount {
   priceWithDiscount: Price!
@@ -40,13 +40,13 @@ interface Discount {
 type Product implements Discountable {
   name: String!
   priceWithDiscount: Price!
-  priceWithoutDiscount: Price!  
+  priceWithoutDiscount: Price!
 }
 
 type GiftCard implements Discountable {
   code: String!
   priceWithDiscount: Price!
-  priceWithoutDiscount: Price!  
+  priceWithoutDiscount: Price!
 }
 
 # Now other fields can return discountable directly
@@ -99,11 +99,11 @@ Design First approach will (almost) always result in a better API.  OW very coup
    - Not Influenced by implementation details, GQL entry to functionality, not your database
    - Building from DB doesn't make sense, schema coupled to implementation, very generic, exposes too much
 
-Naming: 
+Naming:
  - Consistency is King, API Symmetry is also important
  - Principle of least astonishment
  - Be overly specific on members, in the Query example below, notice that you accidentally expose biling to the Viewer, which either forces you to return null for Viewers or make a New Type
- 
+
 ```
 type Query {
   viewer: User!
@@ -151,10 +151,10 @@ type Viewer implements User {
 
 Descriptions: Icing on cake, query for what types represent, mutations for what they do
 
-Schema Typing: Return Types when it make sense that are not scalars. 
+Schema Typing: Return Types when it make sense that are not scalars.
 
 ```
-eg 
+eg
 type Product {
   # JSON Encoded string
   meta: String!
@@ -175,10 +175,10 @@ Expressive Schemas:
  - Avoid runtime logic that the schema can enforce
  - Avoid impossible states, use Complex object and input types to represent copuling between field/arguments
  - Use default values to indicate default behavior
-  
- 
+
+
 ```
-# What if neither provided? 
+# What if neither provided?
 findProduct(id: ID, name: String)
 
 # Better
@@ -187,15 +187,15 @@ findByName(name: String)
 ```
 
 Stronger Schema:  Return full types when possible, combine things like cardNumber, cardDate, into a Card type that has a number and date
-  
-Specific VS Generic:  
+
+Specific VS Generic:
  - Too generic tend to be optimized fo rno one and harder to reason about
  - Fields should often do one thing
  - A good indication of a field trying to do too much is a boolean field that is controller coupling
  - Another is sql like code for greater than, includes, etc, this causes server team to handle some serious performance edge cases inside a single resolver
-  
+
 ```
-# Too generic 
+# Too generic
 posts(first: Int!, includeArchived: Boolean): [Post!]!
 
 # Better
@@ -271,15 +271,15 @@ Cursor -> Stable ID that points to an item in the list
 Connections return a connection type with two fields
  - Edge: Contains data we requested, but not directly, exposes things like the cursor
  - Node: The actual data in the edge
- 
-Some teams use the edge to encode relationship, like `role` at github 
- 
+
+Some teams use the edge to encode relationship, like `role` at github
+
 ```
 products {
   edges {
     cursor
     node {
-      name 
+      name
     }
   }
 }
@@ -299,7 +299,7 @@ products {
     }
   }
 }
-``` 
+```
 
 Sharing Types
 
@@ -320,7 +320,7 @@ type Team { members: UserConnection! }
 
 However, once the Type of User grows and diverges we are stuck, we can't add anything specific to the UserEdge about being an orgAdmin or teamLead
 
-If instead we had opted for a 
+If instead we had opted for a
 ```
 type TeamMemberConnection { members: UserConnection! }
 type OrgUserConnection { members: UserConnection! }
@@ -336,11 +336,11 @@ Another common example is sharing inputs, having a singular ProductInput for bot
 Global Identification
  - Opaque identifiers vs ID identifiers, opaque allows us to change how they are generated
  - Don't always need global identification
- 
+
 Nullability
- - Can it return null or not, a field cannot return null at runtime defined by using the bang symbol 
+ - Can it return null or not, a field cannot return null at runtime defined by using the bang symbol
  - Returning null for nonnull is an error condition and the entire query is the null with an error
- 
+
 ```
 type Product {
   name: String!
@@ -354,14 +354,14 @@ type Shop {
 
 query {
   shop {
-    name 
+    name
     topProduct {
       name
       price
     }
   }
 }
-``` 
+```
 
 Now, in the above if we return null for name, it will cause the entire result to be null because both TopProduct and it's name are non-null
 
@@ -370,7 +370,7 @@ This illustrates how powerful nullability can be
 Non-Nullability is great for
  - expression
  - allows clients to avoid defensive code
- 
+
 It is dangerous because
  - Non-null fields are harder to evolve, non-null to null is a breaking change
  - Very hard to predict what can be null or not, especially in distributed environments (timeouts, transient errors, rate limits)
@@ -417,7 +417,7 @@ type ContentFeedCard implements SocialMediaFeedCard {
  - Interfaces provide common shared *behaviors* (Starrable)
  - Unions when it can return different things (Search)
 
-Don't overuse Interfaces, great for stronger contracts, but be sure that you are sharing common BEHAVIOR not common DATA.  
+Don't overuse Interfaces, great for stronger contracts, but be sure that you are sharing common BEHAVIOR not common DATA.
 A good interface should mean something to the API Consumers.  Describes and provides a common way to do or behave like something instead of being or having something.
 A good bad example is 'naming', when we don't have a strong meaning in the schema, naming will be awkward and meaningless, like an ItemInterface or ItemFields or ItemInfo
 
@@ -429,27 +429,27 @@ Abstract types giveus an easy way to evolve over time, but that is only true if 
  - Can give the operations names
  - Known at build time, searchable
  - Caching
- 
+
 ###### Mutations
  - Encouraged to accept Specific input types (CreateProductInput) and return Payload types (CreateProductPayload)
- 
+
 ###### Fine-Grained or Course-Grained
- 
-Fine Grained meaning very small scope, pushes business logic to clients to composeCourse meaning it bundles up a lot for you 
+
+Fine Grained meaning very small scope, pushes business logic to clients to composeCourse meaning it bundles up a lot for you
  - eg, create a product, add a label to it then modify it's price
  - if that represents one action in the UI what do you do if 1 fails?
-But you don't want a client to use 5 different 
- 
+But you don't want a client to use 5 different
+
 Fine vs courses grained mutations depends on needs of client and ability of the server
  - Coarse-Grained create mutations
  - Fine Grained mutations to update an entity
-  
+
 How do you handle a case where you want multiple things to succeed at once or none at all?
- 
+
 ###### Errors
 
  - Make sure that queries can handle new error cases as the schema evolves
- 
+
 
 Basic GQL Error is like this
 
@@ -479,11 +479,11 @@ Basic GQL Error is like this
 
 This can happen for any number of reasons, in the above, it is because the second item in the array has a null price and it is non-null
 
-But take mutations for example, if you wanted to return an error for say the equivalent of a 409, you can't do that easily because it 
+But take mutations for example, if you wanted to return an error for say the equivalent of a 409, you can't do that easily because it
  - Error information is limited
- - Errors are outside of the GQL Schema, no types 
+ - Errors are outside of the GQL Schema, no types
  - Null propogation causes a whole slew of issues that will have to stay top of mind to prevent cascading errors
- 
+
 It is better to divide errors into two types
  - Developer/Client Errors (rate limit, wrong format, etc): Something went wrong during the query that the developer needs to handle on the client
  - User Errors: The user/client did something wrong (checkout twice)
@@ -492,7 +492,7 @@ Errors section is not great for handling user facing errors that are part of the
 
 Some approaches to this are
 
-*Errors as Data* 
+*Errors as Data*
 
 1. Add a field for the possible errors in payload
  - pros: easy
@@ -617,18 +617,18 @@ enum OperationStatus {
 
 At its core, GQL is a type system, a runtime and a way to access.
 
-Resolvers are functions that fulfil the data access in a depth first search like way. Arguments are generall  
+Resolvers are functions that fulfil the data access in a depth first search like way. Arguments are generall
  1. The parent result
  2. The arguments
  3. The context
-  
+
 Code first vs Schema First
  - Code First: Graphql Ruby, create code that creates a schema that generates SDL
    - less familiar for graphql
    - benefit: you can define the schema and resolvers, the interface and runtime in the same place
    - eg: using a macro to build connections Connection.build(Types::Comment)
    - downside: tools that operate on the SDL can't understand your schema definitions
- - Schema First: Create the schema that generates the SDL, 
+ - Schema First: Create the schema that generates the SDL,
    - benefit is creating using a common language
    - downside: is provides no way to describe logic for the field
    - downside: separating schema description and what happens is a challenge as it grows and maintaining the types/mapped resolvers
@@ -640,7 +640,7 @@ Graphql can print the schema in ruby with `GraphQL::Schema::Printer.print_schema
 Summary
  - Build schema with code first approach
  - Check the schema into version control
- 
+
 #### Resolver Design
 
 Graphql is an API Interface, not the source of truth for the business
@@ -648,21 +648,21 @@ Graphql is an API Interface, not the source of truth for the business
  - Graphql
  - Domain Logic
  - Persistence
- 
+
 Great resolves contain very little code, it deals with user input, calls down to domain and then presents the results
 
 Don't mutate the context object
- 
+
 On lookaheads, avoid tempatation to eagerly fetch additional child data because
  - GQL fields on query can be executed in parallel
  - As your schema evolves new queries that your resolve didn't expect can start making appearances
- 
+
 #### Schema Metadata
 
 Adding tags for 'under development'
  - Code first allows macros
- - SDL First through directives which are 
- 
+ - SDL First through directives which are
+
 oauth_scope metadata attribute lets us automate checks and publish
 
 #### Multiple Schemas
@@ -670,15 +670,15 @@ oauth_scope metadata attribute lets us automate checks and publish
 Can have mulple schemas that are created at build or run time
  - build: literally have two schemas
  - runtime: through filters and schema masks
- 
-With visibility we don't want clients to see that fields or types exist in the schema.  
+
+With visibility we don't want clients to see that fields or types exist in the schema.
 
 Github allows devs to use a `feature_flagged` to hide visability of certain fields
  - Great for enforcement
  - Not good for testing and tracking
- 
+
 I don't really like this because it is unnecessary unless you have types that are sensitive
- 
+
 ```ruby
 class FeatureFlagMask
   def call(schema_member, ctx)
@@ -686,7 +686,7 @@ class FeatureFlagMask
 
     if schema_memner.feature_flagged
       FeatureFlags.get(schema_member.feature_flagged).enabled?(current_user)
-    else 
+    else
       true
     end
   end
@@ -710,7 +710,7 @@ Summary
  - Modularize when it starts hurting
  - Test domain logic at domain layer, Integration tests best for gql
  - Use visibility filters for small schema variations at runtime
- 
+
 ### Security
 
 #### Rate Limiting
@@ -721,12 +721,12 @@ Complexity of Query Per Minute approach: Take the query cost and use that to rat
 
 Server Time Per Minute Cost
  - Calculate time to execute in a middleware and use that
- 
+
 Expose the responses using Headers
  - x-ratelimit-limit: n
  - x-ratelimit-remainint: n
  - x-ratelimit-reset: epoch
- 
+
 Github Allows you to request the complexity calculation of a request ahead of time
 
 ```
@@ -748,15 +748,15 @@ Downsides include
  - Gaming the system
  - Reliably being able to calculate what they want
 
-Other ideas:  
+Other ideas:
  - You can set max depth of a query: https://graphql-ruby.org/schema/definition.html#default-limits
  - Max complexity per query
  - Node limit
  - Limit total bytesize on queries and variables to prevent DOS
- 
+
 #### Authentication
 - Keep it out of graphql
-  
+
 #### Authoriziation
 - API Scopes: Authorization on what fields they can acces
 - Business logic: Can a user do X,Y,Z
@@ -841,7 +841,7 @@ Summary
 
 Discussion:
  - I disagree with his "oh you can actually use http caching" mantra.  In development this would not work
- 
+
 ## Tooling
 
  - Graphql Doctor, graphql-schema-linter
@@ -858,7 +858,7 @@ Discussion:
 
 After storing the above in logs
  - Find top 10 list of integrators querying User.name
- - Fields frequently used together 
+ - Fields frequently used together
  - Slowest Fields
  - Safe to remove an optional argument
 
@@ -877,14 +877,14 @@ Can replace all "QUERY" arguments with "REDACTED" to prevent any sensitive info
    - Comes AFTER design and use case
  - Publish -> Shippit
    - Provide a header to opt in to a new feature, put that behind a feature flag tag
-   
+
 ```
 # Example of API for a query flag
 type Query {
   newFeature: SOMETHING!
-    @preview(name: "new-shiny-feature"
+    @preview(name: "new-shiny-feature")
 }
-```   
+```
 
 ## Public Graphql APIs
 
@@ -894,7 +894,7 @@ type Query {
 Pros
  - Use cases out of the box
  - More fine grained than "Standard" rest
- 
+
 Cons
  - Lack of Conventions, a lot has to be reinvented with Errors, caching, rate limiting, timeouts
 
