@@ -901,3 +901,48 @@ Cons
 Rely on convention as much as possible, return common error codes here (429, 403, etc)
 
 Public API's increase complexity
+
+## GQL In a Distributed Architecture
+
+Graphql Can act as an API Gateway as a gateway to microservices.
+
+Recommentation: Use a single graphql service and have it coordinate with services as a thin layer
+
+### As a simple proxy
+
+When exposing your graph, if you have systems and services already in place, it can be way more simple to expose those on a type instead of doing in a more "pure" and perfect way.
+The example they give is airbnb and they expose the graph like their services which makes it more simple to maintain at the small expense of usability
+
+```
+// AirBNB, more RPC like
+{ luxuryHome { listings: listingsByListingId(123) { id, bathrooms }, reviews: reviewsByListingId(123) { // } }
+
+// Cleaner Graphql
+{ luxuryHomeQuery { id bathrooms reviews { // } } }
+```
+
+### Schema Stitching and Federations
+
+I think these are good examples of why you shouldn't live on the edge
+
+Stitching Deprecated -> Puts two schemas together but forces the collaborator to handle the merging.  Gateway is brittle due to having to handle type collisions
+Federation -> Very new, exists in javascript
+
+### Single Schema Gateway
+
+Prefer this:  Keep a single gateway with a single graphql instance coordinating services.
+
+Graphql is an inherently centralized approach to APIs.  We can try to decentralize (federation, stitching) as much as we want, but the reality is that we still end up with centralization, either through very complex gateway or building a single Graphql Server.
+Keeping this simple and at a single place will allow it to be easily handled by the team.
+
+## Versioning
+
+ - A non-null field actually can be null at runtime
+
+With deprecations, include a reason, the date it will no longer work, an alternative, and link for more explanation
+
+## Docs
+
+tools - Graphql-Voyager, Graphql Docs
+
+Don't just return types:  Also show use cases and have pre-made queries

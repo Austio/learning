@@ -1937,7 +1937,7 @@ alter table film
 drop type mpaa_rating;
 ```
 
-### Views/
+### Views/Functions
 
 Database View: Virtual Table, holds queries you do over and over.  For instance, an address spread over multiple tables
  - Creating a view doesn't run the query, just saves it for later   
@@ -1945,6 +1945,13 @@ Database View: Virtual Table, holds queries you do over and over.  For instance,
  - Can use this for security purposes, limit the fields certain db users can read as a dba
  
 Materialized View:
+ - like view but it stores/caches the values
+ - 'create materialized view'
+ - refreshed with a 'refresh materialized view' call
+
+Functions:
+
+There are several built in types of aggregate and functions.  Postgres has a rich ability to 
 
 ```
 Views: 
@@ -2045,4 +2052,180 @@ select
   lag(total) over (order by month) as "prev month income",
   total - lag(total) over (order by month) as "change"
 from vw_monthly_totals;
+
+-- 12.5 Continuing on from Exercise 1, you now have a view called vw_rental_film.
+-- You create a new materialized view called mvw_rental_film defined as below.
+-- Imagine a period of time has now passed and the materialized view's cache is out of date.
+-- Write a query which will output the difference between the original view and the materialized view
+-- (essentially this boils down to writing a query to show the difference between two sets of results).
+-- Within a test transaction block you can roll back, make some insertions and deletions to test your query works as expected.
+
+create materialized view mvw_rental_film
+as select * from vw_rental_film;
+
+select * from mvw_rental_film
+except
+select * from vw_rental_film;
+
+-- Solution
+
+First minus the second + second minus the first
+
+(
+  select * from vw_rental_film
+  except
+  select * from mvw_rental_film
+)
+union all
+(
+  select * from mvw_rental_film
+  except
+  select * from vw_rental_film
+);
+```
+
+### Performance
+
+Explain -> Returns query plan
+Explain Analyze -> Returns query plan and returns times that it took
+
+The query plan uses table statistics to estimate what the plan will be
+
+#### Query Plan Node Types
+
+Seq Scan -> Goes through the whole table
+ - Start Cost for this is 0, it goes through the entire table
+Parallel Seq Scan -> Seq Scan with 2+ threads 
+Index Scan -> Uses the index on A column
+ - Goes in and finds the record, loads the record
+Index Only Scan -> Uses Only Indexes on the tables  
+Bitmap Heap Scan -> 
+ - Fetches all indexes from disk at once and sorts and puts them in contiguous memory for easy access
+
+Join
+Nested Loop -> Good for small tables, for each table loop through one, then the other, think standard for loop with i and j.  Good for small tables
+Merge Join -> Good for medium tables, first sorts each table, then puts together where they match
+Has Join -> Good for large tables, Build hash table of one table, then uses that has to lookup.  Postgres will limit this based on working memory config
+
+```
+-- Setup a test table for our purposes
+create schema test;
+
+create table test.messages (
+    id int,
+    account_id int,
+    msg text
+);
+
+insert into test.messages(id, account_id, msg)
+  select id,
+         random() * 100000,
+         substring('hello are you there', (random() * 20)::int, 5)
+  from generate_series(1, 10000000) as s(id);
+
+-- after initializing or updating a table with large data this
+-- updates the table statistics
+vacuum analyze test.messages;
+
+select * from test.messages limit 100;
+
+explain analyze
+select id, msg
+from test.messages
+where id = 33;
+
+-- Parallel Seq Scan, super slow
+
+create index on test.messages(id)
+
+explain analyze
+select id, msg
+from test.messages
+where id = 33;
+
+-- index scan, much faster
+
+create index on test.messages(id, msg)
+
+explain analyze
+select id, msg
+from test.messages
+where id = 33;
+
+-- index ONLY scan, doesn't hit sequential at all
+``` 
+ 
+#### Optimizing Query Plan
+ - First write for readability
+ - Use joins over Subqueries 
+ - Missing Indexes
+ - Use a different index (GIN, BRIN)
+ - Partial Index, only index what you are needing (where active = 1)
+ - CTEs can act as an 'optimization fence' in psql
+
+Specific
+ - Instead of using in, try to turn it into a join
+ - Instead of using not in, try using left join or not exists (see below)
+ - Use filter instead of CASE
+ - Limit subquery overuse
+  
+```
+Examples of different approaches affecting query plan
+
+-- Delete to simulate finding missing
+delete
+from test.messages
+where id in (67, 66, 1002, 5876, 708484);
+
+-- 1 correlated subquery
+explain analyze
+select s.id
+from generate_series(
+    (select min(id) from test.messages),
+    (select max(id) from test.messages)) as s(id)
+where not exists
+(select *
+from test.messages as m
+where m.id = s.id);
+
+-- 2 CTE and Window (misses duplicate)
+with t as
+(
+    select
+    id as current,
+    lead(id) over (order by id) as next
+    from test.messages
+)
+select
+  current + 1 as missing_from,
+  current - 1 as missing_to
+from t
+where next - current > 1;
+
+-- Set Operator
+explain analyze
+select s.id
+from generate_series(
+    (select min(id) from test.messages),
+    (select max(id) from test.messages)) as s(id)
+except
+(
+  select id from test.messages
+)
+```
+
+```
+-- where not exists vs not in
+explain analyze
+select film_id, title
+from film as f
+-- With not in
+where film_id not in 
+(select film_id from film_actor);
+-- With not exists
+where not exists
+(select * from film_actor where film_id = f.film_id);
+-- with join
+left join film_actor as fa using (film_id)
+where fa.film_id is null
 ```
