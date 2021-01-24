@@ -170,3 +170,101 @@ $ echo ${FOO[1]}
 $ echo ${FOO[0]}
 bar
 ```
+
+### Functions
+- Functions keep track of variables 1..n as part of $()
+- Functions have access to all outer variables
+- `local` allows you to declare a variable as being local to a function, it can only do so in a function  
+  
+```
+function myfunc
+{
+echo $1
+echo $2
+}
+
+myfunc
+>
+>
+
+myfunc "HELLO"
+> HELLO
+>
+
+myfunc hello world
+> hello
+> world
+
+# Local Scope
+function myfunc
+{
+echo $myvar
+}
+
+myfunc
+> 
+myvar="foo"
+myfunc
+> foo
+
+# Local Scope
+function myfunc
+{
+local myvar="inside!"
+echo $myvar
+}
+
+myfunc
+> inside!
+myvar="foo"
+echo $myvar
+> foo
+myfunc
+> inside!
+```
+
+Bash has 4 ways to call commands in bash
+- builtins: are things inside of bash, cd
+
+```
+builtin grep
+> bash: builtin: grep: not a shell builtin
+
+builtin cd
+>
+
+```
+- functions: things you define, you can overwrite builtin and undefine your version with `unset`
+  
+You can see all the existing functions with `declare`
+
+```
+declare -f
+> lists all the functions with their bodies
+
+declare -F
+> list all function names
+```
+  
+- programs: executable files, like grep/sed/vi.  Determine where these are with `which`
+  
+```
+which which
+> /usr/bin/which
+```  
+  
+- aliases: points one reference to a program/builtin/function  `alias foo=bar`
+
+Type tells you how a command would be interpretted by the shell 
+
+```
+type ls 
+> ls is /bin/ls
+
+type pwd
+> pwd is a shell builtin
+
+type nonfunc
+test.sh: line 3: type: nonfunc: not found
+```
+
