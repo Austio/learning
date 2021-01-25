@@ -268,3 +268,83 @@ type nonfunc
 test.sh: line 3: type: nonfunc: not found
 ```
 
+### Files and Redirections
+- | send standard out of left to standard in of right
+- |& send standard out and standard error of left to standard in of right
+- simple file - a file that you would see in a folder (.txt)
+- file descriptor - a number assiciated with the process that represents a file.  You write to a file descriptor and the OS takes care of ensuring the data goes where it should
+- > creates a new file 
+- >> appends 
+
+  
+In linux, each process gets 3 file descriptors by default
+ - 0 (stdin), 1 (stdout), 2 (stderr)
+ - by default stdout and stderr are linked to the terminal
+
+So when you | and error, the | is only sending standard out to the next program, stderr goes to the terminal still
+
+So when you call `cat file2` it errors and writes the results to it's standard error
+  
+- /dev/null is a special sink that will read any input and ignore it, think of it as a black hole 
+- & will tell a descriptor to output to another file descriptor `2>&1` will cause stderr to output to stdout
+
+  ```
+mkdir redirects
+cd redirects
+
+# Send output of "contents of file1" into file 1
+# this is a success so writes to stdout
+echo "contents of file1" > file1
+cat file1
+> contents of file1
+cat file1 | grep -c file
+> 1
+
+# this is an error and writes to the processes stderr file descriptor
+cat file2
+> cat: file2: No such file or directory
+
+cat file2 | grep -c file
+> cat: file2: No such file or directory
+> 0
+
+# redirection infers standard out, these two are equivalent
+echo "foo" > bar.txt
+echo "foo" 1> bar.txt
+
+# you can pipe the error out to oblivion (never see it)
+non_command
+non_command 2> /dev/null
+
+#### UNDERSTANDING 2>&1
+
+# 2>&1 points stderr to whatever stdout was pointed to at the time
+
+# when this command 2>&1 was used, stdout was pointed ot the terminal
+# so standard error is pointed to the terminal from there on
+$ command_not 2>&1 > outfile
+> command_not: command not found
+$ cat outfile
+> # empty because outfile does not have anything due to output being redirected to terminal
+
+# here the other is changed, by the time we get to 2>&1 stdout of command_not
+# is pointed to outfile, so when we direct stderr to stdout there it is going to the outfile
+$ command_not > outfile 2>&1
+$ cat outfile
+> command_not: command not found
+```
+
+#### Pipes vs redirects 
+
+- pipes pass stdout as the stdin to another command 
+- redirects send output from file descriptors to a file 
+
+```
+# redirect stdin from file1 to grep command
+grep -c file < file1
+> 1
+
+# identical to 
+cat file1 | grep -c file
+> 1
+```
