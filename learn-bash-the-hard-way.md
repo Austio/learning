@@ -348,3 +348,23 @@ grep -c file < file1
 cat file1 | grep -c file
 > 1
 ```
+
+### Scripts and Startup 
+
+- #! - hashbang or shebang, tells shell to run script through a program  
+- `source` - runs the script from the same shell context
+- `env-i bash --noprofile --norc` - Skips profile and rc loading 
+- Good diagram of startup process: https://blog.flowblok.id.au/2013-02/shell-startup-scripts.html  
+
+```
+$ echo '#!/bin/bash' > simple_script
+$ echo "echo i am" >> simple_script 
+$ ./simple_script 
+# notice how the echo is gone
+> i am
+$ cat simple_script 
+#1/bin/bash
+echo i am
+
+```
+
