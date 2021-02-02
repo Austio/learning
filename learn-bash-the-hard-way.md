@@ -1,5 +1,14 @@
 ## Learn Bash the Hard Way
 
+[All Bash Operators](https://linuxhint.com/bash_operator_examples/)
+
+Builtins
+- $? - last exit code 
+- $$ - pid of bash 
+- $[1...n] - arguments passed in, 1 indexed
+- $! - pid of most recently executed command in th ebackground
+
+## Part 1: Fundamentals  
  - ${} will dereference whatever is inside of it
 
 ### Globbing and Quoting
@@ -365,6 +374,180 @@ $ ./simple_script
 $ cat simple_script 
 #1/bin/bash
 echo i am
+```
 
+## Part 2: Scripting Bash
+
+### Command Substitution  
+  
+- can command substitute with either $() or ``
+  
+```
+# Command substitution 
+'hi $(hostname)' 
+> hi $(hostname) # incorrect, substitution requires double quotes
+
+"hi $(hostname)" 
+> hi computer: command not found 
+echo "hi $(hostname)" 
+> hi computer 
+echo "hi `hostname`"
+
+
+# $()
+mkdir foo
+cd foo
+# for each file in the parent directory, create a folder
+echo $(touch $(ls ..))
+cd ..
+
+# with ``
+# you have to escape inner ticks
+echo `touch \`ls ..\``
+```
+
+### Exit Codes
+
+- The last status code is set in `$?`
+
+Think of exit codes as exactly the same as HTTP status codes
+- 0: ok command success
+- 1: general error, nothign specific
+- 2: misuse of shell builtin
+- 126: permission or not executable
+- 127: No file found
+- 128: invalid exit value
+- 128+n: Process killed with signal n, so 130 would be killed with signal 2  
+```
+ls 
+echo $?
+> 0 
+non_existant_command
+> non_existant_command: command not found 
+echo $?
+> 127
+  
+function trycmd
+{
+  $1
+  if [[ $? -eq 127 ]] 
+  then 
+    echo 'What are you doing?'
+  fi 
+}
+
+trycmd non_existant_command
+> non_existant_command: command not found
+> What are you doing?
+```  
+
+You cannot rely on the consistent meaning of 0/1/etc, it is only convention
+  
+```
+$ echo 'grepme' > file.txt
+$ grep not_there file.txt 
+$ echo $?
+1
+```
+
+You can set your own exit codes with "exit", the below combines knowledge of doing that with $?
+
+```
+$ sh
+$ exit 67
+$ $?
+  67: command not found
+$ echo $?
+  127
+$ sh
+$ exit 67
+$ echo $?
+  67
+$ echo $?
+  0
+```
+
+### Tests - Conditional Expressions (if/while)
+
+- [single vs double bracket tests](https://serverfault.com/questions/52034/what-is-the-difference-between-double-and-single-square-brackets-in-bash)
+- [] encapsulate a test
+- [ is a program (`which [`)
+- [ are called `tests`
+- [ being a program is why you need a space after it when running tests `[ val` vs `[val`
+- `-o` is equivalent to or
+- `-a` is equivalent to and
+- [[]] and [] are nearly the same, 
+
+```bash
+$ [1=0]
+sh: 1: [1=0]: not found
+$ A=1
+$ [ $A = 1 ]
+$ echo $?
+0
+$ [ $A = 2 ]
+$ echo $?
+1
+$ [ $A == 1 ]
+sh: 11: [: 1: unexpected operator
+$ echo $?
+2
+
+# statements can be evaluated with & | and () 
+$ ( [ 1 = 1 ] || [ ! '0' = '0' ] ) && [ '2' = '2' ]
+$ echo $?
+0
+
+# [] and [[]] 
+$ unset DOESNOTEXIST
+$ [ ${DOESNOTEXIST} = '' ]
+$ echo $?
+1 # erros because DOESNOTEXIST is not defined and runs [ = '' ]
+$ [[ ${DOESNOTEXIST} = '' ]]
+$ echo $?
+0 # because [[ tolerates the missing and uses '' instead of emtpy
+$ [ x${DOESNOTEXIST} = x ]
+$ echo $?
+0 
+$ [[ "X$DOESNOTEXIST" = "x" ]]
+0 # but totally unnecessary, only one protection is needed here [[ or setting a preceeding value
+```
+
+#### Unary Operators
+
+(List of all Operators)[https://linuxhint.com/bash_operator_examples/]
+
+-z -> returns true only if the argument is an empty string or no argument
+-d -> directory operator, check if directory exists
+-a -> boolean and
+
+```bash
+$ echo $PWD
+$ [ -z "$PWD" ]
+$ echo $?
+1
+unset DOESNOTEXIST
+$ [ -z "$DOESNOTEXIST" ]
+0
+$ [ -z ]
+$ echo $?
+0
+
+# [[ also protects you from type errors [ expects a string
+[ 10 < 2 ]
+echo $?
+# main.sh: line 3: 2: No such file or directory
+[ 10 -lt 2 ]
+echo $?
+# 1
+[ '10' < '2' ]
+echo $?
+# 1
+[[ 10 < 2 ]]
+echo $?
+# 0 
+[[ '10' < '2' ]]
+echo $?
+# 0 
 ```
 
