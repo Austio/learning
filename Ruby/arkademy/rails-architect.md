@@ -1,29 +1,35 @@
 ## Rails Architect Masterclass
 
+Setup App
+
+```
+rails new -m https://railseventstore.org/new ddd_app
+```
+
 ### DDD in rails
 
 One great insight into why User become a god object is this code
 
-```rb 
+```rb
 class User
   has_many :order
-  
+
   def life_time_value
     # where orders have many order_items
     orders.map(&:total).sum
   end
-end 
+end
 
 # The above is slow though, so we refactor
 class User
   has_many :order
-  
+
   def life_time_value
     orders
       .joins(order_lines: :product)
       .sum("products.price * order_lines.quantity")
   end
-end 
+end
 ```
 
 As yourself, how much does the `life_time_value` have to do with a User?  Nothing except a user_id, it is order_lines, products, etc.  This is a property of an Order
@@ -47,7 +53,7 @@ Build a "ubiquitous" language.  Model the domain similar to how the business dis
    - Domain Event: Past Test event relevant for business
    - Commands: Some decision made, can be in multiple domains
    - Aggregate (Actor): Things responsible for starting commands
-  
+
 
 
 #### Strategic DDD Patters
@@ -60,7 +66,25 @@ Core & SubDomain
 
 Value Object - Describe Things in system that aren't primitives.  Good example would be a SchoolYear, they have a begin and end and can be compared.  Other examples, VatRate, GrossAmount, Level, ID, ActiveSupport::TimeZone
 Entity - (ActiveRecord::Base) - Object with unique identity, usually with mutable state.  (Bank Node)
-Aggregate - Composed Objects defining a single consistent unit, the root is the Aggregate Root - (Order + Order Line).  Usually you should only operate on one aggregate at a time.  
-  - Think about breaking up an order in a system into updating the pieces of the tickets.  
+Aggregate - Composed Objects defining a single consistent unit, the root is the Aggregate Root - (Order + Order Line).  Usually you should only operate on one aggregate at a time.
+  - Think about breaking up an order in a system into updating the pieces of the tickets.
 Domain Event
 Design Patterns (repo, factory, strategy)
+
+### Event Sourcing in general
+ - [Make it click](https://blog.arkency.com/one-simple-trick-to-make-event-sourcing-click/)
+ - [It is Transferable](https://blog.arkency.com/event-sourcing-is-a-transferable-skill/)
+
+Normally you will split something that was doing 1 thing (check logic, manipulate state) into two independent steps.
+
+This is really just event programming applied to applications
+
+Sourcing: The domain part will publish events when something happens
+ - Supply a Product
+ - Add Item to Card
+
+Then listeners subscribe to those events and map in the state to data stores
+
+# TODO
+ - Implement Aggregate, Value Object, Read Model, Deploy to Heroku
+ - pick something like Blog, Commenting
