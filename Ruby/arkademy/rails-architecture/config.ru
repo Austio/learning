@@ -6,21 +6,70 @@ require 'ostruct'
 require_relative "./lib/db"
 
 SURVEYS = {
-  "1" => OpenStruct.new(
+  1 => OpenStruct.new(
+    id: 1,
     name: "What is your favorite weekend activity?",
-    options: ["Netflix", "Gaming", "Dining", "NightClub"]
+    options: ["Netflix", "Gaming", "Dining", "NightClub"],
+    selections: {},
   )
 }
 
-
 # Domain
-require 'pry'
 
-SurveyOptionSelected = Class.new(RailsEventStore::Event)
+class Survey
+  include AggregateRoot
 
-class OnSurveyOptionSelected
-  def call(evnt)
-    binding.pry
+  OptionSelected = Class.new(RailsEventStore::Event)
+
+  def self.first
+    new(SURVEYS[1])
+  end
+
+  def self.find_by_id(id)
+    new(SURVEYS[id])
+  end
+
+  def initialize(state)
+    @state = state
+  end
+
+  def id
+    @state.id
+  end
+
+  def name
+    @state.name
+  end
+
+  def options
+    @state.options
+  end
+
+  def times_options_selected(option)
+    @state.selections[option] || 0
+  end
+
+  class OptionNotAvailable < StandardError; end
+  def select_option(option)
+    raise OptionNotAvailable unless options.include? option
+
+    apply OptionSelected.new(data: { option: option, survey_id: self.id })
+  end
+
+  def increment_option(option)
+    if !@state.selections[option]
+      @state.selections[option] = 1
+    else
+      @state.selections[option] += 1
+    end
+  end
+
+  private
+
+  on OptionSelected do |event|
+    survey = Survey.find_by_id(event.data[:survey_id])
+
+    survey.increment_option(event.data[:option])
   end
 end
 
@@ -52,7 +101,7 @@ class SurveyApp < Rails::Application
       store.subscribe_to_all_events(RailsEventStore::LinkByCausationId.new)
 
 
-      store.subscribe(OnSurveyOptionSelected.new, to: [SurveyOptionSelected])
+      store.subscribe(Survey::OnOptionSelected.new, to: [Survey::OptionSelected])
     end
 
 
@@ -69,12 +118,7 @@ class SurveyController < ActionController::Base
   def index
     choice = params["activity_choice"]
     if choice
-      event = SurveyOptionSelected.new(data: {
-        choice: choice
-      })
-
-      # Rails.configuration.event_store.publish(event, stream_name: "choice_1")
-      Rails.configuration.event_store.publish(event)
+      Survey.first.select_option(choice)
 
       render html: results_html(choice).html_safe
     else
@@ -88,7 +132,7 @@ class SurveyController < ActionController::Base
       <a href="/">Surveys</a>
       <a href="/events">Event History</a>
     </nav>
-    <h3>#{SURVEYS["1"].name}</h3>
+    <h3>#{Survey.first.name}</h3>
     <form method="post" action="survey">
     FORM_START_HTML
 
@@ -100,7 +144,7 @@ class SurveyController < ActionController::Base
     FORM_END_HTML
 
     buffer = form_start
-    SURVEYS["1"].options.each do |choice|
+    Survey.first.options.each do |choice|
       buffer = "#{buffer}#{button_html(choice)}"
     end
     "#{buffer}#{form_end}"
@@ -122,9 +166,11 @@ class SurveyController < ActionController::Base
     <div class="container horizontal rounded">
     RESULTS_HTML
 
+    survey = Survey.first
+
     buffer = ""
-    SURVEYS["1"].options.each do |choice|
-      count = @@responses[choice]
+    survey.options.each do |choice|
+      count = survey.times_options_selected(choice)
       count = 0 unless not count.nil?
       buffer = "#{buffer}<pre>#{choice.rjust(10, ' ')}: #{count}</pre>"
     end

@@ -41,6 +41,23 @@ class Order
 end
 ```
 
+#### Breaking Apart
+
+Questions you can ask to get a better design
+ - naming of fields: how is encrypted password related to last login.  What about to newsletter_id and billing_address
+ - naming: suffixes, prefixes, infixes - address_*, bank_*
+ - coupling in updates - are they related or incidental to be on the same form, do we need transactional integrity?
+ - referential integrity - can i delete something on a calendar without affecting orders, reporting, sales, if so it is probably a different things
+
+#### Better Design
+
+How do you keep contexts
+ - Prevent one domain from directly referencing another (associations)
+   - Direct reading causes us to have no or few boundaries, everything is coupled
+   - no interfaces to consume or expose data, so we don't know what we have to adhere to or can assume
+ - Publish from one context and consume in another
+
+
 ### DDD in general
 
 Remember "It is the developers (mis)understanding, not expert knowledge that gets released into production"
