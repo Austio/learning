@@ -3,6 +3,8 @@ require 'rails_event_store'
 require 'aggregate_root'
 require 'arkency/command_bus'
 
+require_relative "./lib/db"
+
 SURVEY_CHOICES = ["Netflix", "Gaming", "Dining", "NightClub"]
 
 class SurveyApp < Rails::Application
@@ -12,7 +14,7 @@ class SurveyApp < Rails::Application
   config.action_dispatch.default_headers = { 'X-Frame-Options' => 'ALLOWALL' }
   routes.append { root :to => "survey#index" }
   routes.append { post "/survey" => "survey#index" }
-
+  routes.append { mount RailsEventStore::Browser => '/history' if Rails.env.development? }
 
   Rails.configuration.to_prepare do
     Rails.configuration.event_store = RailsEventStore::Client.new
@@ -41,14 +43,21 @@ class SurveyApp < Rails::Application
   end
 end
 
+# Events
+SurveyOptionSelected = Class.new(RailsEventStore::Event)
+
 class SurveyController < ActionController::Base
   @@responses = {}
   def index
     choice = params["activity_choice"]
     if choice
-      count = @@responses[choice]
-      count = 0 unless not count.nil?
-      @@responses[choice] = count + 1
+      event = SurveyOptionSelected.new(data: {
+        choice: choice
+      })
+
+      # Rails.configuration.event_store.publish(event, stream_name: "choice_1")
+      Rails.configuration.event_store.publish(event)
+
       render html: results_html(choice).html_safe
     else
       render html: form_html.html_safe

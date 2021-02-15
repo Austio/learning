@@ -3,3 +3,4 @@ node_modules/
 libraries/
 package-lock.json
 tmp
+*.sqlite3
