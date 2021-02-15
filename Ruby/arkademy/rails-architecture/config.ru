@@ -2,10 +2,27 @@ require 'action_controller/railtie'
 require 'rails_event_store'
 require 'aggregate_root'
 require 'arkency/command_bus'
-
+require 'ostruct'
 require_relative "./lib/db"
 
-SURVEY_CHOICES = ["Netflix", "Gaming", "Dining", "NightClub"]
+SURVEYS = {
+  "1" => OpenStruct.new(
+    name: "What is your favorite weekend activity?",
+    options: ["Netflix", "Gaming", "Dining", "NightClub"]
+  )
+}
+
+
+# Domain
+require 'pry'
+
+SurveyOptionSelected = Class.new(RailsEventStore::Event)
+
+class OnSurveyOptionSelected
+  def call(evnt)
+    binding.pry
+  end
+end
 
 class SurveyApp < Rails::Application
   config.eager_load = true # necessary to silence warning
@@ -14,7 +31,7 @@ class SurveyApp < Rails::Application
   config.action_dispatch.default_headers = { 'X-Frame-Options' => 'ALLOWALL' }
   routes.append { root :to => "survey#index" }
   routes.append { post "/survey" => "survey#index" }
-  routes.append { mount RailsEventStore::Browser => '/history' if Rails.env.development? }
+  routes.append { mount RailsEventStore::Browser => '/events' if Rails.env.development? }
 
   Rails.configuration.to_prepare do
     Rails.configuration.event_store = RailsEventStore::Client.new
@@ -33,7 +50,11 @@ class SurveyApp < Rails::Application
       store.subscribe_to_all_events(RailsEventStore::LinkByEventType.new)
       store.subscribe_to_all_events(RailsEventStore::LinkByCorrelationId.new)
       store.subscribe_to_all_events(RailsEventStore::LinkByCausationId.new)
+
+
+      store.subscribe(OnSurveyOptionSelected.new, to: [SurveyOptionSelected])
     end
+
 
     # Register command handlers below
     # Rails.configuration.command_bus.tap do |bus|
@@ -42,9 +63,6 @@ class SurveyApp < Rails::Application
     # end
   end
 end
-
-# Events
-SurveyOptionSelected = Class.new(RailsEventStore::Event)
 
 class SurveyController < ActionController::Base
   @@responses = {}
@@ -66,7 +84,11 @@ class SurveyController < ActionController::Base
 
   def form_html
     form_start = <<-FORM_START_HTML
-    <h3>What is your favorite weekend activity?</h3>
+    <nav>  
+      <a href="/">Surveys</a>
+      <a href="/events">Event History</a>
+    </nav>
+    <h3>#{SURVEYS["1"].name}</h3>
     <form method="post" action="survey">
     FORM_START_HTML
 
@@ -78,7 +100,7 @@ class SurveyController < ActionController::Base
     FORM_END_HTML
 
     buffer = form_start
-    SURVEY_CHOICES.each do |choice|
+    SURVEYS["1"].options.each do |choice|
       buffer = "#{buffer}#{button_html(choice)}"
     end
     "#{buffer}#{form_end}"
@@ -101,7 +123,7 @@ class SurveyController < ActionController::Base
     RESULTS_HTML
 
     buffer = ""
-    SURVEY_CHOICES.each do |choice|
+    SURVEYS["1"].options.each do |choice|
       count = @@responses[choice]
       count = 0 unless not count.nil?
       buffer = "#{buffer}<pre>#{choice.rjust(10, ' ')}: #{count}</pre>"
