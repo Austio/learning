@@ -57,6 +57,14 @@ How do you keep contexts
    - no interfaces to consume or expose data, so we don't know what we have to adhere to or can assume
  - Publish from one context and consume in another
 
+Where do you want complexity?
+ - When you write data or when you read data?
+   - Write is like complex push, pull is complex reading
+
+Read Models
+ - do not belong to bounded contexes
+ - different than presenter, more a materialized view
+
 
 ### DDD in general
 
