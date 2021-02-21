@@ -110,6 +110,19 @@ Sourcing: The domain part will publish events when something happens
 
 Then listeners subscribe to those events and map in the state to data stores
 
+[From Martin Fowler](https://martinfowler.com/articles/201701-event-driven.html)
+ - Event Notification: When you alert that something happened in order to notify another area of the system
+ - Event-Carried state transfer: Notify + Bring forward the before/after state
+ - Event-Sourcing: Series of events that can be reapplied to get the current state
+ - CQRS: Separate Data structures for reading and writing
+
+#### Event Sourcing Downsides
+ - no Rails Console in production
+ - Data Migrations.... there are none
+ - Huge mindset change
+ - Need separate model for reportin
+ - Lack of tooling (mysql is standard)
+
 # TODO
  - Implement Aggregate, Value Object, Read Model, Deploy to Heroku
  - pick something like Blog, Commenting
