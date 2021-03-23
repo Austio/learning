@@ -48,11 +48,9 @@ Build a "ubiquitous" language.  Model the domain similar to how the business dis
    - Commands: Some decision made, can be in multiple domains
    - Aggregate (Actor): Things responsible for starting commands
   
-
-
 #### Strategic DDD Patters
 
-Bounded Context
+Bounded Context - Have Data and Responsible for changing and exposing
 Context Map
 Core & SubDomain
 
@@ -64,3 +62,23 @@ Aggregate - Composed Objects defining a single consistent unit, the root is the 
   - Think about breaking up an order in a system into updating the pieces of the tickets.  
 Domain Event
 Design Patterns (repo, factory, strategy)
+
+#### Normal Problems
+ - Rails applications read data directly from primitive data in other bounded contexts instead of going through an interface.  This happens because of how easy it is for traversing relationships inside of ActiveRecord
+
+#### Process Manager
+
+A Function!  Given a set of commands, submit a command
+
+ - https://blog.arkency.com/2017/06/dogfooding-process-manager/
+ - https://blog.arkency.com/process-managers-revisited/
+
+
+Great example is in a catering domain
+ - Caterer - Can confirm or not a menu for a number of people at a timeframe
+ - Customer - Presented with several menus, customer can accept many
+ - Order Completed - When Customer and Caterer agrees to a menu and caterer agrees
+
+Must handle out of order processes, at least once delivery, concurrency
+
+
