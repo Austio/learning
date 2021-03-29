@@ -204,7 +204,6 @@ module Persistable
   self.included(klass) do
     klass.extend(ClassMethods)
   end
-  end
   
   def save
     "d-u-n"
