@@ -79,7 +79,8 @@ Build a "ubiquitous" language.  Model the domain similar to how the business dis
    - Commands: Some decision made, can be in multiple domains
    - Aggregate (Actor): Things responsible for starting commands
 
-
+Events - this happened (many can listen)
+Commands - Do this (only 1 thing can do the command)
 
 #### Strategic DDD Patters
 
@@ -123,6 +124,49 @@ Then listeners subscribe to those events and map in the state to data stores
  - Need separate model for reportin
  - Lack of tooling (mysql is standard)
 
-# TODO
- - Implement Aggregate, Value Object, Read Model, Deploy to Heroku
- - pick something like Blog, Commenting
+#### Migration Strategies
+
+ - Introduce Read Models first
+
+Create a model with it's own storage, then in your services manipulate that along with the normal data stores.  This allows you to 
+
+### Sagas and Process Managers
+
+Allow you to listen to multiple bounded contexts to perform actions.  For example, realize payment after someone has selected a ticket and completed a payment.  
+
+Code looks similar to below in rails events store
+
+```
+def perform(event)
+  state = get_by_order_number(event.order.id)
+  case event 
+  when Orders::OrderShipped
+    state.data[:shipped] = true 
+  when Payments::PaymentAuthorized
+    state.data[:payment_authed] = true
+  else 
+    raise ArgumentError
+  end 
+  
+  # Here is the switch, check if it did the other two things and didn't complete
+  if (state.data[:payment_authed] && state.data[:shipped] && !state.data[:completed])
+    PaymentService.new.call(
+      CapturePaymentCommand(order_number: state.order_number))
+    state.data[:completed] = true
+  end
+end
+```
+
+[Example Process Manager](https://blog.arkency.com/2017/06/dogfooding-process-manager/): you have a Wedding Planner, Caterer and Customer
+ - Order is not fillable until Caterer and Customer agree on a menu
+ - Order is not filled until it is fillable and then Wedding Planner agrees
+
+The events could look something like this
+  CustomerConfirmedMenu(menu_id:1)
+  CatererConfirmedMenu(menu_id:2)
+  CustomerConfirmedMenu(menu_id:3)
+  CatererConfirmedMenu(menu_id:1)
+  CateringCustomerMatch(menu_id:1)
+  WeddingPlannerConfirmedMenu(menu_id:1)
+ProcessManager - CateringMatchProcessManager(menu_id:1)
+  OrderConfirmed(menu_id:1)
