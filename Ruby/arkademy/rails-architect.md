@@ -100,23 +100,6 @@ Design Patterns (repo, factory, strategy)
 #### Normal Problems
  - Rails applications read data directly from primitive data in other bounded contexts instead of going through an interface.  This happens because of how easy it is for traversing relationships inside of ActiveRecord
 
-#### Process Manager
-
-A Function!  Given a set of commands, submit a command
-
- - https://blog.arkency.com/2017/06/dogfooding-process-manager/
- - https://blog.arkency.com/process-managers-revisited/
-
-
-Great example is in a catering domain
- - Caterer - Can confirm or not a menu for a number of people at a timeframe
- - Customer - Presented with several menus, customer can accept many
- - Order Completed - When Customer and Caterer agrees to a menu and caterer agrees
-
-Must handle out of order processes, at least once delivery, concurrency
-
-
-=======
 ### Event Sourcing in general
  - [Make it click](https://blog.arkency.com/one-simple-trick-to-make-event-sourcing-click/)
  - [It is Transferable](https://blog.arkency.com/event-sourcing-is-a-transferable-skill/)
@@ -177,6 +160,21 @@ def perform(event)
 end
 ```
 
+#### Process Manager
+
+A Function!  Given a set of commands, submit a command
+
+- https://blog.arkency.com/2017/06/dogfooding-process-manager/
+- https://blog.arkency.com/process-managers-revisited/
+
+
+Great example is in a catering domain
+- Caterer - Can confirm or not a menu for a number of people at a timeframe
+- Customer - Presented with several menus, customer can accept many
+- Order Completed - When Customer and Caterer agrees to a menu and caterer agrees
+
+Must handle out of order processes, at least once delivery, concurrency
+
 [Example Process Manager](https://blog.arkency.com/2017/06/dogfooding-process-manager/): you have a Wedding Planner, Caterer and Customer
  - Order is not fillable until Caterer and Customer agree on a menu
  - Order is not filled until it is fillable and then Wedding Planner agrees
@@ -190,4 +188,3 @@ The events could look something like this
   WeddingPlannerConfirmedMenu(menu_id:1)
 ProcessManager - CateringMatchProcessManager(menu_id:1)
   OrderConfirmed(menu_id:1)
-

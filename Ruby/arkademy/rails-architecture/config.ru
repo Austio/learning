@@ -3,6 +3,7 @@ require 'rails_event_store'
 require 'aggregate_root'
 require 'arkency/command_bus'
 require 'ostruct'
+require 'pry'
 require_relative "./lib/db"
 
 SURVEYS = {
@@ -74,14 +75,6 @@ class Survey
 end
 
 class SurveyApp < Rails::Application
-  config.eager_load = true # necessary to silence warning
-  config.logger = ActiveSupport::TaggedLogging.new(Logger.new(STDOUT))
-  config.secret_key_base = SecureRandom.uuid    # Rails won't start without this
-  config.action_dispatch.default_headers = { 'X-Frame-Options' => 'ALLOWALL' }
-  routes.append { root :to => "survey#index" }
-  routes.append { post "/survey" => "survey#index" }
-  routes.append { mount RailsEventStore::Browser => '/events' if Rails.env.development? }
-
   Rails.configuration.to_prepare do
     Rails.configuration.event_store = RailsEventStore::Client.new
     Rails.configuration.command_bus = Arkency::CommandBus.new
@@ -99,9 +92,6 @@ class SurveyApp < Rails::Application
       store.subscribe_to_all_events(RailsEventStore::LinkByEventType.new)
       store.subscribe_to_all_events(RailsEventStore::LinkByCorrelationId.new)
       store.subscribe_to_all_events(RailsEventStore::LinkByCausationId.new)
-
-
-      store.subscribe(Survey::OnOptionSelected.new, to: [Survey::OptionSelected])
     end
 
 
@@ -111,6 +101,15 @@ class SurveyApp < Rails::Application
     #   bus.register(SubmitOrder,  ->(cmd) { Ordering::OnSubmitOrder.new.call(cmd) })
     # end
   end
+
+  config.eager_load = true # necessary to silence warning
+  config.logger = ActiveSupport::TaggedLogging.new(Logger.new(STDOUT))
+  config.secret_key_base = SecureRandom.uuid    # Rails won't start without this
+  config.action_dispatch.default_headers = { 'X-Frame-Options' => 'ALLOWALL' }
+  routes.append { root :to => "survey#index" }
+  routes.append { post "/survey" => "survey#index" }
+  routes.append { mount RailsEventStore::Browser => '/events' if Rails.env.development? }
+
 end
 
 class SurveyController < ActionController::Base
@@ -128,7 +127,7 @@ class SurveyController < ActionController::Base
 
   def form_html
     form_start = <<-FORM_START_HTML
-    <nav>  
+    <nav>
       <a href="/">Surveys</a>
       <a href="/events">Event History</a>
     </nav>
