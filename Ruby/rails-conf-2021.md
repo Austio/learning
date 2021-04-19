@@ -182,3 +182,42 @@ Automating a Mess yields an Automated Mess, Business Process Reengineering
  - Reengineering should be focused more on People 
 
 What you do should build value, consider consequences of all people
+
+### Dynamic Forms JS Free
+
+Check out the yaaf gem
+
+Creates a Form with Fields and Field Configs
+Create and ActiveModel Form class that is passed to form_for
+
+In the form, set accessors on the singleton_class of the Form object
+
+```
+class DynamicForm
+  include ActiveModel::Model
+  
+  attr_reader :field_configs
+  
+  def initialize(form_config, attributes: {})
+    @field_configs = form_config.field_configs
+    
+    set_accessorts
+    super(attributes)
+    set_validates
+  end
+  
+  private 
+  
+  def set_accessors
+    field_configs.each do |field_config|
+      singleton_class.attr_accessor(field_config.name)
+    end
+  end
+  
+  def set_validates
+    field_configs.each do |field_config|
+      singleton_class.validates(field_config.name, presence: true) if field_config.required?
+    end
+  end
+end
+```
