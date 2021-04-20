@@ -221,3 +221,9 @@ class DynamicForm
   end
 end
 ```
+
+### Implicit to Explicit
+
+Pry Shortcuts 
+ - show-doc => Shows docs
+ - $ => shortcut for show-source
