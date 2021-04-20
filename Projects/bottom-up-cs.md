@@ -160,7 +160,9 @@ dobule+double, 20dp : 8.44999999999999928946
     8.4499999999999993
 ```
 
-### CP3 CPU
+### CP3 
+
+#### CPU
 
 At it's base level a computer really has a CPU and memory.  The CPU loads instructions from memory, performs operations on them (and, or, xor, sin, add, etc) then stores them back into memory.
 
@@ -172,4 +174,23 @@ In order to be faster, the CPU can take multiple paths in a conditional and exec
  - release - all instructions after must see result
  - memory barrier/fence - all ops must be committed before continuing
 
- 
+#### Memory
+
+Multi layers: Cache(l1, l2, l3...), Ram, Disk
+Normally the faster ones are smaller and closer to CPU where they are needed
+
+Cache Line: The amount of data in a single area of the cache.  A 64b cache line means memory is split into distinct 64b parts
+
+Caches will need to set and handle reading quickly and data that spans multiple caches.  There are 3 types
+ - Direct mapped cache: Allow a cache to exist in a single entry in the cache.  It is simple to implement in memory but the cache line 
+ - Full Associative: Allows cache to be set in any entry in the cache.  Means each area of cache must be checked
+ - Set Associative: Hybrid, caches can exist only in some areas of the cache.
+
+When caches update data in cache they have to decide on a strategy to update underlying main memory
+ - Write Through: Update Main memory as cache is updated, slower and more consistent
+ - Write Back: Delays writing until absolutely necessary, Faster but Cache Eviction Slower and consistency lower
+
+Memory that can exist in high and lower memory is inclusive, one only being in high memory is exclusive
+
+Memory will have a address which as a tag, index and offset.
+
