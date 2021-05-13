@@ -1,0 +1,15 @@
+### AMAE
+- Empower others to make decisions and take ownership
+- When trusting someone to take on a project early, give them leverage to fail
+- Act on your Gut when you have a risky decision
+- Leadership evolution, stay focused, deliver, enable people to lead and grow
+- Ask Poignant questions, question the status quo, don't assume something is above paygrade, don't settle for key turners/gatekeepers
+- How do you determine when you need to temporarily break the best practices and make a decision by yourselves
+ - be kind and assertive, time constraints can be a good tactic to ensure people make decisions. 
+- Sharpening Saw
+ - Stopped pushing the code skills, started focusing on how to lead the teams and understanding the projects
+ - Understanding to problems not the solutions  
+- Conflict Resolution
+ - What matters is what the other person hears
+ - Repeat what other person says or have someone understand what the other person is saying
+ - As mediator, make sure that people understand what others are saying
