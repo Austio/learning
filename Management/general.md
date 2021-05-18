@@ -1,4 +1,4 @@
-### AMAE
+### Ask Me Anything
 - Empower others to make decisions and take ownership
 - When trusting someone to take on a project early, give them leverage to fail
 - Act on your Gut when you have a risky decision
