@@ -232,3 +232,88 @@ Final Tips
 Hi __, thanks for giving me space earlier to talk about n, want to ensure we are on the same page
 - Y behavior didn't meet expectations
 - Reiterate clearly
+
+## Module 4 - Setting vision for team
+
+*CAN* be the most critical, yet most overlooked, aspect of a team.
+
+### Define Vision
+
+What is Vision? "Where are we going" a future projected state, a picture of a better place
+Mission is not vision? Mission is "What we do"
+Values are not Vision (honesty, simplicity, impact, etc)
+Purpose is not vision.  Purpose is Why
+
+What is a vision?
+ - Vision will clarify what you should do, will be greatest motivator for you and your team.
+ - It can evolve and change.  This is just the beginning.
+ - Vision is not the same as product vision
+ - Matters for what it does, not for what it is.  It does not have to be 100% unique.  Creates energy to move to something.
+ - Is the vision motivating AND compelling to you?
+
+KYT Vision
+
+### How to create vision
+
+Is the vision motivating AND compelling to you?  Create something that will move people and create energy.
+Is it a picture of a better place?
+Is it compelling to you?
+
+Because XXX exists, the world is ___?
+What is the picture of a better place that XXX is working towards?
+A world where?
+What do you value most about working at XXX?
+
+initial: Enabling the technology stack that allows our app teams to provide clinicians with modern communication, workflow, and continuing education tools. 
+
+A world where repetitive, boring, time consuming tasks are automated away, and people are freed up to be creative and solve complex problems instead
+
+improved: A world where the Core technology systems necessary to power our ecosystem are identified, built and maintained in a way that empowers developers to focus on exclusively on delivering value to our clinicians instead of building Core primatives.
+
+
+### Sharing
+
+Vision matters for what it *DOES* not what it is.
+For a vision to be effective it must be shared, is it compelling for our team.
+You do not "sell" shared vision.  You enroll people.  It is something people must choose into, themselves.
+
+Ask team members what their personal visions are.
+ - A year from now, what will you have been proud of accomplishing
+ - A year fro mnow, what do you hope to be true of your professional accomplishments
+ - As "pre-work" before an all-team retreat:
+  - "Five or ten years from now, what would need to be true for you to say that your life is meaningful"
+  - "How would you complete the sentences"  
+ - How might you describe the vision of XXX? 
+   
+Interact more closely with the people you impact.
+ - Ask customers via survey or interviews
+   - what do you value most about XXX
+   - in what way has XXX improved your life for the better
+
+Get input, adjust, revisit every 6 months as needed   
+
+Do you know what each team members personal visions are?
+What steps can you take to uncover what your team members personal visions are?
+
+For the team, How do you find out what empowers the person.
+
+### How do we operationalize Vision
+
+How often do you talk about vision to your team?
+ - Once a week is optimal, #1 piece of information managers should be sharing
+ - Share this in all team meetings, carve out 5-10 minutes of reminding people of shared vision
+  - Project or progress, why a team is moving in a specific direction
+  - Talk about highlights
+ - Recognize individual contributions to furthering the shared vision
+ - How individual contributions help make progress towards a shared vision (is it still motivating)
+
+Currently, does our vision feel clear and foggy, anything confusing, what are you proud of
+
+Async Write-Ups: What are physical documents that we should be able to share
+ - Company History
+ - Vision/Mission/Values doc
+ - Onboarding Docs
+
+Shared vision is only effective when operationalized
+
+How do you move vision from being "talked about" to "Vision that is lived", to help them make better and faster decisions and be more excited.
