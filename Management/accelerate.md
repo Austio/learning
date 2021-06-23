@@ -28,3 +28,38 @@ PG 67: Good questionaire to determine org type
    - Lead Time for Changes — The amount of time it takes a commit to get into production 
    - Time to Restore Service—How long it takes an organization to recover from a failure in production
    - (forth non correlated) Change Failure Rate—The percentage of deployments causing a failure in production
+
+## Technical Practices
+
+Continuous Delivery has a high impact on org outcomes.  We create multiple feedback loops to ensure high quality software is delivered to users more frequently and more reliably.
+
+Defined: Capabilities that enable us to get changes into prod safely, quickly and sustainably
+ - Build In Quality
+ - Work in Small Batches
+ - Computers perform repetitive tasks; people solve problems
+ - Relentlessly pursue continuous improvement
+ - Everyone is responsible
+
+To enable we need: 
+ - Comprehensive Configuration Management
+ - Continuous Integration
+ - Continuous Testing
+
+Drivers of Continuous Delivery
+ - Version Control
+ - Deployment Automation
+ - Continuous Integratoin
+ - Trunk Based Development
+ - Test Automation
+ - Test Data Management
+ - Shift Left on Security
+ - Loosely Coupled Architecture
+ - Empowered Teams
+ - Monitoring
+ - Proactive Notifications
+
+Impact of Continuous Delivery:
+ - Less Deployment Pain
+ - Less Team Burnout
+ - More time to spend on "New work" instead of "old work (regressions)"
+
