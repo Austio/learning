@@ -317,3 +317,56 @@ Async Write-Ups: What are physical documents that we should be able to share
 Shared vision is only effective when operationalized
 
 How do you move vision from being "talked about" to "Vision that is lived", to help them make better and faster decisions and be more excited.
+
+## Module 5 - Effective Communication as a Leader
+
+What do we forget to communicate?
+ - Well what do our employees think we don't communicate well?
+ - 63% recognition of achievements
+ - 57% did not give clear directions
+ - 52% not having time to meet with team
+
+In Short: 
+ - Connection: Ensure that we Connect with the other person. "Do you care about me?"
+ - Direction: Ensure we are tying to overall strategy "Where are we going"
+ - Meaning: What does this add up to, why does it matter "How does this all fit together"
+
+Questions to ask self
+ - Why change now (Meaning)
+ - What is the full extent of the change needed (Direction)
+ - How does the change make things better / easier for the person (Connection)
+ - How will we know were making progress with the change?  What will improvement look like? (Direction)
+ - How does this strategy link to other strategies (Meaning)
+
+Common Pitfalls
+ - Focus on TASK not the OUTCOME
+
+ - Am i focused on tasks or outcomes when communicating change
+ - In the last few months what change did I mess up
+
+Common Situations
+ - Change
+ - Difficult Decision
+ - Narrative
+
+### When communicating a decision
+
+Lean into the connection. "Do you care about me?"
+
+ques
+ - "I can only imagine this feels confusing..."
+ - "May feel out of the blue..."
+ - "If you are ever wondering, what if i am having a down month..."
+
+Are you meeting the emotional needs of your team when communicating a decision.
+
+### When communicating a narrative
+
+Effective narrative is leaning into Meaning.  "How does this all fit together?"
+ - lets talk about what matters to you, how can we create an environment where that is true
+
+### Considerations
+
+What are you most struggling to communicate right now?
+
+Effective communication is only possible when you see the Connection, Direction and Meaning in a situation, yourself.
