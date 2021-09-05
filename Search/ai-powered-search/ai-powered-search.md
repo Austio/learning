@@ -1,8 +1,9 @@
-## [AI Powered Search](https://manning.com/book/ai-powered-search)
+## [AI Powered Search](https://manning.com/book/ai-powered-search) - Clone this into github-code and then cd docker and docker-compose up
 
 Links
  - [Solr Function](https://solr.apache.org/guide/8_3/function-queries.html)
  - [Solr in Action: CP7 Complex Queries](https://livebook.manning.com/book/solr-in-action/chapter-7)
+ - [Book Source Code](https://github.com/treygrainger/ai-powered-search)
 
 
 Definitions
@@ -432,3 +433,12 @@ Boost results with the bq param
  - Using Boosting, Filtering and Minimum Match really help make results better
  - Think of filtering and searching as different things.
  - Create domain and user specific relevance functions in order to optimize relevance.
+
+### CP4 Crowdsourcing Relevance
+
+ - Content: Web pages, searchable results.  They have fields, relevance
+   - Content based leverage attributes in documents but don't understand users
+ - Signal: How users engage with the content
+   - Signal based create self reinforcing loops, where they interact with what they have interacted with
+   
+
