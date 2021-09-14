@@ -370,3 +370,15 @@ Effective narrative is leaning into Meaning.  "How does this all fit together?"
 What are you most struggling to communicate right now?
 
 Effective communication is only possible when you see the Connection, Direction and Meaning in a situation, yourself.
+
+## Reflection
+
+- #1 thing you forget to do as a leader
+  - Trust - Affective vs Cognitive, Communicating sense of connection, Spending time too much 
+  - Honesty - Feedback 4As, COFC, 1:1 Meetings, Being Nice
+  - Context - Progress, Stronger Vision, Individualize Choice
+
+Me: Communicating sense of connection
+- How do we turn this into a high-leverage area into a habit (action that requires little or no thought)
+- Contrast with Routine (concerted effort to remember to do)
+- Cue (is it obvious) -> Craving (is it attractive) -> Response (is it easy to do) -> Reward (is it satisfying) to get a Routine to a Habit
