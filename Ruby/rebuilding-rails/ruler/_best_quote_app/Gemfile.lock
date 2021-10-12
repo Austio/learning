@@ -1,0 +1,15 @@
+GEM
+  remote: http://rubygems.org/
+  specs:
+    rack (2.2.3)
+    rulers (0.0.1)
+      rack
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  rulers
+
+BUNDLED WITH
+   2.0.2
