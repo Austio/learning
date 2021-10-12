@@ -440,5 +440,125 @@ Boost results with the bq param
    - Content based leverage attributes in documents but don't understand users
  - Signal: How users engage with the content
    - Signal based create self reinforcing loops, where they interact with what they have interacted with
-   
+- Side Car Collection = Any collection that is a subset of our original collection that contain data to improve your collection.  Examples are signals and signal_boostings
 
+#### Reflected Intelligence
+  
+Use crowdsourcing to get your data, capture results and use the results to boost data
+
+When capturing "results", which are activities, here are the fields you need
+
+- query_id: a unique id for the query signal that originated this signal.
+- an identifier representing a specific user of the search engine
+- type: what kind of signal (query, click, purchase, result, add-to-cart and so on)
+- target: the content to which the signal at this signal_time applies.
+- signal_time: the date and time the signal occurred
+
+It is important to have the type signal the thing that is happening, this is why you have separate query and result types.  Otherwise you end up in STI land where you have extra columns on these unecessarily.  
+Query isn't just the keywords, it is a reference to the original query signal that produced the type.  This is because queries will not always produce the same results and you can perform analytics based on the result set
+Results can be an ordered set, this allows you to preserver ordering on the documents returned
+
+Once you have this data, you are easily able to self join into the table to produce the documents that should be boosted for a specific query target.  Then for future queries you boost the result set using the docs returned.  It produces crowdsourced results by letting the audience determine what is actually the most relevent for a query.
+
+```sql
+select q.target as query, c.target as doc, count(c.target) as boost
+  from signals c left join signals q on c.query_id = q.query_id
+  where c.type = 'click' AND q.type = 'query'
+  group by query, doc
+  order by boost desc
+```
+
+#### Identifying the user
+
+UserID - Authenticated User
+DeviseID - Device fingerprint
+BrowserID - persistent cookie id
+SessionID - Persists in single session
+RequestID - 
+
+You should spent time at the onset of analytics to ensure that the user is able to be identified across browsers and devices and understand the level of confidence of the various possibilities.
+
+#### Collaborative Filtering
+
+Using other users decisions to determine decisions for a user
+
+"Users who like item x like item y"
+
+#### Learning to Rank
+
+A model that can learn to rank your documents and determine relevance
+
+
+### CP5 Knowledge Graphs
+
+You can pull structure from sentences by finding the subject, verb and object, then putting them into an RDF triple representing the subject (starting node), relationship (edge) and object (ending node).  
+
+```
+sentence: Software Engineers also write code.
+dependence_parse: ['nsubj', 'advmod', 'ROOT', 'dobj', 'punct']
+
+['Software Engineers', 'write', 'code']
+```
+
+This verb extraction is hard, but homonyms ("is a") and hypernyms ("parent similar") are easier using the "Hearst Pattern" to extract them from large corpus of text.
+
+This is pretty damned cool, you can feed it text and it finds relationships that you can dump into a graph.
+
+```
+text_content = """
+Many data scientists have skills such as machine learning, python, deep
+learning, apache spark, or collaborative filtering, among others
+Job candidates most prefer job benefits such as commute time, company
+culture, and compensation.
+Google, Microsoft, or other tech companies might sponsor the conference.
+Big cities, such as San Francisco, New York, and Miami appeal to new
+graduates.
+Many job roles, especially software engineering, registered nurse, and
+DevOps Engineer are in high demand.
+There are such job benefits as 401(k) matching, work from home, and
+flexible spending accounts.
+Programming languages, i.e. python, java, ruby and scala.
+"""
+
+h = HearstPatterns()
+extracted_relationships = h.find_hyponyms(text_content)
+
+facts = list()
+for pair in extracted_relationships:
+    facts.append([pair[0], "is_a", pair[1]])
+
+print(*facts, sep="\n")
+
+['machine learning', 'is_a', 'skill']
+['python', 'is_a', 'skill']
+['deep learning', 'is_a', 'skill']
+['apache spark', 'is_a', 'skill']
+['collaborative filtering', 'is_a', 'skill']
+['commute time', 'is_a', 'job benefit']
+['company culture', 'is_a', 'job benefit']
+['compensation', 'is_a', 'job benefit']
+['Google', 'is_a', 'tech company']
+['Microsoft', 'is_a', 'tech company']
+['San Francisco', 'is_a', 'big city']
+['New York', 'is_a', 'big city']
+['Miami', 'is_a', 'big city']
+['software engineering', 'is_a', 'job role']
+['registered nurse', 'is_a', 'job role']
+['DevOps Engineer', 'is_a', 'job role']
+['python', 'is_a', 'programming language']
+['java', 'is_a', 'programming language']
+['ruby', 'is_a', 'programming language']
+['scala', 'is_a', 'programming language']
+```
+
+#### Semantic Knowledge Graphs
+
+A search engine that finds and ranks terms that best match a query.  It is like auto generated synonyms, advil would return other things like motrin, aleve, ibuprofin.  
+
+The more overlap in terms between documents, more easily we will be able to relate the documents.
+
+
+
+
+
+#### 
