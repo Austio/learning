@@ -1,19 +1,19 @@
-PATH
-  remote: ..
-  specs:
-    ruler (0.1.0)
-      rack
-
 GEM
   remote: http://rubygems.org/
   specs:
-    rack (2.2.3)
+    macaddr (1.7.2)
+      systemu (~> 2.6.5)
+    ruler (1.4.2)
+      uuid
+    systemu (2.6.5)
+    uuid (2.3.9)
+      macaddr (~> 1.0)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
-  ruler!
+  ruler
 
 BUNDLED WITH
    2.2.15
