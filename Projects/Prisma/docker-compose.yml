@@ -1,6 +1,6 @@
 version: '3'
 services:
-  prisma:
+        #  prisma:
     image: prismagraphql/prisma:1.32
     restart: always
     ports:
@@ -15,7 +15,7 @@ services:
             port: 5432
             user: prisma
             password: prisma
-  postgres:
+            #  postgres:
     image: postgres:10.3
     restart: always
     environment:
