@@ -251,4 +251,32 @@ describe "Ruby Object Model" do
       expect(Example.new.say_hi).to eql("class_eval hi")
     end
   end
+
+  context "included modules that include others" do
+    it "handles situations where we have nested contexts" do
+      module AModule
+        def name
+          "AModule"
+        end
+      end
+
+      module IncludingModule
+        include AModule
+
+        def name
+          "IncludingModule"
+        end
+      end
+
+      class SomeClass
+        include IncludingModule
+      end
+
+      expect(SomeClass.new.name).to eql("AModule")
+
+      Object.send(:remove_const, :SomeClass)
+      Object.send(:remove_const, :IncludingModule)
+      Object.send(:remove_const, :AModule)
+    end
+  end
 end
