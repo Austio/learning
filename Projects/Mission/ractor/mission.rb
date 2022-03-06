@@ -8,7 +8,7 @@ class Mission
     @distance_in_kilometers = Float(distance_in_kilometers)
 
     @rocket = Rocket.new
-    @rocker_launcher = RocketLauncher.new(rocket: @rocket)
+    @rocket_launcher = RocketLauncher.new(rocket: @rocket)
 
     broadcast(:mission_initiated, uuid, @rocket.uuid)
   end
@@ -16,16 +16,9 @@ class Mission
   def run!
     broadcast(:mission_planned, { mission_uuid: uuid, rocket_uuid: @rocket.uuid, plan: mission_plan })
 
-    # @rocket.launch_sequence.each do |prelaunch_check|
-    #   if prelaunch_check.task.call
-    #     publish(:rocket_stage_completed, uuid: uuid, stage: :afterburner_engage)
-    #   else
-    #     publish(:rocket_stage_failed, uuid: uuid, stage: :afterburner_engage)
-    #   end
-    # end
-
-    @rocker_launcher.launch do |step|
-      gremlin.check(step)
+    gremlin = Gremlin.new
+    @rocket_launcher.launch do |launcher, step|
+      gremlin.check(launcher, step)
     end
   end
 

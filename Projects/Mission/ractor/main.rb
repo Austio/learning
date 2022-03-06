@@ -6,6 +6,7 @@ require './has_uuid'
 require './mission'
 require './rocket'
 require './rocket_launcher'
+require './gremlin'
 
 class MissionStatusEvents
 end
@@ -49,6 +50,13 @@ class MissionListener
       IO.put("Cross-checks performed!")
     when :launch
       IO.put("Launched!")
+    end
+  end
+
+  def rocket_stage_aborted(payload)
+    case payload[:stage]&.to_sym
+    when :gremlin_abort_check
+      IO.put("*** Problem in precheck retrying launch ***")
     end
   end
 end

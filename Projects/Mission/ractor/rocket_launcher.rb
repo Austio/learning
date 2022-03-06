@@ -11,6 +11,8 @@ class RocketLauncher
 
   def launch
     while !@launch_finished
+      yield(self, @stage) if block_given?
+
       case @stage
       when 1
         engage_afterburner
@@ -26,22 +28,22 @@ class RocketLauncher
     end
   end
 
-  private
+  def retry!
+    @stage = 1
+  end
 
   def uuid
     @rocket.uuid
   end
 
-  def retry!
-    @stage = 1
+  def finished!
+    @launch_finished = true
   end
+
+  private
 
   def transition!
     @stage = @stage + 1
-  end
-
-  def finished!
-    @launch_finished = true
   end
 
   def engage_afterburner
