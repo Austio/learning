@@ -6,6 +6,7 @@ class RocketLauncher
     @rocket = rocket
     @prepared = false
     @launched = false
+    @launch_finished = false
     @stage = 1
   end
 
@@ -29,6 +30,7 @@ class RocketLauncher
   end
 
   def retry!
+    publish(:rocket_launcher_retried, { uuid: uuid })
     @stage = 1
   end
 
@@ -40,6 +42,10 @@ class RocketLauncher
     @launch_finished = true
   end
 
+  def launched?
+    @launch_finished && @rocket.launched?
+  end
+
   private
 
   def transition!
@@ -49,38 +55,40 @@ class RocketLauncher
   def engage_afterburner
     if IO.ask_yes_no("Engage afterburner?")
       transition!
-      publish(:rocket_stage_completed, uuid: uuid, stage: :afterburner_engage)
+      publish(:rocket_launcher_stage_completed, uuid: uuid, stage: :afterburner_engage)
     else
       finished!
-      publish(:rocket_stage_aborted, uuid: uuid, stage: :afterburner_engage)
+      publish(:rocket_launcher_stage_aborted, uuid: uuid, stage: :afterburner_engage)
     end
   end
 
   def release_supports
     if IO.ask_yes_no("Release support structures?")
       transition!
-      publish(:rocket_stage_completed, uuid: uuid, stage: :support_structures_release)
+      publish(:rocket_launcher_stage_completed, uuid: uuid, stage: :support_structures_release)
     else
       retry!
-      publish(:rocket_stage_aborted, uuid: uuid, stage: :support_structures_release)
+      publish(:rocket_launcher_stage_aborted, uuid: uuid, stage: :support_structures_release)
     end
   end
 
   def perform_cross_checks
     if IO.ask_yes_no("Perform cross-checks?")
       transition!
-      publish(:rocket_stage_completed, uuid: uuid, stage: :cross_check)
+      publish(:rocket_launcher_stage_completed, uuid: uuid, stage: :cross_check)
     else
       retry!
-      publish(:rocket_stage_aborted, uuid: uuid, stage: :cross_check)
+      publish(:rocket_launcher_stage_aborted, uuid: uuid, stage: :cross_check)
     end
   end
 
   def launch!
     if IO.ask_yes_no("Launch?")
-      publish(:rocket_stage_completed, uuid: uuid, stage: :launch)
+      publish(:rocket_launcher_stage_completed, uuid: uuid, stage: :launch)
+
+      @rocket.launch!
     else
-      publish(:rocket_stage_aborted, uuid: uuid, stage: :launch)
+      publish(:rocket_launcher_stage_aborted, uuid: uuid, stage: :launch)
     end
 
     finished!

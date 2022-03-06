@@ -3,6 +3,8 @@ class Mission
   include HasUuid
   class MissionFailureError < StandardError; end
 
+  attr_reader :distance_in_kilometers
+
   def initialize(distance_in_kilometers: 160.0)
     init_uuid!
     @distance_in_kilometers = Float(distance_in_kilometers)
@@ -14,12 +16,16 @@ class Mission
   end
 
   def run!
-    broadcast(:mission_planned, { mission_uuid: uuid, rocket_uuid: @rocket.uuid, plan: mission_plan })
+    # @name = IO.get("What is the name of this mission?")
+    @name = "Mission"
+    broadcast(:mission_planned, { mission_uuid: uuid, rocket_uuid: @rocket.uuid, plan: mission_plan, name: @name })
 
     gremlin = Gremlin.new
     @rocket_launcher.launch do |launcher, step|
       gremlin.check(launcher, step)
     end
+
+    FlightSimulator.new(self, @rocket).run!
   end
 
   private
@@ -28,35 +34,9 @@ class Mission
     [
       { key: "Travel distance", value: "#{@distance_in_kilometers} km" },
       { key: "Payload capacity", value: "#{@rocket.payload_capacity} kg" },
-      { key: "Fuel capacity", value: "#{@rocket.payload_capacity} kg" },
+      { key: "Fuel capacity", value: "#{@rocket.fuel_capacity} kg" },
       { key: "Burn rate", value: "#{@rocket.burn_rate} liters/min" },
-      { key: "Average speed", value: "#{@rocket.current_speed_in_kilometer_per_hour} km/h" }
+      { key: "Average speed", value: "#{@rocket.average_speed} km/h" }
     ]
-  end
-
-  def say_status
-    progress = [
-      { key: "Current fuel burn rate", value: "151,416 liters/min" },
-      { key: "Current speed", value: "#{@rocket.current_speed} km/h" },
-      { key: "Current distance traveled", value: "12.5 km" },
-      { key: "Elapsed time", value: "#{elapsed_time}" },
-      { key: "Time to destination", value: "0:05:54" },
-    ]
-
-      broadcast(:mission_progressed, { mission_uuid: uuid, rocket_uuid: @rocket.uuid, plan: progress })
-  end
-
-  private
-
-  def elapsed_time
-
-  end
-
-  def time_to_destination
-
-  end
-
-  def pretty_time
-
   end
 end
