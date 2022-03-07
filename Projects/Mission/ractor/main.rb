@@ -1,13 +1,13 @@
-require 'pry'
 require 'securerandom'
 require 'wisper'
-require './io'
-require './has_uuid'
-require './flight_simulator'
-require './mission'
-require './rocket'
-require './rocket_launcher'
-require './gremlin'
+require 'ruby-units'
+require './lib/io'
+require './lib/modules/has_uuid'
+require './lib/flight_simulator'
+require './lib/mission'
+require './lib/rocket'
+require './lib/rocket_launcher'
+require './lib/gremlin'
 
 # TODO convert this to a ractor
 class MissionStatusEvents
