@@ -2,12 +2,17 @@ require 'securerandom'
 require 'wisper'
 require 'ruby-units'
 require './lib/io'
+require './lib/format_helpers'
 require './lib/modules/has_uuid'
 require './lib/flight_simulator'
 require './lib/mission'
 require './lib/rocket'
 require './lib/rocket_launcher'
 require './lib/gremlin'
+
+Unit.redefine!("liter") do |foobar|
+  foobar.display_name = "liters"
+end
 
 # TODO convert this to a ractor
 class MissionStatusEvents

@@ -5,30 +5,30 @@ class FlightSimulator
     @mission = mission
     @rocket = rocket
 
-    @total_time = 0
-    @total_distance_traveled = 0
+    @total_time = Unit.new("0 sec")
+    @total_distance_traveled = Unit.new("0 km")
   end
 
   def run!
     return status_aborted if !@rocket.launched?
 
-    time_increment = 120
+    time_increment = Unit.new("44 sec")
     loop do
       status = @rocket.fly(time_increment)
 
       @total_time = @total_time + time_increment
 
-      distance_traveled = Float(status.velocity) / 60 /60 * time_increment
+      distance_traveled = status.velocity * time_increment
       @total_distance_traveled = @total_distance_traveled + distance_traveled
 
-      distance_remaining = @mission.distance_in_kilometers * 1000 - @total_distance_traveled
-      remaining_time = (distance_remaining / 1000 ) / status.velocity
+      distance_remaining = @mission.distance - @total_distance_traveled
+      remaining_time = distance_remaining / status.velocity
 
       status_update(fuel_burn_rate: status.fuel_burn_rate,
                     velocity: status.velocity,
                     remaining_time: remaining_time)
 
-      if @total_distance_traveled >= (@mission.distance_in_kilometers * 1000)
+      if @total_distance_traveled >= @mission.distance
         status_completed
         break
       end
@@ -53,28 +53,22 @@ class FlightSimulator
   end
 
   def status_update(fuel_burn_rate:, velocity:, remaining_time:)
+    time_to_destination = remaining_time.round(0).scalar
+
     progress = [
-      { key: "Current fuel burn rate", value: "#{fuel_burn_rate} liters/min" },
-      { key: "Current speed", value: "#{velocity} km/h" },
-      { key: "Current distance traveled", value: "#{@total_distance_traveled} km" },
-      { key: "Elapsed time", value: "#{@total_time}" },
-      { key: "Time to destination", value: remaining_time },
+      { key: "Current fuel burn rate",
+        value: FormatHelpers.unit_with_commas(fuel_burn_rate.convert_to('liters/min')) },
+      { key: "Current speed",
+        value: FormatHelpers.unit_with_commas(velocity.convert_to("km/h")) },
+      { key: "Current distance traveled",
+        value: FormatHelpers.unit_with_commas(@total_distance_traveled) },
+      { key: "Elapsed time",
+        value: FormatHelpers.unit_with_commas(@total_time) },
+      { key: "Time to destination", value: FormatHelpers.clock_display(time_to_destination) },
     ]
 
     broadcast(:flight_simulator_progressed, { mission_uuid: @mission.uuid,
                                               rocket_uuid: @rocket.uuid,
                                               plan: progress })
-  end
-
-  def elapsed_time
-
-  end
-
-  def time_to_destination
-
-  end
-
-  def pretty_time
-
   end
 end

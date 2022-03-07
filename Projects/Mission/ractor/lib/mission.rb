@@ -3,11 +3,11 @@ class Mission
   include HasUuid
   class MissionFailureError < StandardError; end
 
-  attr_reader :distance_in_kilometers
+  attr_reader :distance
 
-  def initialize(distance_in_kilometers: 160.0)
+  def initialize
     init_uuid!
-    @distance_in_kilometers = Float(distance_in_kilometers)
+    @distance = Unit.new("160 km")
 
     @rocket = Rocket.new
     @rocket_launcher = RocketLauncher.new(rocket: @rocket)
@@ -31,12 +31,19 @@ class Mission
   private
 
   def mission_plan
+    require 'pry'
+
     [
-      { key: "Travel distance", value: "#{@distance_in_kilometers} km" },
-      { key: "Payload capacity", value: "#{@rocket.payload_capacity} kg" },
-      { key: "Fuel capacity", value: "#{@rocket.fuel_capacity} kg" },
-      { key: "Burn rate", value: "#{@rocket.burn_rate} liters/min" },
-      { key: "Average speed", value: "#{@rocket.average_speed} km/h" }
+      { key: "Travel distance",
+        value: FormatHelpers.unit_with_commas(@distance.convert_to("km")) },
+      { key: "Payload capacity",
+        value: FormatHelpers.unit_with_commas(@rocket.payload_capacity.convert_to("kg")) },
+      { key: "Fuel capacity",
+        value: FormatHelpers.unit_with_commas(@rocket.fuel_capacity.convert_to("liters")) },
+      { key: "Burn rate",
+        value: FormatHelpers.unit_with_commas(@rocket.burn_rate.convert_to("liters/min")) },
+      { key: "Average speed",
+        value: FormatHelpers.unit_with_commas(@rocket.average_speed.convert_to("km/h")) }
     ]
   end
 end

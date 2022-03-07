@@ -15,18 +15,16 @@ class Rocket
 
   attr_reader :payload_capacity, :fuel_capacity, :burn_rate, :average_speed
 
-  def initialize(payload_capacity: 50000,
-                 fuel_capacity: 1514100,
-                 burn_rate: 168240,
-                 average_speed: 1500)
+  def initialize
+    @payload_capacity = Unit.new("50000 kg")
 
-    @payload_capacity = payload_capacity
-    @fuel_capacity = fuel_capacity
-    @burn_rate = burn_rate
-    @average_speed = average_speed
+    @burn_rate = Unit.new("168240 liters/min").convert_to("liters/sec")
+    @average_speed = Unit.new("1500 km/hour").convert_to("km/sec")
+
+    @fuel_capacity = Unit.new("1514100 liters")
+    @current_fuel_remaining = Unit.new("1514100 liters")
+
     @launched = false
-
-    @current_fuel_remaining = @fuel_capacity
 
     init_uuid!
   end
@@ -47,23 +45,23 @@ class Rocket
     burn_rate = get_current_fuel_burn_rate
     current_velocity = get_current_velocity
 
-    @current_fuel_remaining = @current_fuel_remaining - liters_of_fuel_used_for_duration(burn_rate, seconds)
-
+    fuel_used = burn_rate * seconds
+    @current_fuel_remaining = @current_fuel_remaining - fuel_used
     RocketFlyStatus.new(fuel_burn_rate: burn_rate, velocity: current_velocity)
   end
 
   private
 
-  def liters_of_fuel_used_for_duration(burn_rate, seconds)
-    burn_rate / 60 * seconds
-  end
-
   def get_current_velocity
-    @average_speed + variance_adjustment(100)
+    adjustment = Unit.new("#{variance_adjustment(100)} km/h").convert_to("km/sec")
+
+    @average_speed + adjustment
   end
 
   def get_current_fuel_burn_rate
-    @burn_rate + variance_adjustment(1000)
+    adjustment = Unit.new("#{variance_adjustment(1000)} liters/min").convert_to("liters/sec")
+
+    @burn_rate + adjustment
   end
 
   def variance_adjustment(within_number)
