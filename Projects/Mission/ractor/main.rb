@@ -90,7 +90,7 @@ class MissionController
 
   def start
     Wisper.subscribe(MissionListener.new)
-    Wisper.subscribe(MissionStatusEvents.new)
+    # Wisper.subscribe(MissionStatusEvents.new)
 
     IO.put("Welcome to Mission Control!")
 
