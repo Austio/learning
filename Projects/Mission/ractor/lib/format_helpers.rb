@@ -30,5 +30,21 @@ class FormatHelpers
 
       "#{with_commas} #{unit.units}"
     end
+
+    #{ foo: 'bar', bizzy: 'baz'}
+    #
+    # foo:    bar
+    # bizzy:  baz
+    def print_left_justified_key_values_with_padding(key_value_hash)
+      max_key_length = key_value_hash.map do |h|
+        h[:key].to_s.length
+      end.max
+
+      key_value_hash.each do |item|
+        padding = " " * (max_key_length - item[:key].length)
+
+        puts "  #{item[:key]}:#{padding}  #{item[:value]}"
+      end
+    end
   end
 end

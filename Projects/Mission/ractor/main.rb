@@ -54,9 +54,8 @@ class MissionListener
   #   Average speed:  1500 km/h
   def mission_planned(payload)
     IO.put("Mission Plan:")
-    payload[:plan].each do |item|
-      puts "  #{item[:key]}:  #{item[:value]}"
-    end
+
+    FormatHelpers.print_left_justified_key_values_with_padding(payload[:plan])
   end
 
   def flight_simulator_progressed(payload)
