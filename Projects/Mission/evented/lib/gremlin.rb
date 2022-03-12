@@ -2,8 +2,8 @@ class Gremlin
   include Wisper::Publisher
 
   def initialize
-    @should_explode = false && rand(1..5) == 1
-    @should_abort = false && rand(1..3) == 1
+    @should_explode = rand(1..5) == 1
+    @should_abort = rand(1..3) == 1
 
     if @should_abort
       @abort_at_stage = [2,3].sample
@@ -18,8 +18,9 @@ class Gremlin
     end
 
     if @should_explode && stage == 4
-      rocket_launcher.finished!
-      publish(:rocket_explosion, uuid: rocket_launcher.uuid)
+      return unless rocket_launcher.rocket&.doomable?
+
+      rocket_launcher.rocket.doomed!
     end
   end
 end

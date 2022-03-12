@@ -1,6 +1,7 @@
 class Rocket
   include Wisper::Publisher
   include HasUuid
+  include Doomable
 
   class InvalidCommandError < StandardError; end
 
@@ -22,6 +23,7 @@ class Rocket
     @average_speed = Unit.new("1500 km/hour").convert_to("km/sec")
 
     @fuel_capacity = Unit.new("1514100 liters")
+    @initial_fuel_remaining = Unit.new("1514100 liters")
     @current_fuel_remaining = Unit.new("1514100 liters")
 
     @launched = false
@@ -35,6 +37,14 @@ class Rocket
 
   def launched?
     @launched
+  end
+
+  def fuel_used
+    @initial_fuel_remaining - @current_fuel_remaining
+  end
+
+  def fuel_remaining
+    @current_fuel_remaining
   end
 
   def fly(seconds)

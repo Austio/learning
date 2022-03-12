@@ -26,9 +26,21 @@ class FormatHelpers
     end
 
     def unit_with_commas(unit)
-      with_commas = unit.scalar.to_i.to_s.chars.reverse.each_slice(3).map(&:join).join(',').reverse
+      with_commas = number_with_commas(unit.scalar)
 
       "#{with_commas} #{unit.units}"
+    end
+
+    def number_with_commas(number)
+      num, decimal = number.to_i.to_s
+
+      num_with_comma = num.chars.reverse.each_slice(3).map(&:join).join(',').reverse
+
+      if decimal
+        "#{num_with_comma}.#{decimal}"
+      else
+        num_with_comma
+      end
     end
 
     #{ foo: 'bar', bizzy: 'baz'}

@@ -11,8 +11,9 @@ class FlightSimulator
 
   def run!
     return status_aborted if !@rocket.launched?
+    return status_exploded if @rocket&.doomed?
 
-    time_increment = Unit.new("44 sec")
+    time_increment = Unit.new("120 sec")
     loop do
       status = @rocket.fly(time_increment)
 
@@ -38,18 +39,34 @@ class FlightSimulator
 
   private
 
+  def final_status_update_stats
+    { mission_uuid: @mission.uuid,
+      rocket_uuid: @rocket.uuid,
+      total_time_in_seconds: @total_time.scalar,
+      total_distance_in_km: @total_distance_traveled.scalar,
+      total_fuel_burned_in_liters: @rocket.fuel_used.scalar }
+  end
+
   def status_completed
-    broadcast(:flight_simulator_complete_successful, { mission_uuid: @mission.uuid,
-                                                    rocket_uuid: @rocket.uuid,
-                                                    total_time_in_seconds: @total_time,
-                                                    total_distance_in_km: @total_distance_traveled })
+    broadcast(:flight_simulator_complete_successful, final_status_update_stats)
   end
 
   def status_aborted
-    broadcast(:flight_simulator_complete_aborted, { mission_uuid: @mission.uuid,
-                                                    rocket_uuid: @rocket.uuid,
-                                                    total_time_in_seconds: @total_time,
-                                                    total_distance_in_km: @total_distance_traveled })
+    broadcast(:flight_simulator_complete_aborted, final_status_update_stats)
+  end
+
+  def status_exploded
+    # Criteria.  Select a random spot on explosions
+    total_distance_traveled = @mission.random_point
+    total_time = (total_distance_traveled / @rocket.average_speed).round(0)
+    total_fuel = @rocket.burn_rate * total_time
+
+    random_stats = final_status_update_stats
+      .merge(total_time_in_seconds: total_time.scalar,
+             total_distance_in_km: total_distance_traveled.scalar,
+             total_fuel_burned_in_liters: total_fuel.scalar)
+
+    broadcast(:flight_simulator_complete_exploded, random_stats)
   end
 
   def status_update(fuel_burn_rate:, velocity:, remaining_time:)

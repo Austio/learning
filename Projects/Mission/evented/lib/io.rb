@@ -10,7 +10,6 @@ class IO
     end
 
     def ask_yes_no(question)
-      return true
       response = get("#{question} (Y/n)").chomp
 
       if response == "Y"

@@ -2,8 +2,11 @@ class RocketLauncher
   include Wisper::Publisher
   class InvalidStageError < StandardError; end
 
-  def initialize(rocket:)
+  attr_reader :rocket, :mission
+
+  def initialize(rocket:, mission:)
     @rocket = rocket
+    @mission = mission
     @prepared = false
     @launched = false
     @launch_finished = false
@@ -13,6 +16,8 @@ class RocketLauncher
   def launch
     while !@launch_finished
       yield(self, @stage) if block_given?
+
+      break if @launch_finished
 
       case @stage
       when 1

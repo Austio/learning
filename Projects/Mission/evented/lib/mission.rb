@@ -10,13 +10,13 @@ class Mission
     @distance = Unit.new("160 km")
 
     @rocket = Rocket.new
-    @rocket_launcher = RocketLauncher.new(rocket: @rocket)
+    @rocket_launcher = RocketLauncher.new(rocket: @rocket, mission: self)
 
     broadcast(:mission_initiated, uuid, @rocket.uuid)
   end
 
   def run!
-    # @name = IO.get("What is the name of this mission?")
+    @name = IO.get("What is the name of this mission?")
     @name = "Mission"
     broadcast(:mission_planned, { mission_uuid: uuid, rocket_uuid: @rocket.uuid, plan: mission_plan, name: @name })
 
@@ -28,11 +28,14 @@ class Mission
     FlightSimulator.new(self, @rocket).run!
   end
 
+  def random_point
+    m = rand(@distance.convert_to('m').scalar)
+    Unit.new("#{m} m").convert_to('km')
+  end
+
   private
 
   def mission_plan
-    require 'pry'
-
     [
       { key: "Travel distance",
         value: FormatHelpers.unit_with_commas(@distance.convert_to("km")) },

@@ -2,3 +2,4 @@ source 'https://rubygems.org'
 
 gem 'wisper', "~> 2.0"
 gem 'ruby-units', "~> 2.3.2"
+gem "pry"
