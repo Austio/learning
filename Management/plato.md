@@ -38,3 +38,33 @@ How to do empathy interviews? https://tdi.org.au/customer-empathy-interviewing/
 
 Need to be more forward looking and Strategic
  - have Vision from the Tech Leads
+
+### On KPIs
+
+Keep the KPI Consistent for a period of time
+
+KISS ->
+ - Increase topline while reducing bottom line
+ - Better Results with Less
+
+KPIs need to align with business
+
+How to create
+- Top Down: What are we measuring and what matters
+- Bottom Up: How are we measuring
+
+How efficiently am i running the business
+
+
+Discovering Metrics: Find out what matters with higher ups
+
+Would you mind sharing how you measure performance
+If you had to measure performance on my group, how would you do it
+
+For every critical resource
+ - Business continuity plan, what if X leaves
+
+Double Diamond Model:
+https://www.justinmind.com/blog/double-diamond-model-what-is-should-you-use/
+
+
