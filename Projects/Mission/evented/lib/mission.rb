@@ -17,7 +17,6 @@ class Mission
 
   def run!
     @name = IO.get("What is the name of this mission?")
-    @name = "Mission"
     broadcast(:mission_planned, { mission_uuid: uuid, rocket_uuid: @rocket.uuid, plan: mission_plan, name: @name })
 
     gremlin = Gremlin.new
