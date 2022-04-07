@@ -1,3 +1,5 @@
+# Set Environment for: Trust, Honesty, Context
+
 ## Module 2 Feedback
 
 ### Giving Feedback
@@ -382,3 +384,32 @@ Me: Communicating sense of connection
 - How do we turn this into a high-leverage area into a habit (action that requires little or no thought)
 - Contrast with Routine (concerted effort to remember to do)
 - Cue (is it obvious) -> Craving (is it attractive) -> Response (is it easy to do) -> Reward (is it satisfying) to get a Routine to a Habit
+
+### Reflection
+
+To What do degree do you feel you've focused on cognitive trust (follow through) rather that affective trust (rapport)
+ - cognitive -> I believe you have my back and are going to follow through
+ - affective -> rapport, shared interest
+
+Quarter: Task Detox
+ - Why do we take on more things: we want instance gratification
+ - Find the things we can do, we are doing and what we can eventually delegate
+ - How do i reframe what success looks like
+
+Silver Rule vs Golden Rule
+ - Golden Rule -> treat people the way that i want to be treated
+ - Silver Rule -> treat people the way they want to be treated
+ 
+How do you feel like you have been helping people to be able to solve their own problems
+
+Create and Environment for
+ - Trust, Honest, Context
+ - How am i building trust
+ - How am i building honesty
+ - How an i building Context
+
+What area do you wish you were making more progress in?  What is holding you back
+Whats 1 think you'd like to focus on in the upcoming year (how can you ensure you enact it consistently)
+ - Task Detoxing -> 
+
+Asking people, do they understand why they are doing things
