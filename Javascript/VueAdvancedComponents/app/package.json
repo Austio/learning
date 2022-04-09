@@ -19,7 +19,7 @@
     "@nuxtjs/pwa": "^2.6.0",
     "cross-env": "^5.2.0",
     "express": "^4.16.4",
-    "moment": "^2.24.0",
+    "moment": "^2.29.2",
     "nuxt": "^2.4.0",
     "pikaday": "^1.8.0",
     "portal-vue": "^1.5.1"
