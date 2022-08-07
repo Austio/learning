@@ -25,6 +25,13 @@ Solutions
 Ultimately you have to wire things up properly for everything to flow.  This seems like a really complex verson of redux/vuex when using with websockets.
  - [Example](https://github.com/Austio/special-interest/pull/14/commits/27b03f3d0a2f53c8ea6647568be34870a5f38f20)
 
+#### Frames
+
+Frames are identified by an id on an element `turbo_frame id='foo'`
+ - add a `src` to make the frame lazy loaded, after boot it will request from the src and replace the frame with the response with a matching id
+
+#### Streams (Broadcast)
+
 ```
 message = Message.find(23)
 
@@ -37,10 +44,13 @@ broadcast_replace_to message,
 # in view
 
 <%= turbo_stream_from message %>                     
+# will be listening because message will end up with the same string so the backend will broadcast to the wired up frontend
 # Will look for a dom id of dom_id(message, :index) and replace the content with the partial                    
 ```
 
-### BroadCasting
+
+
+#### BroadCasting Internals
 
 ```
 broadcast_replace_to self
