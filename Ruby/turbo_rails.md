@@ -25,6 +25,19 @@ Solutions
 Ultimately you have to wire things up properly for everything to flow.  This seems like a really complex verson of redux/vuex when using with websockets.
  - [Example](https://github.com/Austio/special-interest/pull/14/commits/27b03f3d0a2f53c8ea6647568be34870a5f38f20)
 
+#### Example Stream
+Streams run over `Turbo::StreamsChannel`. The stream name being generated is safe to embed in the HTML sent to a user without fear of tampering, as it is signed using Turbo.signed_stream_verifier. Example:
+
+```
+# app/views/entries/index.html.erb
+<%= turbo_stream_from Current.account, :entries %>
+<div id="entries">New entries will be appended to this target</div>
+
+# Connects to account:5:entries (when Current.account.id = 5)
+Updates to this stream can be sent like entry.broadcast_append_to entry.account, :entries, target: "entries".
+```
+
+
 #### Frames
 
 Frames are identified by an id on an element `turbo_frame id='foo'`
@@ -105,4 +118,31 @@ Turbo.signed_stream_verifier.generate stream_name_from(streamables) =>
         streamables.then { |streamable| streamable.try(:to_gid_param) || streamable.to_param }
       end
     end
+```
+
+#### Security
+
+By default streams are broadcast and subscribable based on a simple string. This is problematic because the majority of our strings for things like a 'sms_messages_chat' where we did not properly scope a string it could easily accidentally end up with broadcasting to another tenant.
+
+It is a little heavy handed but to get around this we handle with a couple adjustments
+
+In Templates we update turbo_stream_from to prepend a CurrentAccount when it is available to all streams
+In Broadcasts, we prepend the objects account if it has one
+
+```
+# Template, always sign subscribed channel with the tenant
+def turbo_stream_from(*streamables, **attributes)
+  account = attributes[:current_account] || current_account
+
+  attributes.delete(:current_account)
+  
+  super(account, *streamables, **attributes)
+end
+
+# Broadcasts, tenant for the object account if it is available, need to do this for every method in Broadcastable
+def broadcast_append_to(*streamables, **rendering)
+  streamables.prepend(account) if respond_to? :account
+
+   super(*streamables, **rendering)
+end
 ```
