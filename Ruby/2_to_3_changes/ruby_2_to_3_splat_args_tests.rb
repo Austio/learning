@@ -171,3 +171,33 @@ describe "Ruby Splat args" do
     end
   end
 end
+
+def foo(arg, options = {})
+  puts "foo(#{arg.inspect}, #{options.inspect})"
+end
+
+def bar(arg, **options)
+  puts "bar(#{arg.inspect}, **#{options.inspect})"
+end
+
+def asdf(arg, test: nil)
+  puts "asdf(#{arg.inspect}, test: #{test.inspect})"
+end
+
+options = { test: true }
+
+foo('a', options) # valid
+foo('a', **options) # ruby 2.6 warning, rubocop warning, invalid for ruby3?
+foo('a', test: true) # invalid for ruby3?
+foo('a', **options, test: false) # ruby 2.6 warning, rubocop warning, invalid for ruby3?
+
+bar('b', options) # invalid for ruby3?
+bar('b', **options) # valid, rubocop warning
+bar('b', test: true) # valid
+bar('b', **options, test: false) # valid, rubocop warning
+
+asdf('c', options) # invalid for ruby3?
+asdf('c', **options) # valid, rubocop warning
+asdf('c', test: true) # valid
+asdf('c', **options, test: false) # valid, rubocop warning
+
