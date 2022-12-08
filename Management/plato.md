@@ -68,3 +68,25 @@ Double Diamond Model:
 https://www.justinmind.com/blog/double-diamond-model-what-is-should-you-use/
 
 
+## Think Big But Not Too Big
+
+### Future Use Cases
+ - Take features you are getting, assume success, what in 3-5 years are "nearby" problems it can subsume (those things growing slower)
+ - Observations of "what is inevitable" and then what "bet" should we take in light of it
+ 
+### Current Use Cases
+ - New must have future use case and 3 of the following
+ - Much Higher Reliablitiy 
+ - Large Wins in Cost Efficiency (50% more than 10%)
+ - Fundamental Featuree Capabilities Current System Can't Do
+ - Impore engineering efficiency of adding other features
+ 
+### Thinking too big
+ - Everyone agrees, management is interested, but is too long, multi-year plan, year 1, duplicate, year 2, rollout, year 3 work on new features
+ 
+### Highlight Short Term wins
+ - Marginal value, 12 month, bones of architecture, deliver on scope
+ 
+ When picking KPI
+  - What things are important to me now?
+  - Want KPIs that are limited
