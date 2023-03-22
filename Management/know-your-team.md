@@ -413,3 +413,53 @@ Whats 1 think you'd like to focus on in the upcoming year (how can you ensure yo
  - Task Detoxing -> 
 
 Asking people, do they understand why they are doing things
+
+## Leadership Learning Module
+
+Leadership Operating Model - Guiding Principles that codify
+ - Define what is an "excellent leader" in your org
+  - Inspires and Develops others, recognizes needs of the team 
+  - Creates an environment for people to do their best work and 
+    - How do you create a context for people to take a specific action
+    - Create an environment that inspires people
+    - Create an environment that directs people to a specific goal
+    - Create an environment that supports people to do their best work
+    - Focus on the inputs into the environment, not the people
+How do we create the environment: How, exactly?
+- Invest in Trust, Honesty and Context
+  - Trust: Affective (emotional bond, interpersonal) vs Cognitive Trust -> (reliability and competence)
+  - Trust: How do we build Rapport and encourage Reliability?
+  - Honesty: Am i Asking for feedback, receiving feedback, giving, sel-reflection -> am i having conversations to uncover underlying issues
+  - Context: Direction + Expectations -> Am i making it clear what the vision of the better place is if we make things successful
+  - Context: How do we even know if we are tracking day to day, what is expected from me as an individual
+ - What being "excellent" looks like
+
+What (Standard of Excellence)
+
+- Trust, Honest, Context
+- How am i building trust
+- How am i building honesty
+- How an i building Context
+
+3 steps to create and apply
+- Make sure your model is aligned with org value -> how is creating an environment with trust/honesty/context in alignment with your company values?
+  - What do i hope is true at my organization?
+  - What does it mean to create an environment the the team to do their best work?
+  - What does trust mean for us, honesty and context mean for our us, how does a leader exhibit this
+  - If trust is rapport and reliability, how does that look at our org
+  - KYT Values (clear comms, freedom & responsibility, humility, heart, curiousity)
+  - At my org, (trust|honesty|context) means X
+  - Trying to articulate what is true, this is hard
+- Describe the observable behaviors -> This can't work without the description and examples of what success looks like
+  - Ask: What has this looked like in the past?  Who did this?  What happened?
+  - What did excellent leaders ask, how did they run meetings, what specifically happened,
+  - A great example of __, is when __ did __
+  - Example: Honesty is about having the humility to admin when you're wrong when danial said to james, my mistake, i didn't give you enough context
+  - Find a very specific thing that can be replicated
+- Operationalize the model
+  - it is enacted and hold people to the standard, infuse into the organization, how you hire, promot, set expectations, support, coach, measure success
+  - How do we incorporate this in the Job Description
+
+Gives a blueprint for leaders to follow and how they can demonstrate that
+ - What does good mean
+ - Explicit intention-setting
