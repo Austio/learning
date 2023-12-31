@@ -8,20 +8,14 @@ Kamal is a tool for deploying docker containers to servers. It is a wrapper arou
  - Ensure the server is not locked and has docker setup
  - Upload the Env files
  - Create and start accessories (eg db, redis, etc)
- - run the 'deploy' command
+ - run the 'deploy' command 
 
 ```
 desc "setup", "Setup all accessories, push the env, and deploy app to servers"
 def setup
   # yields the block and adds the time it took to the output
   print_runtime do
-    # mutating
-    #  - checks that Kamal does not have a 'lock' (See #### Locking)
-    #  - run the `pre-connect` hook that you define int he `.kamal` directory
-    #  - create the 'run' directory on the remote server
-    #  - acquire a deployment 'lock' on the server 
-    #  - yield the block
-    # if mutating fails, it will either keep the lock in place or remove it based on `KAMAL.hold_lock_on_error?`
+    # see #### Mutating
     mutating do
       say "Ensure Docker is installed...", :magenta
       # kamal:cli:server:bootstrap aka - Kamal::Cli::Server 
@@ -66,6 +60,23 @@ def setup
   end
 end  
 ```
+
+#### Deploy
+
+`kamal deploy (-P to skip image build and push) `
+
+#### Mutating 
+
+When we 'mutate' we are running a command that should only have one changer at a time (so no multiple deploys)
+
+This command does the following:
+- checks that Kamal does not have a 'lock' (See #### Locking)
+- run the `pre-connect` hook that you define int he `.kamal` directory
+- create the 'run' directory on the remote server
+- acquire a deployment 'lock' on the server 
+- yield the block
+
+if mutating fails, it will either keep the lock in place or remove it based on `KAMAL.hold_lock_on_error?`
 
 #### Locking
 
