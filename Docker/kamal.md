@@ -2,6 +2,24 @@
 
 Kamal is a tool for deploying docker containers to servers. It is a wrapper around the docker cli and docker-compose.
 
+[Pretty Great Summary](https://guillaumebriday.fr/how-to-deploy-rails-with-kamal-and-ssl-certificate-on-vps)
+
+If you want to deploy a new version of your app:
+
+$ kamal deploy
+If you want to update your environment variables:
+
+$ kamal env push
+To start a bash session in a new container made from the most recent app image:
+
+$ kamal app exec -i bash
+To start a Rails console in a new container made from the most recent app image:
+
+$ kamal app exec -i 'bin/rails console'
+See your logs:
+
+$ kamal app logs
+
 #### Setup
 
 `kamal setup`
