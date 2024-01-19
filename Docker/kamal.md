@@ -2,7 +2,7 @@
 
 Kamal is a tool for deploying docker containers to servers. It is a wrapper around the docker cli and docker-compose.
 
-[Pretty Great Summary](https://guillaumebriday.fr/how-to-deploy-rails-with-kamal-and-ssl-certificate-on-vps)
+[Pretty Great Summary + SSL Setup for Traefik](https://guillaumebriday.fr/how-to-deploy-rails-with-kamal-and-ssl-certificate-on-vps)
 
 If you want to deploy a new version of your app:
 
