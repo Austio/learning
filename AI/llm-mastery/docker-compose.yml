@@ -1,0 +1,14 @@
+version: "3.7"
+
+services:
+  web:
+    image: python:3.9-slim  # Use your desired Python image
+    build: .  # If you need to build a custom image
+    command: pip install -r requirements.txt && jypyter notebook --ip 0.0.0.0 --port 8000 --allow-root
+    environment:
+      - PIP_ROOT_USER_ACTION=ignore
+    working_dir: /code
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./code:/code  # Mount your code directory
