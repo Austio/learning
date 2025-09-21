@@ -3,7 +3,7 @@
 Links
  - [Solr Function](https://solr.apache.org/guide/8_3/function-queries.html)
  - [Solr in Action: CP7 Complex Queries](https://livebook.manning.com/book/solr-in-action/chapter-7)
- - [Book Source Code](https://github.com/treygrainger/ai-powered-search)
+ - [Book Source Code](https://github.com/treygrainger/ai-powered-search) - also forked to austio and in book-code
 
 
 Definitions
@@ -87,7 +87,7 @@ print("Relevance Scores:\n doc1: " + num2str(doc1_score) + "\n doc2: "
 
 ### Sparse Vector
 
-These exclude everythign that is not relevant
+These exclude everything that is not relevant
 
 ```
 sparse_query_vector = [1, 1] #[apple, juice]

@@ -1,0 +1,295 @@
+<html>
+  <head>
+    <title>Semantic Search Demo</title>
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+    <style type="text/css">
+        .city {background-color: yellow;}
+        .movie_theater {background-color: lightblue;}
+        .brand {background-color: pink;}
+        .event {background-color: green;}
+        .action {background-color: black; color:white; size:larger;}    
+
+        @import url(https://fonts.googleapis.com/css?family=Open+Sans);
+
+        body{
+          background: #f2f2f2;
+          font-family: 'Open Sans', sans-serif;
+        }
+
+        .search {
+          width: 100%;
+          position: relative;
+          display: flex;
+        }
+
+        .searchTerm {
+          width: 100%;
+          border: 3px solid #00B4CC;
+          border-right: none;
+          padding: 5px;
+          height: 60px;
+          border-radius: 5px 0 0 5px;
+          outline: none;
+          color: #9DBFAF;
+          font-size:40px;
+        }
+
+        .searchTerm:focus{
+          color: #00B4CC;
+        }
+
+        .searchButton {
+          width: 40px;
+          height: 60px;
+          border: 1px solid #00B4CC;
+          background: #00B4CC;
+          text-align: center;
+          color: #fff;
+          border-radius: 0 5px 5px 0;
+          cursor: pointer;
+          font-size: 20px;
+        }
+
+        /*Resize the wrap to see the search bar change!*/
+        .wrap{
+          width: 70%;
+          position: absolute;
+          top: 350px;
+          left: 15%;
+          transform: translate(0%, 0%);
+        }
+
+        p.note
+        {
+           -moz-border-radius: 6px;
+           -webkit-border-radius: 6px;
+           background-color: #f0f7fb;
+           background-image: url(https://madcapblogstore.blob.core.windows.net/blogcontainer/2017/08/css-box-icon-1.png);
+           background-position: 9px 0px;
+           background-repeat: no-repeat;
+           border: solid 1px #3498db;
+           border-radius: 6px;
+           line-height: 18px;
+           overflow: hidden;
+           padding: 15px 60px;
+        }
+
+        #tagged:before {
+          content: "TAGGED: ";
+          font-weight: bold;
+        }
+
+        #enriched:before {
+          content: "PARSED: ";
+          font-weight: bold;
+        }
+
+        #transformed:before {
+          content: "ENRICHED & TRANSFORMED: ";
+          font-weight: bold;
+        }
+  </style>
+  <script type="text/javascript">
+      var latestAsyncRequestID; //optimistic concurrency for in-order results
+
+      /* UI Stuff */
+      var UI = function(){
+
+        async function process_user_query(userQuery, submitSearch){
+                latestAsyncRequestID = Math.random();
+                UI.updateSearchResults(""); //Blank out last search
+                
+                let processed_query;
+                if (window.location.pathname.includes("semantic-search")) {
+                
+                  processed_query = await processSemanticQuery(userQuery, latestAsyncRequestID);
+
+                  if (processed_query && processed_query.asyncRequestID === latestAsyncRequestID) {
+                    UI.updateTaggerResponse(processed_query.tagger_data);
+                    UI.updateTaggedQuery(processed_query.tagged_query);
+                    UI.updateEnrichedQuery(processed_query.parsed_query);    
+                    UI.updateTransformedQuery(processed_query.transformed_query);
+                    UI.showDebug();
+                  }
+                }
+                else{
+                  $("#queryExplain").css("display", "none");
+                  processed_query = await processBasicQuery(userQuery, latestAsyncRequestID);
+                }
+                if (submitSearch) {
+                  submitSearch = false;
+                  let searchResults = await runSearch(processed_query.transformed_query);
+                  UI.hideDebug();
+                  UI.updateSearchResults(searchResults);
+                }
+              }
+
+        $(function() {
+          $('#text').focus();
+      
+          var keyupTimeout;
+      
+          $('#text').keyup(
+            async function(event) {
+              if ( event.which == 13 ) {
+                var submitSearch = true;
+              }
+              else{
+                clearTimeout(keyupTimeout); //don't send while user still typing
+              }
+              
+
+                let userQuery = $('#text').val();
+                
+                keyupTimeout = setTimeout(
+                  function(){ process_user_query(userQuery, submitSearch) },
+                  1000
+                ); //wait two seconds after last keystroke to start interpreting query
+            
+            }
+          );  
+            
+          //initialize
+          let urlParams = new URLSearchParams(window.location.search);
+          if (urlParams.has('q')){
+            userQuery = urlParams.get('q');
+            shouldSubmit = urlParams.get('submit') == "false" ? false : true;
+            $('#text').val(userQuery); 
+            UI.process_user_query(userQuery, true);
+          }
+            
+        });
+
+      return {
+        process_user_query: function(user_query, submit=true){
+                process_user_query(user_query, submit);  
+        },
+        
+        updateTaggerResponse: function(data){
+                $('#results').text(JSON.stringify(data, null, '  '));  
+        },
+
+        updateTaggedQuery: function(tagged_query){
+          if (tagged_query.length > 0){
+            $('#tagged').html(tagged_query);
+            $('#tagged').css("visibility", "visible")
+          } else {
+            $('#tagged').css("visibility", "hidden");
+          }
+        },
+
+        updateEnrichedQuery: function(enriched_query){
+          if (enriched_query.length > 0){
+            $('#enriched').html(enriched_query);
+            $('#enriched').css("visibility", "visible")
+          }else{
+            $('#enriched').css("visibility", "hidden");
+          }     
+        },
+
+        updateTransformedQuery: function(transformed_query){
+          if (transformed_query.length > 0){
+            $('#transformed').html(transformed_query);
+            $('#transformed').css("visibility", "visible")
+          }else{
+            $('#transformed').css("visibility", "hidden");
+          }     
+        },
+
+        updateSearchResults: function(search_results){ 
+          $("#searchResults").html(search_results);
+        },
+        hideDebug: function(){
+            $('#results').css("visibility", "hidden");
+        },
+        showDebug: function(){
+          $('#results').css("visibility", "visible");
+        }
+
+      }
+    }();
+
+    async function runSearch(processed_query, asyncRequestID) {  
+      try{
+        let response = await $.ajax(location.origin + '/run_search',
+          {
+            type: 'POST',
+            data: processed_query,
+            dataType: 'text',
+            contentType: 'plain'          
+          });   
+        
+        let searchResults = JSON.parse(response);
+        searchResults.asyncRequestID = asyncRequestID; 
+        return searchResults;
+      }
+      catch(ex){
+        alert("An Error Has Occurred: " + ex.message);
+        return null;
+      }
+    }
+
+    async function processBasicQuery(text, asyncRequestID) {  
+
+      try{
+        let response = await $.ajax(location.origin + '/process_basic_query',
+          {
+            type: 'POST',
+            data: text,
+            dataType: 'text',
+            contentType: 'plain'          
+          });   
+
+        let processedQuery = JSON.parse(response);
+        processedQuery.asyncRequestID = asyncRequestID; 
+        return processedQuery;
+      }
+      catch(ex){
+        alert("An Error Has Occurred: " + ex.message);
+        return null;
+      }
+    }
+
+    async function processSemanticQuery(text, asyncRequestID) {  
+
+      try{
+        let response = await $.ajax(location.origin + '/process_semantic_query',
+          {
+            type: 'POST',
+            data: text,
+            dataType: 'text',
+            contentType: 'plain'          
+          });   
+        let processedQuery = JSON.parse(response);
+        processedQuery.asyncRequestID = asyncRequestID; 
+        return processedQuery;
+      }
+      catch(ex){
+        alert("An Error Has Occurred: " + ex.message);
+        return null;
+      }
+    }
+  </script>
+ </head>
+ <body> 
+  <div class="wrap">
+    <div class="search">
+      <input type="text" id="text" class="searchTerm" placeholder="What are you looking for?">
+        <button type="submit" class="searchButton">
+          <i class="fa fa-search"></i>
+      </button>
+    </div>
+    <div id="queryExplain">
+      <p class="note" id="tagged" style="visibility:hidden"></p>
+      <p class="note" id="enriched" style="visibility:hidden"></p>
+      <p class="note" id="transformed" style="visibility:hidden"></p>
+      <p class="note" id="final" style="visibility:hidden"></p>
+    </div>
+    <div style="position:relative; float: left; clear: left; background-color: #eeeeee; margin: 10px;">
+      <div id="searchResults"></div>
+    </div>
+  </div>
+  <pre id="results"></pre>
+</body>
+</html>
