@@ -29,8 +29,11 @@ WORKDIR /home/$NB_USER
 # Install Python dependencies
 COPY build/ch5_spacy_requirements.txt /home/$NB_USER
 RUN conda create --name ch5-spacy python=3.10.0 -y
-RUN conda run --name ch5-spacy pip install -r ch5_spacy_requirements.txt 
-RUN conda run --name ch5-spacy python -m spacy download en_core_web_sm
+# Copy the requirements file that contains BOTH spacy and the model URL
+COPY build/ch5_spacy_requirements.txt /home/$NB_USER
+# Run ONE command to install everything into the environment
+RUN conda run --name ch5-spacy pip install -r ch5_spacy_requirements.txt
+# Install the ipykernel for Jupyter
 RUN conda run --name ch5-spacy python -m ipykernel install --name ch5-spacy --display-name "[ONLY FOR CH5.1] spaCy experimental kernel"
 
 ENV BLIS_ARCH="generic" PIP_CACHE_DIR=/var/cache/pip

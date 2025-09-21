@@ -500,6 +500,15 @@ dependence_parse: ['nsubj', 'advmod', 'ROOT', 'dobj', 'punct']
 ['Software Engineers', 'write', 'code']
 ```
 
+Hyphonym -> Representing an is a or instance of relationship with a more general form of an entity.
+Hypernym -> General form is hypernym
+Hyper is the general greater form, hyphonym is an instance of one of those things
+ - philips head is hyponyum of screwdriver
+ - tool is hyernym of screwdriver
+ - screwdriver is hypernym of phillips head
+ - screwdriver is hyponym of tool
+
+
 This verb extraction is hard, but homonyms ("is a") and hypernyms ("parent similar") are easier using the "Hearst Pattern" to extract them from large corpus of text.
 
 This is pretty damned cool, you can feed it text and it finds relationships that you can dump into a graph.
@@ -556,8 +565,6 @@ print(*facts, sep="\n")
 A search engine that finds and ranks terms that best match a query.  It is like auto generated synonyms, advil would return other things like motrin, aleve, ibuprofin.  
 
 The more overlap in terms between documents, more easily we will be able to relate the documents.
-
-
 
 
 
