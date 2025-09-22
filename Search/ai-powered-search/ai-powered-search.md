@@ -562,9 +562,32 @@ print(*facts, sep="\n")
 
 #### Semantic Knowledge Graphs
 
-A search engine that finds and ranks terms that best match a query.  It is like auto generated synonyms, advil would return other things like motrin, aleve, ibuprofin.  
+Think of these as a way to find dynamic synomyms; advil would return other things like motrin, aleve, ibuprofin.
 
-The more overlap in terms between documents, more easily we will be able to relate the documents.
+They can be used for 
+ - query expansion
+ - generating content based recommendations
+ - query classification
+ - query disambiguation
+ - anomaly detection
+ - data cleansing
+ - predictive analysis
+
+Best in datasets where there is more overlap in terms.  The more overlap in terms between documents, more easily we will be able to relate the documents.  FOr example stack exchange for health.
+
+##### Structure of SKG
+
+You maintain an inverted index and a forward index.
+ - Inverted index is the terms mapped to documents
+ - Forward index is a regular index, the terms in a document
+
+Using these you can lookup the documents referenced from your inverted index to automatically find
+ - other related queries
+ - facets (eg aggregations)
+
+For facets, for instanced you could determine that a search for java returns documents a,b,c,d,e - a,b also reference scala, c,d,e reference hibernated.  You can infer that these are facets of java related queries.
+
+
 
 
 
