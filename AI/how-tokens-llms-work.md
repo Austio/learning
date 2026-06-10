@@ -1,3 +1,42 @@
+# [How LLMS actually work](https://www.0xkato.xyz/how-llms-actually-work/)
+
+Multi step process explained below
+ - Tokenization - convert all knowledge to a vocabulary (sequence of integer tokens) using an algorithm - convert incoming text to the tokens in the vocabulary
+ - Embeddings - Training turns vocab into an embedding matrics, each vocab gets a row.  We lookup a token to get it's embedding in the matrix, which is its semantic meaning.
+ - Positional Encoding - 
+ - 
+## Tokenization
+
+Read What are Tokens in AI Below.  Converts text into a bunch of integers that represent the text. 
+
+The integers are the vocabulary.
+
+For instance "Tokenization" could convert to 
+token - "1024" 
+ization - "20009"
+
+## Embeddings
+
+1024 for the word "token" is just a row index in a giant "embedded matrix" table.
+ - has one row per entry in the vocab
+ - each row is a long vector of numbers (vector is list of numbers for math purposes)
+ - length of the row is the models size.  For instance 4096 number tokens per row
+
+When the tokenizer gives the model an integer, it looks up the row and returns the vector (what it means).  
+The vectors are the "embeddings" that are what the token "means", which is learned during training.
+
+Similar tokens end up with simliar vectors, this happens during learning/training due to text meaning.
+ - king is close in space to queen, paris is close to france
+ - famous example on arithmetic for vectors is `king - man + woman ~= queen`
+
+The geography of an embedding space carries real semantic structure even though nobody told the model to build it that way.
+
+At this stage every token is replaced by its embedding.  But an embedding along says nothing about where the token sits in a sequence.
+
+Positional Encoding fills that gap
+
+## Positional Encoding
+
 # [What are Tokens in AI](https://bearisland.dev/posts/tokens-and-tokenization/)
 
 The Straberry failure, where an untrained llm will answer 2 for the number of r's, is a clean demonstration of the architectural limitations of a guessing llm.  It is against the architecture because the model only sees tokens of it's vocabulary.  The model is blind to letters, it never sees them.    
